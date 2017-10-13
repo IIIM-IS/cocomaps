@@ -1,0 +1,14 @@
+{"__type__":"Task",
+    "canBeActivated": "False", 
+    "taskList": [
+    ], 
+    "name": "EngageSpeaking", 
+    "timeOutAction": "No-Answer", 
+    "conclusiveAction": "(Speak(GetTask))", 
+    "module": "MEX", 
+    "maxDuration": "4000", 
+    "whatAmIDoing": "Waiting for task", 
+    "failureAction": "Audio Error", 
+    "isActive": "False", 
+    "requiredData": "[audio-input]"
+}

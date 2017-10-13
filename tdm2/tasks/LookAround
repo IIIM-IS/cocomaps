@@ -1,0 +1,17 @@
+{"__type__":"Task",
+    "canBeActivated": "False", 
+    "taskList": [
+        "HeadTurnLeft", 
+	"HeadTurnRight",
+	"HeadFacingForward"
+    ], 
+    "name": "LookAround", 
+    "timeOutAction": "Report-Motor-Compliance-Fail", 
+    "conclusiveAction": "None", 
+    "module": "YTTM", 
+    "maxDuration": "1000", 
+    "whatAmIDoing": "Lost in Space", 
+    "failureAction": "Report-Motor-Compliance-Fail", 
+    "isActive": "False", 
+    "requiredData": "[head-motor-on]"
+}
