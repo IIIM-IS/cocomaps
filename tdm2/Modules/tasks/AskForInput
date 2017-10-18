@@ -1,0 +1,15 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [
+    ], 
+    "name": "AskForInput", 
+    "timeOutAction": "Return-To-Root", 
+    "conclusiveAction": ["askQuestion"], 
+    "module": "MEX", 
+    "maxDuration": "2500", 
+    "whatAmIDoing": "Waiting for Audio Input", 
+    "failureAction": "Report-Nothing-Heard", 
+    "isActive": "False", 
+    "requiredData": ["Listen-To"],
+    "activeTasks": []
+}

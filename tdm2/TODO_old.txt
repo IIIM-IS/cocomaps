@@ -1,0 +1,139 @@
+Create system from bottom up, using tasks and the currently defined (need
+to change a little bit) tasks and a task manager. 
+
+Structure is : there is a tree, the tree has an initial node(fig 1), this node
+has three tasks, find_person, ask_for_task, confirm_task. Obviously these task
+are conditiona. You don't need to find a person if there is already a person
+there. If there isn't a person you don't need to ask for a task. 
+The task of asking for a task is acive until 'subtasks' are finished
+
+A subtask (fig 2) requires a set of information. A task sequentially 
+calls subtasks that sequentially call subtasks. The tree has arbitrary 
+depth but in practice won't get to deep. 
+
+
+====
+Thinking note 
+	Each task is defined in a task structure that is parsed into 
+	a good format (each task is different). 
+====
+
+
+fig 1:"Root of decision tree"
+
+			FIND-SOMETHING-TODO-1
+			  /              \
+                         /                \
+		find_person            ask_for_task
+					/    |    \
+				       /     |     \
+			          schedule  call  send_email
+
+
+fig 2:"A 'typical' subtask"	
+
+			  	 meeting
+			      /    |     \
+			     /     |      \
+		          _who    _when   _where
+
+
+
+What we need to make this work.
+	Create the structure
+		A task is defined in a specific way (using current template)
+			-missing from current task methodology:
+				*What prerequisits are there?
+					(see Though note: Prerequsists)
+			-activation of subtasks
+				*once prerequisits are met, ask_for_task
+				needs to start a question module. This
+				question module asks the user for input
+				this is handled by a new module : Talk
+				Talk takes in the module name, and other
+				params and returns a string of good
+				answers.
+
+Actionables:  
+	Create a module Talk  
+				Takes in parameters and returns a string
+				of what to say. Given a module name, some
+				other paramters the output through ?MEx? 
+				is that line. - Wait for input = try to 
+				match input to template based on module name
+	Create a template extractor
+				Each task that needs inputs needs to get
+				input via sound and this gets put to an
+				meaning extractor (MEx). The template
+				tries to extract meaning from the decyphered
+				text and fill in the templates <- this also
+				means that the Node needs to keep information
+				about the template
+	Create a main function for TDM 
+				Starting run, initialized neccessary 
+				processes, overall and start at init
+				model FIND-SOMETHING-TODO-1. Try task
+				find-person (check for prerequisits) 
+				if possible start task controller and 
+				send into task. If failed examine 
+				ask_for_task
+	Create task controller 
+				A task controller controls the task,
+				checks prerequisits from the correct
+				location/database. Creates new task 
+				controller and subtasks. Returns true
+				or false (true if prerequisits are
+				possible) (true if action accomplished)
+				e.g. _who - I have found a name.
+	Create base questions
+				A set of base questions run the
+				objectives. who, where, what, how,
+				when. These actions are the fundamental
+				building blocks, the template tries to
+				watch for each type  
+	
+	
+
+
+
+====
+Thought note
+Prerequisits : Given a task (e.g. FIND-SOMETHING-TODO-1) it checks submodules.
+The submodule (in picture case ask_for_task) needs to have a person found. 
+Secondly we add to the ask_for_task a followup condition (close_in_person = ensure the robot is facing the person)
+So when ask_for_task is enabled it activates a subtask without interferance.
+
+This method makes sense (we hide information about actions that should be 
+started once nodes are activated)
+====
+
+====
+Thought note : Matching input to template based on module name. Each task 
+that needs input (e.g. FIND-SOMETHING-TODO1, _who) needs a template that it
+is trying to extract from MEx. 
+===
+
+
+I am doing a top-down approach. So the method is
+
+Create an overall system that(like the method from Jacky) runs continously,
+should be able to build on her skelaton. 
+I need to be able to callback a specific node given its name, check prereqs.
+and "silent nodes".
+
+
+===
+Thought note 
+No task : find_person; can it be a subtask in ask_for_task? So ask for task
+has a prerequisit, find_person, but this can also be a model subtask. find_person [then find_person has a check, if found return true]. This effectively means that the model starts in ask_for_task.
+The problem is that when ask_for_task is active, it activates YTTM and listens
+i.e. waits. In other words, find_person is automatic and doesn't need 
+input from user so it can run that for a long time. However ask_for_task
+needs input. In order to solve that, I would need a new method that has 
+solves a prerequisit. And obviously that is an issue.
+===
+
+===
+Thought note:
+Scanning room. if at any time person is found, face person should be
+put on movement stack.

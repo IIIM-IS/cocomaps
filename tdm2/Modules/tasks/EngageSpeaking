@@ -10,5 +10,6 @@
     "whatAmIDoing": "Waiting for task", 
     "failureAction": "Audio Error", 
     "isActive": "False", 
-    "requiredData": "[audio-input]"
+    "requiredData": ["audio-input"],
+    "activeTasks": ["askQestion"]
 }

@@ -1,16 +1,14 @@
 {"__type__":"Task",
     "canBeActivated": "False", 
-    "taskList": [
-        "LookAround",
-	"EngageSpeaking"
-    ], 
-    "name": "FIND-SOMETHING-TODO-1", 
+    "taskList" : [], 
+    "name": "HeadTurnLeft", 
     "timeOutAction": "Report-Motor-Compliance-Fail", 
-    "conclusiveAction": "(Head-Move(-90,10))", 
+    "conclusiveAction": ["HeadMove"],
     "module": "YTTM", 
     "maxDuration": "1000", 
     "whatAmIDoing": "Lost in Space", 
     "failureAction": "Report-Motor-Compliance-Fail", 
     "isActive": "False", 
-    "requiredData": "[head-motor-on]"
+    "requiredData": ["head-motor-on"],
+    "activeTasks": []
 }

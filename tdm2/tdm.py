@@ -17,22 +17,21 @@ import sched, time
 import os
 import json
 import sys
-import static
+import Modules.static as static
 
-import cmsdk2 # This is the Psyclone library
 
 # Root takes care of creating a root for the decision tree
 # and maintains 
-from Root import Root 
 # Task was created by Jacie @ iiim.is and is a wrapper for
 # json implimentation of tasks, effectively creating a struct
 # for the tasks
-from Task import Task
+from Modules.Task import Task as Task
+
 # Import Psyclone list reader
-from Psy2Py import PsycloneList as Psy2Py
+#from Psy2Py import PsycloneList as Psy2Py
 
 
-TASK_DIR = "tasks" # Directory containing task definitions 
+TASK_DIR = "Modules/tasks" # Directory containing task definitions 
 START_ROOT = "FIND-SOMETHING-TODO-1"
 root_ = []
 # Initialize the 
@@ -51,6 +50,7 @@ def checkTaskList(tasklist):
 # Main Loop
 if __name__ == "__main__":
    for filename in os.listdir(TASK_DIR):
+       print(TASK_DIR + "/" + filename)
      
        # Read in tasks from the directory and load into the tasks dictionary
        with open(TASK_DIR + "/" + filename, "r") as fptr:
