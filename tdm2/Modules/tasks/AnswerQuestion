@@ -1,0 +1,12 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [], 
+    "name": "MakeACall", 
+    "timeOutAction": "returnToGetObjective", 
+    "prerequisites": ["personFound", "haveGreeted", "askingAQuestion"], 
+    "whatAmIDoing": "preparingToAnswerQuestion", 
+    "maxDuration": "15000", 
+    "functionCalls" : [ "askMeAnything"],
+    "failureAction": "", 
+    "isActive": "False"
+}

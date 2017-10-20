@@ -1,6 +1,0 @@
-{
-	"Greeting": ["Howdy", "Hello how are you", "Good day"],
-	"GetName": ["What is your name", "Could I get your name", "Good person, can robot get name please"],
-	"GetInfo": ["What is your name", "Can you please give me your name", "Sorry, robot need name"],
-	"AskForInput" : ["What would you like me to do?", "How can I help?", "Please give robot seomehting to do"]
-}

@@ -12,23 +12,20 @@ import static as static
 
 
 TASK_DIR = "tasks"
-
 class Task():
-    def __init__(self, name, module, canBeActivated, requiredData, conclusiveAction,
+    def __init__(self, name, canBeActivated, prerequisites,functionCalls,
                  failureAction, timeOutAction, maxDuration, whatAmIDoing,
-                 isActive, taskList, activeTasks):
+                 isActive, taskList):
         self.name             = name
-        self.module           = module
         self.canBeActivated   = canBeActivated
-        self.requiredData     = requiredData
-        self.conclusiveAction = conclusiveAction
+        self.prerequisites    = prerequisites
+        self.functionCalls    = functionCalls
         self.failureAction    = failureAction
         self.timeOutAction    = timeOutAction
         self.maxDuration      = maxDuration
         self.whatAmIDoing     = whatAmIDoing
         self.isActive         = isActive
         self.taskList         = taskList
-        self.activeTasks      = activeTasks
 
 
 
@@ -36,31 +33,29 @@ class Task():
     @staticmethod
     def object_decoder(obj):
         if '__type__' in obj and obj['__type__'] == 'Task':
-             return Task(obj['name'],          obj['module'],
-                         obj['canBeActivated'],
-                         obj['requiredData'],  obj['conclusiveAction'], 
-                         obj['failureAction'], obj['timeOutAction'],    
-                         obj['maxDuration'],   obj['whatAmIDoing'],
-                         obj['isActive'],      obj['taskList'], 
-                         obj['activeTasks'])
+             return Task(obj['name'],           obj['canBeActivated'],
+                         obj['prerequisites'],  obj['functionCalls'], 
+                         obj['failureAction'],  obj['timeOutAction'],    
+                         obj['maxDuration'],    obj['whatAmIDoing'],
+                         obj['isActive'],       obj['taskList'])
         return obj
+
+
 
 # If invoked directly, create a sample task and put it in the main directory
 
 if __name__ == "__main__":
    o = json.loads('{"__type__":"Task", \
                     "name"            :"FIND-SOMETHING-TODO-1", \
-                    "module"          :"YTTM", \
-                    "canBeActivated"  :"Fals", \
-                    "requiredData"    :["head-motor-on"],  \
-                    "conclusiveAction":"(Head-Move(-90,10))", \
-                    "failureAction"   :"Report-Motor-Compliance-Fail", \
-                    "timeOutAction"   :"Report-Motor-Compliance-Fail", \
-                    "maxDuration"     :"1000", \
+                    "canBeActivated"  :"False", \
+                    "prerequisites"   :[],  \
+                    "functionCalls"   :"", \
+                    "failureAction"   :"SEARCH-TASK-FAILED", \
+                    "timeOutAction"   :"SLEEP", \
+                    "maxDuration"     :"300000", \
                     "whatAmIDoing"    :"Lost in Space", \
                     "isActive"        :"False", \
-                    "taskList"        :["HeadTurnLeft","HeadTurnRight","HeadFacingForward"], \
-                    "activeTasks"     :["AskForInput"]}',
+                    "taskList"        :["LookAround", "AskForInput"]}',
                     object_hook=Task.object_decoder)
    print o.taskList[0]
 
@@ -78,14 +73,15 @@ def checkTaskList(tasklist):
             return True
     return True
 
-def createTaskList():
+
+def initDictionaries(DICT_DIR):
     # Create a dictionay of the tasks, callable by name of taks
     # and return
     static.init()
-    TASKS_DIR = 'task'
+    # Initialize Tasks
+    TASK_DIR = DICT_DIR + '/' + 'tasks'
     for filename in os.listdir(TASK_DIR):
-        taskPath = TASK_DIR + '/' + filename
-        #print(taskPath)
+        taskPath = TASK_DIR+ '/' + filename
         with open(taskPath, 'r') as fptr:
             t       =   fptr.read()
             task    =   json.loads(t, object_hook=Task.object_decoder)

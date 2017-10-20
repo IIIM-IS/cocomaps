@@ -1,0 +1,15 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [
+	"WhoToCall",
+	"OutGoingCall"
+    ], 
+    "name": "MakeACall", 
+    "timeOutAction": "returnToGetObjective", 
+    "prerequisites": ["personFound", "haveGreeted", "askingToMakeACall"], 
+    "whatAmIDoing": "preparingToCall", 
+    "maxDuration": "3000", 
+    "functionCalls" : [], 
+    "failureAction": "", 
+    "isActive": "False"
+}

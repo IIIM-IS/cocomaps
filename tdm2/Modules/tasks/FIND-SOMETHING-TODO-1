@@ -2,16 +2,14 @@
     "canBeActivated": "False", 
     "taskList": [
 	"LookAround",
-	"AskForInput"
+	"AskForTask"
     ], 
     "name": "FIND-SOMETHING-TODO-1", 
-    "timeOutAction": "Report-Motor-Compliance-Fail", 
-    "conclusiveAction": "", 
-    "module": "YTTM", 
-    "maxDuration": "10000", 
-    "whatAmIDoing": "Lost in Space", 
-    "activeTasks": [], 
-    "failureAction": "Report-Motor-Compliance-Fail", 
-    "isActive": "False", 
-    "requiredData": ["head-motor-on"]
+    "timeOutAction": "SLEEP", 
+    "prerequisites": [], 
+    "whatAmIDoing": "lost-in-space", 
+    "maxDuration": "300000", 
+    "functionCalls" : [], 
+    "failureAction": "SEARCH-TASK-FAILED", 
+    "isActive": "False"
 }

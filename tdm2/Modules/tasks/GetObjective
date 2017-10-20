@@ -1,0 +1,13 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [
+    ], 
+    "name": "GetObjective", 
+    "timeOutAction": "returnToRoot", 
+    "prerequisites": ["personFound", "haveNotGreeted"], 
+    "whatAmIDoing": "sayingHi", 
+    "maxDuration": "1000", 
+    "functionCalls" : [ "getObjective"],
+    "failureAction": "", 
+    "isActive": "False"
+}

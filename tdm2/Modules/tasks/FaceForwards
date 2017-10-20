@@ -1,0 +1,13 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [
+    ], 
+    "name": "FaceForwards", 
+    "timeOutAction": "returnToRoot", 
+    "prerequisites": ["personNotFound"], 
+    "whatAmIDoing": "turningFaceForwards", 
+    "maxDuration": "3000", 
+    "functionCalls" : [ "headTurn"],
+    "failureAction": "", 
+    "isActive": "False"
+}

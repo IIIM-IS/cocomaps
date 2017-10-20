@@ -1,18 +1,16 @@
 {"__type__":"Task",
-    "canBeActivated": "False", 
+    "canBeActivated": "True", 
     "taskList": [
-        "HeadTurnLeft", 
-	"HeadTurnRight",
-	"HeadFacingForward"
+	"TurnLeft",
+	"TurnRight",
+	"FaceForwards"
     ], 
     "name": "LookAround", 
-    "timeOutAction": "Report-Motor-Compliance-Fail", 
-    "conclusiveAction": [], 
-    "module": "YTTM", 
-    "maxDuration": "10000", 
-    "whatAmIDoing": "Looking around", 
-    "failureAction": "ReturnToRoot", 
-    "isActive": "False", 
-    "requiredData": ["head-motor-on"],
-    "activeTasks": []
+    "timeOutAction": "stopAction", 
+    "prerequisites": ["personNotFound"], 
+    "whatAmIDoing": "lost-in-space", 
+    "maxDuration": "5000", 
+    "functionCalls" : [ "headTurn"],
+    "failureAction": "SEARCH-TASK-FAILED", 
+    "isActive": "False"
 }

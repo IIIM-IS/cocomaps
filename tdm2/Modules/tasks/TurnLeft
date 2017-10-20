@@ -1,0 +1,13 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [
+    ], 
+    "name": "TurnLeft", 
+    "timeOutAction": "returnToRoot", 
+    "prerequisites": ["personNotFound", "haveNotGreeted"], 
+    "whatAmIDoing": "sayingHi", 
+    "maxDuration": "3000", 
+    "functionCalls" : ["headTurn"],
+    "failureAction": "", 
+    "isActive": "False"
+}

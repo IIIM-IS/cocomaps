@@ -1,0 +1,16 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [
+	"WhoToMeet",
+	"WhenToMeet",
+	"WhereToMeet"
+    ], 
+    "name": "ScheduleMeeting", 
+    "timeOutAction": "returnToGetObjective", 
+    "prerequisites": ["personFound", "haveGreeted", "askingToScheduleMeeting"], 
+    "whatAmIDoing": "preparingAMeeting", 
+    "maxDuration": "60000", 
+    "functionCalls" : [], 
+    "failureAction": "", 
+    "isActive": "False"
+}

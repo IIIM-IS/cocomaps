@@ -1,6 +1,0 @@
-{	"isPerson":"VISION.person",
-	"myTurn":"YTTM.myTurn",
-	"head-motor-on":"GLOBAL.OK",
-	"AskForInput" : "YTTM.myTurn",
-	"Listen-To" : "YTTM.OtherHasTurn"
-}
