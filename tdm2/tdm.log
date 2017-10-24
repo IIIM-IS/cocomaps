@@ -1,0 +1,196 @@
+[__main__] | 2017-10-24 09:55:12,562 | Started root: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-10-24 09:55:12,563 | Running task: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-10-24 09:55:12,563 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:12,563 | 
+[Modules.TaskHandler] | 2017-10-24 09:55:12,563 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:12,563 | Starting new task: LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:12,564 | Running task: LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:12,564 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:12,564 | personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:12,564 | Prerequisites test: personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:12,564 | False	Failed TaskHandler:prerequisites:checkPrerequisites for LookAround - personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:12,564 | personNotFound : FAILED
+[Modules.TaskHandler] | 2017-10-24 09:55:12,564 | Prereq test after testing: False
+[Modules.TaskHandler] | 2017-10-24 09:55:12,565 | True;  Finished :LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:12,565 | Starting new task: AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:12,565 | Running task: AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:12,565 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:12,565 | personFound,talkingToPerson
+[Modules.TaskHandler] | 2017-10-24 09:55:12,565 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:12,565 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:12,566 | Prerequisites test: talkingToPerson
+[Modules.TaskHandler] | 2017-10-24 09:55:12,566 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:12,566 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:12,566 | Starting new task: Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:12,566 | Running task: Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:12,566 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:12,566 | personFound,haveNotGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:12,566 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:12,567 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:12,567 | Prerequisites test: haveNotGreeted
+[Modules.prerequisites] | 2017-10-24 09:55:12,567 | InfoBag: False
+[Modules.TaskHandler] | 2017-10-24 09:55:12,567 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:12,567 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:12,567 | Running function: greetPerson
+[Modules.actions] | 2017-10-24 09:55:17,089 | Greeting :  Good thanks
+[Modules.TaskHandler] | 2017-10-24 09:55:17,089 | True;  Finished :Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:17,089 | Starting new task: GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:17,090 | Running task: GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:17,090 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:17,090 | personFound,haveGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:17,090 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:17,091 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:17,091 | Prerequisites test: haveGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:17,091 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:17,091 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:17,091 | Running function: getObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:21,292 | True;  Finished :GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:21,292 | True;  Finished :AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:21,292 | True;  Finished :FIND-SOMETHING-TODO-1
+[__main__] | 2017-10-24 09:55:21,292 | FIND-SOMETHING-TODO-1
+[__main__] | 2017-10-24 09:55:21,292 | Finished circle: True 
+[__main__] | 2017-10-24 09:55:21,292 | Started root: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-10-24 09:55:21,292 | Running task: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | 
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | Starting new task: LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | Running task: LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | Prerequisites test: personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | False	Failed TaskHandler:prerequisites:checkPrerequisites for LookAround - personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | personNotFound : FAILED
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | Prereq test after testing: False
+[Modules.TaskHandler] | 2017-10-24 09:55:21,293 | True;  Finished :LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Starting new task: AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Running task: AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | personFound,talkingToPerson
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Prerequisites test: talkingToPerson
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Starting new task: Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Running task: Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:21,294 | personFound,haveNotGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | Prerequisites test: haveNotGreeted
+[Modules.prerequisites] | 2017-10-24 09:55:21,295 | InfoBag: True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | False	Failed TaskHandler:prerequisites:checkPrerequisites for Greet - haveNotGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | haveNotGreeted : FAILED
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | Prereq test after testing: False
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | True;  Finished :Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | Starting new task: GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | Running task: GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | personFound,haveGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:21,295 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,296 | Prerequisites test: haveGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:21,296 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,296 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:21,296 | Running function: getObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:24,924 | True;  Finished :GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:24,925 | True;  Finished :AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:24,925 | True;  Finished :FIND-SOMETHING-TODO-1
+[__main__] | 2017-10-24 09:55:24,925 | FIND-SOMETHING-TODO-1
+[__main__] | 2017-10-24 09:55:24,925 | Finished circle: True 
+[__main__] | 2017-10-24 09:55:24,925 | Started root: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-10-24 09:55:24,925 | Running task: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-10-24 09:55:24,925 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:24,925 | 
+[Modules.TaskHandler] | 2017-10-24 09:55:24,925 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | Starting new task: LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | Running task: LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | Prerequisites test: personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | False	Failed TaskHandler:prerequisites:checkPrerequisites for LookAround - personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | personNotFound : FAILED
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | Prereq test after testing: False
+[Modules.TaskHandler] | 2017-10-24 09:55:24,926 | True;  Finished :LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | Starting new task: AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | Running task: AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | personFound,talkingToPerson
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | Prerequisites test: talkingToPerson
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,927 | Starting new task: Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | Running task: Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | personFound,haveNotGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | Prerequisites test: haveNotGreeted
+[Modules.prerequisites] | 2017-10-24 09:55:24,928 | InfoBag: True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | False	Failed TaskHandler:prerequisites:checkPrerequisites for Greet - haveNotGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | haveNotGreeted : FAILED
+[Modules.TaskHandler] | 2017-10-24 09:55:24,928 | Prereq test after testing: False
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | True;  Finished :Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | Starting new task: GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | Running task: GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | personFound,haveGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | Prerequisites test: haveGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:24,929 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,930 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:24,930 | Running function: getObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:27,527 | True;  Finished :GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | True;  Finished :AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | True;  Finished :FIND-SOMETHING-TODO-1
+[__main__] | 2017-10-24 09:55:27,528 | FIND-SOMETHING-TODO-1
+[__main__] | 2017-10-24 09:55:27,528 | Finished circle: True 
+[__main__] | 2017-10-24 09:55:27,528 | Started root: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | Running task: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | 
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | Starting new task: LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | Running task: LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:27,528 | Prerequisites test: personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | False	Failed TaskHandler:prerequisites:checkPrerequisites for LookAround - personNotFound
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | personNotFound : FAILED
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | Prereq test after testing: False
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | True;  Finished :LookAround
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | Starting new task: AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | Running task: AskForTask
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | personFound,talkingToPerson
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | Prerequisites test: talkingToPerson
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,529 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | Starting new task: Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | Running task: Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | personFound,haveNotGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | Prerequisites test: haveNotGreeted
+[Modules.prerequisites] | 2017-10-24 09:55:27,530 | InfoBag: True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | False	Failed TaskHandler:prerequisites:checkPrerequisites for Greet - haveNotGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | haveNotGreeted : FAILED
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | Prereq test after testing: False
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | True;  Finished :Greet
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | Starting new task: GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:27,530 | Running task: GetObjective
+[Modules.TaskHandler] | 2017-10-24 09:55:27,531 | Name of prerequisites
+[Modules.TaskHandler] | 2017-10-24 09:55:27,531 | personFound,haveGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:27,531 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-10-24 09:55:27,531 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,531 | Prerequisites test: haveGreeted
+[Modules.TaskHandler] | 2017-10-24 09:55:27,531 | True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,531 | Prereq test after testing: True
+[Modules.TaskHandler] | 2017-10-24 09:55:27,531 | Running function: getObjective

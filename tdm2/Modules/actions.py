@@ -1,7 +1,11 @@
 # A function dictionary, here new actions can be implimented
 # added to the dictionary and called instantly
-
+import logging
 import InfoBag
+from prerequisites import *
+#
+
+logger = logging.getLogger(__name__)
 
 def askMeAnything(*args):
     '''
@@ -26,7 +30,7 @@ def askWhoToMeet(*args):
     return True, "actions:askWhoToMeet not implemented"
 
 def callSomeone(*args):
-    # Function of task make a call - who to call
+    # Function of task makn{tabular}{>{\ttfamily}l >{\ttfamily}l p{8cm}}e a call - who to call
     '''
     NOT IMPLEMENTED
     Meta task
@@ -60,8 +64,9 @@ def greetPerson(*args):
     '''
     if not InfoBag.Bag["haveGreeted"]:
         print("Good morning kind person")
+        tempVal = raw_input("How are you this morning:")
         InfoBag.Bag["haveGreeted"] = True
-        return True, "DEBUG : FINISHED GREETING"
+        return True, ""
     #iInfoBag.Bag["haveGreeted"] = True
     return False, "actions:greetPerson not implemented"
 
@@ -141,14 +146,23 @@ class debugClass():
 
 
 if __name__ == "__main__":
-    task1= debugClass("TurnLeft")
-    task2= debugClass("TurnRight")
-    task3= debugClass("FaceForwards")
-    for key in actions.keys():
-        if key == "headTurn":
-            actions[key](task1)
-            actions[key](task2)
-            actions[key](task3)
-        else : 
-            actions[key]()
+    keyList = []
+    for key in actions:
+        keyList.append(key)
+
+    keyList.sort()
+    with open("/home/david/IIIM/Reports/TDM_functions/actionsList.tex", 'w') as fid:
+        for key in keyList:
+            fid.write("&"+ key+ " \\\\ \n")
+
+#    task1= debugClass("TurnLeft")
+#    task2= debugClass("TurnRight")
+#    task3= debugClass("FaceForwards")
+#    for key in actions.keys():
+#        if key == "headTurn":
+#            actions[key](task1)
+#            actions[key](task2)
+#            actions[key](task3)
+#        else : 
+#            actions[key]()
 

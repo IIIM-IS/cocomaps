@@ -15,90 +15,84 @@
 # Author : David Orn = david@iiim.is
 #
 
-import time
 from prerequisites import *
 from Task import * 
 from actions import * 
 from InfoBag import *
-# FOR DEBUGGING
 import static as static
 
-def getMillis(): # Get the current time in milliseconds, 
-                 # used to compute the maximum allowed time.
-    return int(round(time.time()*1000))
+import logging
 
+logger = logging.getLogger(__name__)
 
 class TaskHandler():
     def __init__(self, task):
         self.task  = task
-        self.debug = 0 # Debug on/off  1/0
         self.task.isActive = 1
+        self.deamon = True
     # Main function for running a task
+
     def run(self):
-        print("Current task: " + self.task.name)
-        # Start by running check of the prerequisites
-        # run returns two values True, [] or False, locationWhereFailed
-        prereqTest, errStr = self.prerequisites() 
-        if prereqTest:
-            # Here all prerequisites are availible
-            for taskName in self.task.taskList:
-                # Create a new set of tasks
-                # TODO need to create a new Task based on task name and then I can create an instance of 
-                # class TaskHandler with Task:task
-                if self.debug == 1:
-                    print("Debug : TaskHandler.run()::for taskName " + self.task.name) 
-                task = static.tasks[taskName]
-                print("Subtask created: "+task.name)
-                newTask = TaskHandler(task)
-                taskTest, newTaskName = newTask.run()
-                errStr = "Failed TaskHandler:Run:newTask.run() " + task.name
-                if taskTest == False:
-                    return False, errStr
-
-
-            # TODO fix code to match new structure;
-            for function in self.task.functionCalls:
-                if self.debug == 1:
-                    print("DEBUG: TaskHandler.run():for function in self.task.conclusiveAction" + function + " -  " +self.task.name)
-                print("Debug: function call name: " + function)
-                # Run a function from actions, based on actions dictionary
-                funcTest, errStr =  actions[function](self.task)
-                
-                if not funcTest:
-                    errStr = "Failed :: TaskHandler.run(): For function " + function
-                    return False, errStr
-                return funcTest, errStr
-
-        
-        else : # self.prerequisites returns false, some data missing
-            # If the data is missing we can't continue
-            return False, errStr
-        return True, "" # If task made it here, it finished well and returns True
-
-
-    def prerequisites(self):
+        logger.info("Running task: " + self.task.name)
+        # First step of task protocol, ensure prerequisites
         test = True
-        errStr = ""
-        for prereqs in self.task.prerequisites:
-            test = prerequisites[prereqs]([])
-            # Sends name of prerequisite function and checks if
-            # that functio is availible. If one is false then return
-            # false
-            if not test: 
-                errStr = "Failed TaskHandler:prerequisites:checkPrerequisites for " + self.task.name + " - " + prereqs
+        logger.debug("Name of prerequisites")
+        logger.debug(",".join(self.task.prerequisites))
+        for prereq in self.task.prerequisites:
+            logger.debug("Prerequisites test: " + prereq)
+            test, errMsg = self.prerequisites(prereq)
+            if not test:
+                # If the prerequisite fails it should stop the
+                # for loop and test==False so it does not go 
+                # into the next statement
+                logger.debug(prereq + " : FAILED")
                 break
-        return test, errStr
+        logger.debug("Prereq test after testing: " + str(test))
+        if test: 
+        # Positive test
+            taskTest = True
+            for taskName in self.task.taskList:
+                newTask = static.tasks[taskName]
+                newTaskHandler = TaskHandler(newTask)
+                logger.debug("Starting new task: " + newTaskHandler.task.name)
+                taskTest, errMsg = newTaskHandler.run()
+                if not taskTest:
+                    logger.debug("Subtask failed: " + errMsg)
+                    return taskTest, errMsg
+
+            if taskTest:
+                for function in self.task.functionCalls:
+                    logger.debug("Running function: " + function) 
+                    print(self.task.name)
+                    funcTest, errMsg = actions[function](self.task)
+
+                    if not funcTest:
+                        return funcTest, errMsg
+        logger.debug("True;  Finished :" + self.task.name)
+        return True, ""
+
+
+
+
+    def prerequisites(self, prereq):
+        test = True
+        errMsg = ""
+        test = prerequisites[prereq]([])
+        if not test: 
+            errMsg = "\tFailed TaskHandler:prerequisites:checkPrerequisites for " + self.task.name + " - " + prereq
+        logger.info(str(test) + errMsg)
+        return test, errMsg
 
 
 
 
 if __name__ == "__main__":
-    initDictionaries("") # This might be a problem...
+    initDictionaries(".") # This might be a problem...
     testTaskName = 'FIND-SOMETHING-TODO-1'
     testTask = static.tasks[testTaskName]
     
     testHandler = TaskHandler(testTask)
-    res, reason = testHandler.run()
+    res, reason = testHandler.run([])
     if res:
         print("Successful")
     else :

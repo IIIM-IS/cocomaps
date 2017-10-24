@@ -4,7 +4,7 @@
     ], 
     "name": "GetObjective", 
     "timeOutAction": "returnToRoot", 
-    "prerequisites": ["personFound", "haveNotGreeted"], 
+    "prerequisites": ["personFound", "haveGreeted"], 
     "whatAmIDoing": "sayingHi", 
     "maxDuration": "1000", 
     "functionCalls" : [ "getObjective"],
