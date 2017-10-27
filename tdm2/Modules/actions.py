@@ -2,7 +2,6 @@
 # added to the dictionary and called instantly
 import logging
 import InfoBag
-from prerequisites import *
 #
 
 logger = logging.getLogger(__name__)
@@ -153,7 +152,8 @@ if __name__ == "__main__":
     keyList.sort()
     with open("/home/david/IIIM/Reports/TDM_functions/actionsList.tex", 'w') as fid:
         for key in keyList:
-            fid.write("&"+ key+ " \\\\ \n")
+            print(key)
+#            fid.write("&"+ key+ " \\\\ \n")
 
 #    task1= debugClass("TurnLeft")
 #    task2= debugClass("TurnRight")
