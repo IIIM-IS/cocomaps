@@ -35,14 +35,16 @@ word    = db[1]
 # * * * * * * * * * * *DEFINITION OF TASK RESULTS * * * * * * * * * 
 def task(inputText):
     outputName = ["MakeACall", "ScheduleMeeting", "AnswerQuestion"]
-    columnNumber = getColumnNumberFromName(outputName)
-    print(inputText)
-    print(columnNumber)
+    columnNumbers = getColumnNumberFromName(outputName)
     prob = np.zeros(len(outputName))
     for word in inputText:
-        temp = raceHolder(columnNumber, word)
+        temp = raceHolder(columnNumbers, word)
         prob = prob + temp
-        print(prob)
+        if np.amax(prob) >= 1:
+            continue
+    # Returns the name of the most likely value that the 
+    # sentance holds
+    return outputName[columnNumbers[np.argmax(prob)]]
 
 
 
@@ -53,24 +55,26 @@ def who(inputText):
     # This obviously has increadible complexity
     # regarding input variance (i.e. the input
     # name will mist likely never be 100 accurate)
+    return "No one >:)"
 
 
 # * * * * * * * * * * *DEFINITION OF TASK RESULTS * * * * * * * * * 
 
 def raceHolder(columnNumber, inputWord):
     # based on an input word tries to lookup in text
-    n = len(columnNumber)
-    out = np.zeros(n)
-    try :
-        percentage = word[inputWord]
-        print(percentage)
+    #try :
+    out = np.zeros(len(columnNumber))
+    if inputWord in word.keys():
+        percentage = np.array(word[inputWord])
         logger.debug("inputWord exists %s" %inputWord)
         out = percentage[columnNumber]
-        print("Finished the try with:")
-        print(out)
+    else :
+        logger.debug("inputWord NOT exists %s" %inputWord)
+    return out
 
-    except :
-        logger.debug("Word NOT exists: %s" %inputWord)
+
+    #except :
+    #    logger.debug("Word NOT exists: %s" %inputWord)
 
     return out
 
@@ -81,9 +85,11 @@ def getColumnNumberFromName(names):
     # word
     # I.e. get the numerical value of the column that
     # will be queried
-    out = []
+    out = [None]*len(names)
+    nameCount = 0
     for name in names:
-        out.append(wordMatrixHeader.index(name))
+        out[nameCount] = (int(wordMatrixHeader.index(name)))
+        nameCount+=1
     return out
 
 
@@ -106,9 +112,10 @@ class MEx():
         logger.info(query)
         logger.info("Input: " + texthandle)
 
-        
+        print(texthandle)
         for q in query:
-            dbDict[q](self.inputText)
+            value = dbDict[q](self.inputText)
+            print(value)
 
 
     def ensuretext(self, handle):

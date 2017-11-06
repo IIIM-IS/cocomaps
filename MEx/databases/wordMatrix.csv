@@ -6,4 +6,4 @@ question,0,0.1,0.9
 answer,0.05,0.05,0.9
 meeting,0.05,0.9,0.05
 schedule,0.1,0.9,0
-where,0,0.1,0.9
+where,0,0.25,0.75

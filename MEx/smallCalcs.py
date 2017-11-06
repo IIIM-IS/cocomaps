@@ -74,10 +74,11 @@ def testIsStringMethod():
     print(isinstance(b, basestring))
 
 def numpyTesterAccess():
-    arr = np.random.randn(10)
-    loc = [1,3,4]
-    print(arr)
-    print(arr[loc])
+    perc = np.random.randn(10)
+    column = [0,1,2]
+    print(type(perc))
+    print(type(column))
+    print(perc[column])
 
 
 if __name__ == "__main__":
