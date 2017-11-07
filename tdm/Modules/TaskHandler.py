@@ -45,7 +45,8 @@ class TaskHandler():
                 # for loop and test==False so it does not go 
                 # into the next statement
                 logger.debug(prereq + " : FAILED")
-                return False, "Failed prerequisites"
+                break
+
         if test: 
         # Positive test
             taskTest = True
@@ -71,8 +72,6 @@ class TaskHandler():
                         return funcTest, errMsg
         logger.debug("Finished :" + self.task.name)
         return True, ""
-
-
 
 
     def prerequisites(self, prereq):

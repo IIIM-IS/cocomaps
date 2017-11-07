@@ -8,7 +8,7 @@
 
 """
 # Import libraries, in final version ensure that these dependencies are met
-import time, logging
+import time, logging, os
 import numpy as np
 
 # Debug library imported
@@ -23,11 +23,14 @@ if debugging:
 
 
 # Logging parameters
-logging.basicConfig(format='[%(name)s]>[%(asctime)s]|: %(message)s', level=logging.DEBUG, filename='MEx.log')
+logging.basicConfig(format='[%(name)s]>[%(asctime)s]|: %(message)s', 
+                    level=logging.DEBUG, 
+                    filename='MEx.log')
 logger = logging.getLogger(__name__)
 
 # Get the reference dictionary used to evaluate input words
-db      = np.load("Modules/MEx/databases/wordMatrix.npy")
+mexFileLocation = __file__[:-7]
+db      = np.load(mexFileLocation+"databases/wordMatrix.npy")
 wordMatrixHeader       = db[0]
 word    = db[1]
 

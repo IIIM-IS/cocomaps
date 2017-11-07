@@ -9,9 +9,9 @@
 # To stop:
 #    ctrl-c
 #
-# Author: jacky mallett (c) IIIM
-# Version 2 appended and changed byt
-#           : David Orn - david@iiim.is
+# Author: 
+#            David Orn - david@iiim.is
+# 07.11.17
 
 import sched, time
 
@@ -24,16 +24,18 @@ import sched, time
 
 import logging
 # Setup for logger
-logging.basicConfig(format='[%(name)s] | %(asctime)s | %(message)s', level=logging.DEBUG, 
-                   filename='tdm.log')
+logging.basicConfig(format='[%(name)s] | %(asctime)s | %(message)s', 
+                    level=logging.DEBUG, 
+                    filename='tdm.log')
 
+from Modules import Task, InfoBag, static
+from Modules import TaskHandler
+import os
+parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.sys.path.insert(0,parentdir)
+import MEx.MEx as MEx
 
-from Modules.TaskHandler import TaskHandler, Task
-import Modules.TaskHandler.InfoBag as InfoBag
-from Modules.MEx.databases import makeDatabase
-
-
-dbMaker = makeDatabase.makeDatabase()
+#dbMaker = makeDatabase.makeDatabase()
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +50,7 @@ def TDM():
    debugOn = 1
    debugCounter = 0
    # Create dictionary of tasks, questions, actions
-   TaskHandler.initDictionaries(DictionaryLocation)
+   TaskHandler.initDictionaries()
    # Setup MEx structure
    
    if debugOn == 1:
@@ -59,34 +61,24 @@ def TDM():
    for key in InfoBag.Bag.keys():
        print(key + " " + str(InfoBag.Bag[key]))
    # Give name of starting module
-   root_task = TaskHandler.static.tasks["FIND-SOMETHING-TODO-1"]
+   root_task = static.tasks["FIND-SOMETHING-TODO-1"]
 
    print(50*'*')
    print("Setup finished, starting up task query protocol") 
    print(50*'*')
    print(2*"\n")
    while True:
-        # The main function starts at the beginning of the tree
-        # and tries to run down it.
 
-        # Start 
+        # Start
         mainHandler = TaskHandler.TaskHandler(root_task)
         logger.info("Started root: "+mainHandler.task.name)
-        # TODO push the outcome of the main task
-        # to a log file
         mainTest, reason = mainHandler.run()
         logger.debug("Finished circle: " + str(mainTest) + " " + reason)
-        if not mainTest: 
-            None
         
         if debugCounter > 2:
             break
         debugCounter += 1
         
-   #    # Read Message from psyclone
-   #    # Update Module/Tasks as appropriate
-   #    # Any other actions
-   #    # Provide user interaction - kill switch/debug etc.
   
 # Main Loop
 if __name__ == "__main__":

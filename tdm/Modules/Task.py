@@ -77,7 +77,9 @@ def checkTaskList(tasklist):
     return True
 
 
-def initDictionaries(TASK_DIR):
+def initDictionaries():
+    # Current file location
+    TASK_DIR = __file__[:-8]+"tasks/"
     # Create a dictionay of the tasks, callable by name of taks
     # and return
     static.init()

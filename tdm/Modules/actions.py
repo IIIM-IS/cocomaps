@@ -2,19 +2,28 @@
 # A function dictionary, here new actions can be implimented
 # added to the dictionary and called instantly
 
-import logging, sys
+import logging, sys, os, time
 import numpy as np
-from TaskHandler import static as static
-from Modules import InfoBag
+from Modules import static as static, InfoBag, Timer
 import Modules as TaskHandler
 
+# Threading method for timer and alternative runs
+from queue import Queue
+from threading import Thread
+
+
 # Get MEx form one level up
-import os
-parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+parentdir = __file__[:-23]
 os.sys.path.insert(0,parentdir)
-from MEx import MEx
+import MEx.MEx as MEx
+
 
 logger = logging.getLogger(__name__)
+
+
+
+
 def getObjective(*args):
     # A main objective task, get input objective
     '''
@@ -34,10 +43,6 @@ def getObjective(*args):
     
     returnValue = False
     errMsg = ''
-
-    newTask = static.tasks[value]
-    newTask = TaskHandler.TaskHandler.TaskHandler(newTask)
-    val, res = newTask.run()
 
     try : 
         logger.debug("Trying to run value: "+ str(value))
@@ -101,6 +106,10 @@ def headTurn(direction):
     return True, "actions:headTurn not implemented"
 
 
+def scheduelWho():
+    raw_input("Who would you like to meet? \n")
+
+    return True
 def scheduleMeeting(*args):
     # A meeting needs three things, 
     #   Participants
@@ -108,15 +117,19 @@ def scheduleMeeting(*args):
     #   Time
     
     print("Allright let's schedule a meeting " + InfoBag.Bag["personName"])
-    # If we want to add memory then we can pull the last
-    # utterance from InfoBag.
-    
     ## WHO
+    task = args[0]
+    timeoutTimer = ContinueTask(task)
+    timeoutTimer.start()
+    if scheduelWho():
+        print("Scheduling accepted")
+    elif timeoutTimer.start():
+        print("Timer Finished")
+    
     
     ## Where
 
     ## When 
-    raw_input("Who would you like to meet? \n")
     
     return True, ""
 

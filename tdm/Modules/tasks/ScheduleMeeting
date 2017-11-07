@@ -6,7 +6,7 @@
     "timeOutAction": "returnToGetObjective", 
     "prerequisites": ["personFound", "haveGreeted"], 
     "whatAmIDoing": "preparingAMeeting", 
-    "maxDuration": "60000", 
+    "maxDuration": "10000", 
     "functionCalls" : ["scheduleMeeting"], 
     "failureAction": "", 
     "isActive": "False", 
