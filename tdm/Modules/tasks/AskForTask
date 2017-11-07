@@ -1,0 +1,16 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [
+        "Greet", 
+        "GetObjective"
+    ], 
+    "name": "AskForTask", 
+    "timeOutAction": "returnToRoot", 
+    "prerequisites": ["personFound", "talkingToPerson"], 
+    "whatAmIDoing": "lost-in-space", 
+    "maxDuration": "10000", 
+    "functionCalls" : [], 
+    "failureAction": "SEARCH-TASK-FAILED", 
+    "isActive": "False", 
+    "query": []
+}

@@ -12,7 +12,7 @@ import time, logging
 import numpy as np
 
 # Debug library imported
-debugging = True
+debugging = False 
 if debugging:
     from debug.mexTester import inStrings
     from debug.mexTester import query
@@ -27,7 +27,7 @@ logging.basicConfig(format='[%(name)s]>[%(asctime)s]|: %(message)s', level=loggi
 logger = logging.getLogger(__name__)
 
 # Get the reference dictionary used to evaluate input words
-db      = np.load("databases/wordMatrix.npy")
+db      = np.load("Modules/MEx/databases/wordMatrix.npy")
 wordMatrixHeader       = db[0]
 word    = db[1]
 
@@ -47,14 +47,13 @@ def task(inputText):
     return outputName[columnNumbers[np.argmax(prob)]]
 
 
-
 def who(inputText):
     # Here we search the name database from a csv file.
     print("We will try to search for a name")
     #TODO impliment name searching function
     # This obviously has increadible complexity
     # regarding input variance (i.e. the input
-    # name will mist likely never be 100 accurate)
+    # name will most likely never be 100 accurate)
     return "No one >:)"
 
 
@@ -102,45 +101,32 @@ def timer():
 # Class definition of the meaning extractor (MEx)
 class MEx():
     def __init__(self, texthandle, query):
+        # Requirements on input, query is one value (i.e.
+        # an array with array[0] equal to database value)
         self.debug = 1 
         self.inputText = self.ensuretext(texthandle)
-        self.query = query
-        self.start = timer()
+        self.query = query[0]
         self.daemon = True
         self.timout = 10 # Perhaps we don't need to timeout
         logger.info("Started new MEx instance")
         logger.info(query)
         logger.info("Input: " + texthandle)
-
-        print(texthandle)
-        for q in query:
-            value = dbDict[q](self.inputText)
-            print(value)
-
+        self.value =  dbDict[self.query](self.inputText)
 
     def ensuretext(self, handle):
-        # Given a specific handle return a string of text
+        # Given a specific handle return a processed string
+        # or an empty value 
+        logger.debug("Running MEx.ensuretext with : " + handle)
         if not isinstance(handle, basestring):
-            # This might be applicable later on (@02.11.17) 
-            # if the input value can be a function, a handle 
-            # or other specific method, currently not used
             print("TempDebug")
             logger.info("Instance is not string")
-            logger.info(type(handle))
             None
         else :
-            # There should be some preprocessing on the string
-            # to reduce variance and increase prob. of correct
-            # identification, return a split string for further
-            # processing
-            #       need to get a sample of strings, 
-            #       what possible errors are there
-            #       to worry about
-            handle = handle.split(" ")  # Split the string for 
-                                        # further computation
+            # Split the string for further computation
+            handle = handle.split(" ")  
+                                        
         return handle
             
-
 
 
         

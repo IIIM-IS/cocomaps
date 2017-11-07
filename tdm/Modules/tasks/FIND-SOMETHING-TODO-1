@@ -1,0 +1,16 @@
+{"__type__":"Task",
+    "canBeActivated": "False", 
+    "taskList": [
+	"LookAround",
+	"AskForTask"
+    ], 
+    "name": "FIND-SOMETHING-TODO-1", 
+    "timeOutAction": "SLEEP", 
+    "prerequisites": [], 
+    "whatAmIDoing": "lost-in-space", 
+    "maxDuration": "300000", 
+    "functionCalls" : [], 
+    "failureAction": "SEARCH-TASK-FAILED", 
+    "isActive": "False", 
+    "query": []
+}

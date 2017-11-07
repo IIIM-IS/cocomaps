@@ -1,0 +1,17 @@
+{"__type__":"Task",
+    "canBeActivated": "True", 
+    "taskList": [
+	"TurnLeft",
+	"TurnRight",
+	"FaceForwards"
+    ], 
+    "name": "LookAround", 
+    "timeOutAction": "stopAction", 
+    "prerequisites": ["personNotFound"], 
+    "whatAmIDoing": "lost-in-space", 
+    "maxDuration": "5000", 
+    "functionCalls" : [ "headTurn"],
+    "failureAction": "SEARCH-TASK-FAILED", 
+    "isActive": "False", 
+    "query": []
+}

@@ -25,7 +25,7 @@ def makeDatabase():
 
     # This file needs to be called from the MEx file
     # loaction
-    with open("databases/wordMatrix.csv", 'r') as csvReader:
+    with open("Modules/MEx/databases/wordMatrix.csv", 'r') as csvReader:
         fileRead = csv.reader(csvReader, delimiter=',')
         rowCount = 0
         for row in fileRead:
@@ -45,5 +45,5 @@ def makeDatabase():
             raise NotEqualToZero("Name value not equal to zero in wordMatrix.cls : %s" %str(key))
     print("Created new word value matrix from wordMatrix.csv")
 
-    np.save("databases/wordMatrix.npy", [valueNames, word])    
+    np.save("Modules/MEx/databases/wordMatrix.npy", [valueNames, word])    
 
