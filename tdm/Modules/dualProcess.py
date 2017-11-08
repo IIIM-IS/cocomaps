@@ -17,8 +17,10 @@ Created: 08.11.17
 """
 
 import threading, time
+from timeit import default_timer as timer
 import Queue
 
+global maxTime
 
 class ThreadItem(threading.Thread):
     def __init__(self, process, queue, *args):
@@ -27,14 +29,24 @@ class ThreadItem(threading.Thread):
         threading.Thread.daemon = True
         self.queue = queue
         self.process = process
-        self.args = args
-
+        self.args = args[0]
     def __getitem__(self):
         return self.process
 
     def run(self):
-        result = self.process(self.args)
-        self.queue.put(result)
+        result = None
+        start = timer()
+        while (not result) and (not timeFinished(start, maxTime)):
+            result = self.process(self.args)
+        if not result:
+            return False
+        else:
+            self.queue.put(result)
+
+def timeFinished(start, maxTime):
+    if timer()-start > maxTime:
+        return True
+    return False
 
 def dualProcess(A, B, *args):
     Q = Queue.Queue()
@@ -47,10 +59,6 @@ def dualProcess(A, B, *args):
     while Q.empty():
         None
     return Q.get()
-
-
-
-
 
 # * * * DEBUGGING FUNCTIONS * * * * * *
 def tA(*args):
@@ -66,4 +74,5 @@ def tD(*args):
 # * * * END OF DEBUGGING * * * * * *
 if __name__ == "__main__":
     res = dualProcess(tA, tD, None, None)
+    time.sleep(20)
     print(res)

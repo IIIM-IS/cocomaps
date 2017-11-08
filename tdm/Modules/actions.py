@@ -2,18 +2,13 @@
 # A function dictionary, here new actions can be implimented
 # added to the dictionary and called instantly
 
-import logging, sys, os, time
+import logging, sys, os, time, select
 import numpy as np
-from Modules import static as static, InfoBag, Timer
+from timeit import default_timer as timer
+
+from Modules import static as static, InfoBag, Timer, dualProcess
 import Modules as TaskHandler
-
-# Threading method for timer and alternative runs
-from queue import Queue
-from threading import Thread
-
-
 # Get MEx form one level up
-
 parentdir = __file__[:-23]
 os.sys.path.insert(0,parentdir)
 import MEx.MEx as MEx
@@ -22,8 +17,7 @@ import MEx.MEx as MEx
 logger = logging.getLogger(__name__)
 
 
-
-
+# MAIN ACTION TASKS
 def getObjective(*args):
     # A main objective task, get input objective
     '''
@@ -106,10 +100,7 @@ def headTurn(direction):
     return True, "actions:headTurn not implemented"
 
 
-def scheduelWho():
-    raw_input("Who would you like to meet? \n")
 
-    return True
 def scheduleMeeting(*args):
     # A meeting needs three things, 
     #   Participants
@@ -119,24 +110,72 @@ def scheduleMeeting(*args):
     print("Allright let's schedule a meeting " + InfoBag.Bag["personName"])
     ## WHO
     task = args[0]
-    timeoutTimer = ContinueTask(task)
-    timeoutTimer.start()
-    if scheduelWho():
-        print("Scheduling accepted")
-    elif timeoutTimer.start():
-        print("Timer Finished")
-    
-    
-    ## Where
+    name = ""
+    gotName = False
+    iterCounter = 1
+    while not gotName and iterCounter < 3:
+        results = getWho("whoToMeet")
+        gotName = results[0]
+        name = results[1]
+        # TODO process name results to try to refine name results,
+        # i.e. connect to database
 
+        iterCounter += 1
+        print("Finished while loop with: {} / {}".format(gotName, name))
+
+    if not gotName:
+        return False, "Could not get name of person to meet with"
+
+    ## Where
     ## When 
     
     return True, ""
 
 def makeACall():
     pass
+## END OF MAIN FUNCTIONS
 
+## SMALL HELPING FUNCTIONS
+
+
+def getNameForMeeting():
+    # A specific vector for timeout to be 
+    # processed parallelled   
+    timeOutVec =  [10, "Getting name"]
+    getWhoVec = "Who would you like to meet"
+
+    return dualProcess.dualProcess(timeOut, getWho,
+                                   timeOutVec, getWhoVec)
+
+def elapsed(start):
+    return timer()-start
+
+## END OF SMALL HELPING FUNCTIONS
+
+
+#  *   *   *   SPECIAL FUNCTIONS FOR PARALLELL RUNNING *   *   *
+def getWho(*args):
+    print("Whom do you want to meet")
+    i,o,e = select.select([sys.stdin], [], [], 5)
+
+    if i:
+        inStr = sys.stdin.readline().strip()
+        print(inStr)
+        return True, inStr
+    else :
+        return False, "Found no one - meeting"
     
+    
+
+def timeOut(*args):
+    args = args[0]
+    T = args[0]
+    errMsg = args[1]
+    time.sleep(T)
+    return False, "Timer timeout: "+errMsg
+
+
+
 actions = {
     "scheduleMeeting"   : scheduleMeeting,
     "answerQuestion"    : answerQuestion,
