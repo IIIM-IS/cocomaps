@@ -1,7 +1,18 @@
 # actions.py
 # A function dictionary, here new actions can be implimented
 # added to the dictionary and called instantly
+"""
+Names of callable functions
 
+actions[keyWord]
+keyWord =
+    "scheduleMeeting"  
+    "answerQuestion"  
+    "makeACall"      
+    "getObjective"  
+    "headTurn"     
+    "greetPerson" 
+"""
 import logging, sys, os, time, select
 import numpy as np
 from timeit import default_timer as timer
@@ -46,7 +57,7 @@ def getObjective(*args):
         logger.debug("Finished correctly")
 
     except :
-        logger.info("ERROR: actions.py unknown new taks")
+        logger.info("action.py - ERROR:")
         logger.info(value)
         logger.info(sys.exc_info()[0])
 
@@ -114,7 +125,7 @@ def scheduleMeeting(*args):
     gotName = False
     iterCounter = 1
     while not gotName and iterCounter < 3:
-        results = getWho("whoToMeet")
+        results = getWho("Who would you like to meet", task)
         gotName = results[0]
         name = results[1]
         # TODO process name results to try to refine name results,
@@ -129,7 +140,7 @@ def scheduleMeeting(*args):
     ## Where
     ## When 
     
-    return True, ""
+    return True, name
 
 def makeACall():
     pass
@@ -137,36 +148,37 @@ def makeACall():
 
 ## SMALL HELPING FUNCTIONS
 
-
 def getNameForMeeting():
     # A specific vector for timeout to be 
     # processed parallelled   
+    # Depricated due to question string not dying
     timeOutVec =  [10, "Getting name"]
     getWhoVec = "Who would you like to meet"
 
     return dualProcess.dualProcess(timeOut, getWho,
                                    timeOutVec, getWhoVec)
 
-def elapsed(start):
-    return timer()-start
 
 ## END OF SMALL HELPING FUNCTIONS
 
 
 #  *   *   *   SPECIAL FUNCTIONS FOR PARALLELL RUNNING *   *   *
 def getWho(*args):
-    print("Whom do you want to meet")
-    i,o,e = select.select([sys.stdin], [], [], 5)
+    value  = args
+    outStr = value[0]
+    task   = value[1]
+    print(outStr + '\n')
+    i,o,e = select.select([sys.stdin], [], [], int(task.maxDuration))
 
     if i:
         inStr = sys.stdin.readline().strip()
-        print(inStr)
-        return True, inStr
-    else :
-        return False, "Found no one - meeting"
-    
-    
+        #TODO connect inStr to name database and return
+        # value
 
+        return True, inStr
+    return False, "Found no one - meeting"
+    
+    
 def timeOut(*args):
     args = args[0]
     T = args[0]
@@ -175,7 +187,8 @@ def timeOut(*args):
     return False, "Timer timeout: "+errMsg
 
 
-
+# Definition of callable functions, other functions are 
+# called by these functions
 actions = {
     "scheduleMeeting"   : scheduleMeeting,
     "answerQuestion"    : answerQuestion,
@@ -184,7 +197,6 @@ actions = {
     "headTurn"          : headTurn,
     "greetPerson"       : greetPerson
 }
-
 
 
 if __name__ == "__main__":
@@ -196,16 +208,3 @@ if __name__ == "__main__":
     with open("/home/david/IIIM/Reports/TDM_functions/actionsList.tex", 'w') as fid:
         for key in keyList:
             print(key)
-#            fid.write("&"+ key+ " \\\\ \n")
-
-#    task1= debugClass("TurnLeft")
-#    task2= debugClass("TurnRight")
-#    task3= debugClass("FaceForwards")
-#    for key in actions.keys():
-#        if key == "headTurn":
-#            actions[key](task1)
-#            actions[key](task2)
-#            actions[key](task3)
-#        else : 
-#            actions[key]()
-
