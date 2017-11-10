@@ -17,7 +17,7 @@ import logging, sys, os, time, select
 import numpy as np
 from timeit import default_timer as timer
 
-from Modules import static as static, InfoBag, Timer, dualProcess
+from Modules import static as static, InfoBag, Timer
 import Modules as TaskHandler
 # Get MEx form one level up
 parentdir = __file__[:-23]
@@ -30,14 +30,14 @@ logger = logging.getLogger(__name__)
 
 # MAIN ACTION TASKS
 def getObjective(*args):
-    # A main objective task, get input objective
+    # A main objective task, get objective
     '''
     Meta task
     This is the initial function called when instigating a 
     dialogue between robot and person
     '''
     inVal = raw_input(10*'*'+"What would you like me to do"+10*'*'+'\n')
-    InfoBag.Bag["lastUtterance"]=inVal
+    InfoBag.Bag["lastUtterance"] = inVal
 
     logger.debug("GetObjective running:")
     logger.debug(inVal)

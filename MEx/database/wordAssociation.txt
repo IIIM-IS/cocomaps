@@ -1,0 +1,37 @@
+*This file maps meaning to tasks through word association and arbitrary word meaning value
+*from these words, using a larger corpus, a large library can be built and meaning given
+*to words that are not here[to be implemented 09.11.17]
+* The following values are assigned arbitrarily by author
+* Author
+*	David Orn -> david@iiim.is
+*(c)IIIM.is
+
+* TASKS 
+* Words are mapped to specific tasks defined for the tdm
+ScheduleMeeting{
+meet#.8
+meeting#.8
+make#.3
+appointment#.75
+schedule#.6
+}
+
+
+AnswerQuestion{
+why#.4
+how#.4
+who#.4
+when#.4
+}
+
+MakeACall{
+call#.8
+phone#.5
+schedule#.3
+ring#.6
+}
+
+
+
+* ACTIONS
+* Here words are mapped to functions, based on the tdm function files actions.py

@@ -12,15 +12,23 @@ import time, logging, os
 import numpy as np
 
 # Debug library imported
-debugging = False 
+debugging = True
 if debugging:
     from debug.mexTester import inStrings
     from debug.mexTester import query
-    from databases import makeDatabase
+    import database.buildDatabase as buildDatabase
     import random
 # inputStrings are a set of input strings simulating the texthandle
 # query is a set of query tests that can be sent with the texthandle
+else : 
+    #Load a new instance of the database
+    dbFolder = __file__[:-7]+"databases/"
+    os.sys.path.insert(0,parentdir)
+    import buildDatabase
 
+# Build word database from file
+global DB
+DB = buildDatabase.makeDataBase()
 
 # Logging parameters
 logging.basicConfig(format='[%(name)s]>[%(asctime)s]|: %(message)s', 
@@ -28,115 +36,88 @@ logging.basicConfig(format='[%(name)s]>[%(asctime)s]|: %(message)s',
                     filename='MEx.log')
 logger = logging.getLogger(__name__)
 
-# Get the reference dictionary used to evaluate input words
-mexFileLocation = __file__[:-7]
-db      = np.load(mexFileLocation+"databases/wordMatrix.npy")
-wordMatrixHeader       = db[0]
-word    = db[1]
 
 
-# * * * * * * * * * * *DEFINITION OF TASK RESULTS * * * * * * * * * 
-def task(inputText):
-    outputName = ["MakeACall", "ScheduleMeeting", "AnswerQuestion"]
-    columnNumbers = getColumnNumberFromName(outputName)
-    prob = np.zeros(len(outputName))
-    for word in inputText:
-        temp = raceHolder(columnNumbers, word)
-        prob = prob + temp
-        if np.amax(prob) >= 1:
-            continue
-    # Returns the name of the most likely value that the 
-    # sentance holds
-    return outputName[columnNumbers[np.argmax(prob)]]
-
-
-def who(inputText):
-    # Here we search the name database from a csv file.
-    print("We will try to search for a name")
-    #TODO impliment name searching function
-    # This obviously has increadible complexity
-    # regarding input variance (i.e. the input
-    # name will most likely never be 100 accurate)
-    return "No one >:)"
-
-
-# * * * * * * * * * * *DEFINITION OF TASK RESULTS * * * * * * * * * 
-
-def raceHolder(columnNumber, inputWord):
-    # based on an input word tries to lookup in text
-    #try :
-    out = np.zeros(len(columnNumber))
-    if inputWord in word.keys():
-        percentage = np.array(word[inputWord])
-        logger.debug("inputWord exists %s" %inputWord)
-        out = percentage[columnNumber]
-    else :
-        logger.debug("inputWord NOT exists %s" %inputWord)
-    return out
-
-
-    #except :
-    #    logger.debug("Word NOT exists: %s" %inputWord)
-
-    return out
-
-
-def getColumnNumberFromName(names):
-    # Get the header number by comparing the array of
-    # headers for the wordMatrix.cls file with each 
-    # word
-    # I.e. get the numerical value of the column that
-    # will be queried
-    out = [None]*len(names)
-    nameCount = 0
-    for name in names:
-        out[nameCount] = (int(wordMatrixHeader.index(name)))
-        nameCount+=1
-    return out
-
-
-dbDict = {"task" : task, 
-          "who"  : who}
-
-def timer():
-    return int(round(time.time()*1000))
-
-# Class definition of the meaning extractor (MEx)
 class MEx():
-    def __init__(self, texthandle, query):
-        # Requirements on input, query is one value (i.e.
-        # an array with array[0] equal to database value)
-        self.debug = 1 
-        self.inputText = self.ensuretext(texthandle)
-        self.query = query[0]
+    def __init__(self):
+        self.text = ""
+        self.template = ""
         self.daemon = True
-        self.timout = 10 # Perhaps we don't need to timeout
-        logger.info("Started new MEx instance")
-        logger.info(query)
-        logger.info("Input: " + texthandle)
-        self.value =  dbDict[self.query](self.inputText)
+        logger.info("Starting up MEx")
+
+    def computeWords(self, text):
+        logger.info("Checking sentance: {}".format(text))
+        words = self.ensuretext(text)
+        evalued = self.checkDictionary(words)
+
+        returnItem = [None]*DB.associatesCount
+        for i in range(DB.associatesCount):
+            returnItem[i] = DB.associates[i], evalued[i]
+            
+        return sorted(returnItem, key=lambda x: x[1], reverse=True)    
+
+
 
     def ensuretext(self, handle):
         # Given a specific handle return a processed string
         # or an empty value 
         logger.debug("Running MEx.ensuretext with : " + handle)
         if not isinstance(handle, basestring):
-            print("TempDebug")
             logger.info("Instance is not string")
-            None
+            logger.info(type(handle))
+            return None
         else :
             # Split the string for further computation
+            handle = handle.lower()
             handle = handle.split(" ")  
                                         
         return handle
+
+    def checkDictionary(self, words):
+        # Takes in a new sentance and returns
+        # the weighted probability of all possible
+        # templates
+        output = np.zeros(DB.associatesCount)
+        for word in words: 
+            associations, values = DB.get(word)
+            if not values is None:
+                padding_with_zeros = self.queryDB(associations, values)
+                output += padding_with_zeros 
+             
+            # Short circuit if value > 1 stop and return
+            if checkComparison(output):
+                return output
+
+        return output
+
+    def queryDB(self, associations, values):
+        temp = np.zeros(DB.associatesCount)
+        counter = 0
+        for value in values:
+            place = DB.associates.index(associations[counter])
+            temp[place] = value
+            counter += 1
+        return temp
             
 
+def returnHighest(output):
+    highest = np.amax(output)
+    indx = np.where(output==highest)
+    indx = indx[0][0]   # where returns tuple and this method short circuits
+                        # if there are two values highe or equal
+    return DB.associates[indx], highest
+            
+def checkComparison(vector):
+    if np.amax(vector) >= 1:
+        return True
+    return False
 
         
 if __name__ == "__main__":
-
-    if debugging:
-        makeDatabase.makeDatabase()
-
-    testStr = inStrings[random.randrange(len(inStrings))]
-    temp = MEx(testStr, query)
+    # Prints out the entire database
+    MExObject = MEx()
+    teststr = ["This is a meeting for a startup schedule", "How do you do today",
+               "Where do you want to go", "who should I call"]
+    for test in teststr:
+        print test
+        print MExObject.computeWords(test)
