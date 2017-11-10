@@ -103,11 +103,12 @@ def returnHighest(output):
     indx = indx[0][0]   # where returns tuple and this method short circuits
                         # if there are two values highe or equal
     return DB.associates[indx], highest
-            
-def checkComparison(vector):
-    if np.amax(vector) >= 1:
-        return True
-    return False
+
+# Deprecated
+#def checkComparison(vector):
+#    if np.amax(vector) >= 1:
+#        return True
+#    return False
 
         
 if __name__ == "__main__":
