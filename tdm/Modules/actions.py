@@ -24,6 +24,10 @@ parentdir = __file__[:-23]
 os.sys.path.insert(0,parentdir)
 import MEx.MEx as MEx
 
+# Currently assuming this file is the only file to use MEx
+# othervise move MEx init to tdm
+MEx = MEx.MEx()
+
 
 logger = logging.getLogger(__name__)
 
@@ -38,14 +42,11 @@ def getObjective(*args):
     '''
     inVal = raw_input(10*'*'+"What would you like me to do"+10*'*'+'\n')
     InfoBag.Bag["lastUtterance"] = inVal
+    value = MEx.computeWords(inVal)
 
-    logger.debug("GetObjective running:")
-    logger.debug(inVal)
+    # Define template 
+    template = ["ScheduleMeeting", "AnswerQuestion", "MakeACall"]
 
-    MExObject = MEx.MEx(str(inVal), ["task"])
-    value = MExObject.value
-
-    
     returnValue = False
     errMsg = ''
 
