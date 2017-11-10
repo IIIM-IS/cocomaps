@@ -80,3 +80,35 @@
 [Modules.TaskHandler] | 2017-11-09 08:36:55,522 | Prerequisites test: haveGreeted
 [Modules.TaskHandler] | 2017-11-09 08:36:55,522 | True
 [Modules.TaskHandler] | 2017-11-09 08:36:55,522 | Running function: getObjective
+[__main__] | 2017-11-10 14:30:12,509 | Started root: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-11-10 14:30:12,509 | Running task: FIND-SOMETHING-TODO-1
+[Modules.TaskHandler] | 2017-11-10 14:30:12,509 | Starting new task: LookAround
+[Modules.TaskHandler] | 2017-11-10 14:30:12,509 | Running task: LookAround
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | Prerequisites test: personNotFound
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | FalseFailed TaskHandler:prerequisites:checkPrerequisites for LookAround - personNotFound
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | personNotFound : FAILED
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | Finished :LookAround
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | Starting new task: AskForTask
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | Running task: AskForTask
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | True
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | Prerequisites test: talkingToPerson
+[Modules.TaskHandler] | 2017-11-10 14:30:12,510 | True
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | Starting new task: Greet
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | Running task: Greet
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | True
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | Prerequisites test: haveNotGreeted
+[Modules.prerequisites] | 2017-11-10 14:30:12,511 | InfoBag: False
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | True
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | Running function: greetPerson
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | Finished :Greet
+[Modules.TaskHandler] | 2017-11-10 14:30:12,511 | Starting new task: GetObjective
+[Modules.TaskHandler] | 2017-11-10 14:30:12,512 | Running task: GetObjective
+[Modules.TaskHandler] | 2017-11-10 14:30:12,512 | Prerequisites test: personFound
+[Modules.TaskHandler] | 2017-11-10 14:30:12,512 | True
+[Modules.TaskHandler] | 2017-11-10 14:30:12,512 | Prerequisites test: haveGreeted
+[Modules.TaskHandler] | 2017-11-10 14:30:12,512 | True
+[Modules.TaskHandler] | 2017-11-10 14:30:12,512 | Running function: getObjective
+[Modules.actions] | 2017-11-10 14:30:14,969 | GetObjective running:
+[Modules.actions] | 2017-11-10 14:30:14,970 | jump

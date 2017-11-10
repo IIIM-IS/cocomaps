@@ -282,3 +282,48 @@
 [__main__]>[2017-11-10 12:24:47,946]|: Running MEx.ensuretext with : Where do you want to go
 [__main__]>[2017-11-10 12:24:47,946]|: Checking sentance: who should I call
 [__main__]>[2017-11-10 12:24:47,947]|: Running MEx.ensuretext with : who should I call
+[__main__]>[2017-11-10 12:54:39,876]|: Starting up MEx
+[__main__]>[2017-11-10 12:54:39,876]|: Checking sentance: This is a meeting for a startup schedule
+[__main__]>[2017-11-10 12:54:39,877]|: Running MEx.ensuretext with : This is a meeting for a startup schedule
+[__main__]>[2017-11-10 12:54:39,878]|: Checking sentance: How do you do today
+[__main__]>[2017-11-10 12:54:39,878]|: Running MEx.ensuretext with : How do you do today
+[__main__]>[2017-11-10 12:54:39,878]|: Checking sentance: Where do you want to go
+[__main__]>[2017-11-10 12:54:39,879]|: Running MEx.ensuretext with : Where do you want to go
+[__main__]>[2017-11-10 12:54:39,879]|: Checking sentance: who should I call
+[__main__]>[2017-11-10 12:54:39,880]|: Running MEx.ensuretext with : who should I call
+[__main__]>[2017-11-10 12:54:46,043]|: Starting up MEx
+[__main__]>[2017-11-10 12:54:46,043]|: Checking sentance: This is a meeting for a startup schedule
+[__main__]>[2017-11-10 12:54:46,043]|: Running MEx.ensuretext with : This is a meeting for a startup schedule
+[__main__]>[2017-11-10 12:54:46,044]|: Checking sentance: How do you do today
+[__main__]>[2017-11-10 12:54:46,044]|: Running MEx.ensuretext with : How do you do today
+[__main__]>[2017-11-10 12:54:46,044]|: Checking sentance: Where do you want to go
+[__main__]>[2017-11-10 12:54:46,044]|: Running MEx.ensuretext with : Where do you want to go
+[__main__]>[2017-11-10 12:54:46,044]|: Checking sentance: who should I call
+[__main__]>[2017-11-10 12:54:46,044]|: Running MEx.ensuretext with : who should I call
+[__main__]>[2017-11-10 12:54:47,037]|: Starting up MEx
+[__main__]>[2017-11-10 12:54:47,037]|: Checking sentance: This is a meeting for a startup schedule
+[__main__]>[2017-11-10 12:54:47,037]|: Running MEx.ensuretext with : This is a meeting for a startup schedule
+[__main__]>[2017-11-10 12:54:47,038]|: Checking sentance: How do you do today
+[__main__]>[2017-11-10 12:54:47,038]|: Running MEx.ensuretext with : How do you do today
+[__main__]>[2017-11-10 12:54:47,038]|: Checking sentance: Where do you want to go
+[__main__]>[2017-11-10 12:54:47,038]|: Running MEx.ensuretext with : Where do you want to go
+[__main__]>[2017-11-10 12:54:47,038]|: Checking sentance: who should I call
+[__main__]>[2017-11-10 12:54:47,038]|: Running MEx.ensuretext with : who should I call
+[__main__]>[2017-11-10 12:54:47,683]|: Starting up MEx
+[__main__]>[2017-11-10 12:54:47,684]|: Checking sentance: This is a meeting for a startup schedule
+[__main__]>[2017-11-10 12:54:47,684]|: Running MEx.ensuretext with : This is a meeting for a startup schedule
+[__main__]>[2017-11-10 12:54:47,684]|: Checking sentance: How do you do today
+[__main__]>[2017-11-10 12:54:47,684]|: Running MEx.ensuretext with : How do you do today
+[__main__]>[2017-11-10 12:54:47,685]|: Checking sentance: Where do you want to go
+[__main__]>[2017-11-10 12:54:47,685]|: Running MEx.ensuretext with : Where do you want to go
+[__main__]>[2017-11-10 12:54:47,685]|: Checking sentance: who should I call
+[__main__]>[2017-11-10 12:54:47,685]|: Running MEx.ensuretext with : who should I call
+[__main__]>[2017-11-10 13:48:31,652]|: Starting up MEx
+[__main__]>[2017-11-10 13:48:31,652]|: Checking sentance: This is a meeting for a startup schedule
+[__main__]>[2017-11-10 13:48:31,652]|: Running MEx.ensuretext with : This is a meeting for a startup schedule
+[__main__]>[2017-11-10 13:48:31,653]|: Checking sentance: How do you do today
+[__main__]>[2017-11-10 13:48:31,653]|: Running MEx.ensuretext with : How do you do today
+[__main__]>[2017-11-10 13:48:31,653]|: Checking sentance: Where do you want to go
+[__main__]>[2017-11-10 13:48:31,653]|: Running MEx.ensuretext with : Where do you want to go
+[__main__]>[2017-11-10 13:48:31,653]|: Checking sentance: who should I call
+[__main__]>[2017-11-10 13:48:31,653]|: Running MEx.ensuretext with : who should I call

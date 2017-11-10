@@ -12,7 +12,7 @@ import time, logging, os
 import numpy as np
 
 # Debug library imported
-debugging = True
+debugging = False
 if debugging:
     from debug.mexTester import inStrings
     from debug.mexTester import query
@@ -23,8 +23,8 @@ if debugging:
 else : 
     #Load a new instance of the database
     dbFolder = __file__[:-7]+"databases/"
-    os.sys.path.insert(0,parentdir)
-    import buildDatabase
+    os.sys.path.insert(0,dbFolder)
+    import database.buildDatabase as buildDatabase
 
 # Build word database from file
 global DB
@@ -83,11 +83,8 @@ class MEx():
             if not values is None:
                 padding_with_zeros = self.queryDB(associations, values)
                 output += padding_with_zeros 
-             
-            # Short circuit if value > 1 stop and return
-            if checkComparison(output):
-                return output
-
+                # Used to have a short circuit, but to match multiple
+                # we want to process entire sentance
         return output
 
     def queryDB(self, associations, values):
