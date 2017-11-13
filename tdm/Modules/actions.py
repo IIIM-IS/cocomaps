@@ -17,6 +17,9 @@ import logging, sys, os, time, select
 import numpy as np
 from timeit import default_timer as timer
 
+# SPECIFIC TO UNIX SYSTEMS, -FLUSHING INPUT BUFFER
+import termios
+
 from Modules import static as static, InfoBag, Timer
 import Modules as TaskHandler
 # Get MEx form one level up
@@ -34,18 +37,27 @@ logger = logging.getLogger(__name__)
 
 # MAIN ACTION TASKS
 def getObjective(*args):
-    # A main objective task, get objective
     '''
     Meta task
     This is the initial function called when instigating a 
     dialogue between robot and person
     '''
-    inVal = raw_input(10*'*'+"What would you like me to do"+10*'*'+'\n')
-    InfoBag.Bag["lastUtterance"] = inVal
-    value = MEx.computeWords(inVal)
 
-    # Define template 
+    # Change this line out to get a string input from YTTM
+    termios.tcflush(sys.stdin, termios.TCIFLUSH)
+    inVal = raw_input(10*'*'+"What would you like me to do"+10*'*'+'\n')
+
+    # Store last instance in bag, currently not used however might come
+    # in handy later
+    InfoBag.Bag["lastUtterance"] = inVal
+    # Run the computational instance of the MEx
+    values_tuple = MEx.computeWords(inVal)
+
+    # Define template for the objective
     template = ["ScheduleMeeting", "AnswerQuestion", "MakeACall"]
+    # Process the template and get the highest possible output
+    # when comparing sentance to template
+    value = processTemplate(values_tuple, template)
 
     returnValue = False
     errMsg = ''
@@ -65,6 +77,16 @@ def getObjective(*args):
     return returnValue, errMsg
 
 
+def processTemplate(values_tuple, template):
+    for value in values_tuple:
+        associate   = value[0]
+        val         = value[1]
+        print "touple line = {} - value : {} | associate : {}\n".format(value, val, associate)
+
+        if associate in template and not val==0:
+            return associate
+    return None
+
 def greetPerson(*args):
     # An action where robot greets person
     '''
@@ -77,7 +99,7 @@ def greetPerson(*args):
         InfoBag.Bag["haveGreeted"] = True
         return True, ""
     #iInfoBag.Bag["haveGreeted"] = True
-    return False, "actions:greetPerson not implemented"
+    return False, "Unable to greet person"
 
 
 def answerQuestion(*args):
@@ -118,6 +140,10 @@ def scheduleMeeting(*args):
     #   Participants
     #   Location
     #   Time
+
+    # ASSUMPTION : We can only get to here if it's through the getObjective 
+    # function. Ergo InfoBag.Bag has a previous sentence in its buffer, 
+    # This is important because now we can run a who_search
     
     print("Allright let's schedule a meeting " + InfoBag.Bag["personName"])
     ## WHO
@@ -163,12 +189,13 @@ def getNameForMeeting():
 ## END OF SMALL HELPING FUNCTIONS
 
 
-#  *   *   *   SPECIAL FUNCTIONS FOR PARALLELL RUNNING *   *   *
 def getWho(*args):
     value  = args
     outStr = value[0]
     task   = value[1]
     print(outStr + '\n')
+    # Clear the input buffer
+    termios.tcflush(sys.stdin, termios.TCIFLUSH)
     i,o,e = select.select([sys.stdin], [], [], int(task.maxDuration))
 
     if i:
@@ -179,7 +206,10 @@ def getWho(*args):
         return True, inStr
     return False, "Found no one - meeting"
     
-    
+def who_search(inputStr):
+    """Given an input string [inputStr] which supposedly contains a name
+        find an object person by querying a name db"""
+
 def timeOut(*args):
     args = args[0]
     T = args[0]
