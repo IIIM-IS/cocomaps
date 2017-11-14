@@ -32,6 +32,23 @@ ring#.6
 }
 
 
+* YES/NO Accept/Deny
+
+accept{
+yes#.9
+sure#.8
+affirmative#.5
+fine#.5
+okay#.5
+true#.5
+}
+
+deny{
+no#.9
+negative#.8
+not#.7
+never#.5
+}
 
 * ACTIONS
 * Here words are mapped to functions, based on the tdm function files actions.py
