@@ -42,23 +42,26 @@ def getObjective(*args):
     This is the initial function called when instigating a 
     dialogue between robot and person
     '''
+    while True:
+        # Change this line out to get a string input from YTTM
+        termios.tcflush(sys.stdin, termios.TCIFLUSH)
+        inVal = raw_input(10*'*'+"What would you like me to do"+10*'*'+'\n')
 
-    # Change this line out to get a string input from YTTM
-    termios.tcflush(sys.stdin, termios.TCIFLUSH)
-    inVal = raw_input(10*'*'+"What would you like me to do"+10*'*'+'\n')
+        # Store last instance in bag, currently not used however might come
+        # in handy later
+        InfoBag.Bag["lastUtterance"] = inVal
+        # Run the computational instance of the MEx
+        values_tuple = MEx.computeWords(inVal)
 
-    # Store last instance in bag, currently not used however might come
-    # in handy later
-    InfoBag.Bag["lastUtterance"] = inVal
-    # Run the computational instance of the MEx
-    values_tuple = MEx.computeWords(inVal)
+        # Define template for the objective
+        template = ["ScheduleMeeting", "AnswerQuestion", "MakeACall"]
+        # Process the template and get the highest possible output
+        # when comparing sentance to template
+        value = process_template(values_tuple, template)
+        if confirm_input(value):
+            break
 
-    # Define template for the objective
-    template = ["ScheduleMeeting", "AnswerQuestion", "MakeACall"]
-    # Process the template and get the highest possible output
-    # when comparing sentance to template
-    value = processTemplate(values_tuple, template)
-
+        
     returnValue = False
     errMsg = ''
 
@@ -76,8 +79,20 @@ def getObjective(*args):
 
     return returnValue, errMsg
 
+def confirm_input(name = ""):
+    termios.tcflush(sys.stdin, termios.TCIFLUSH)
+    inval = raw_input("Are you sure - {}\n".format(name))
+    # TODO connect to input so objective is defined
+    # e.g. "Are you sure you want a meeting with *"
+    values_tuple =MEx.computeWords(inval)
+    template = ['accept', 'deny']
+    value = process_template(values_tuple, template)
+    
+    if value == 'accept':
+        return True
+    
 
-def processTemplate(values_tuple, template):
+def process_template(values_tuple, template):
     for value in values_tuple:
         associate   = value[0]
         val         = value[1]
@@ -100,6 +115,8 @@ def greetPerson(*args):
         return True, ""
     #iInfoBag.Bag["haveGreeted"] = True
     return False, "Unable to greet person"
+
+
 
 
 def answerQuestion(*args):
