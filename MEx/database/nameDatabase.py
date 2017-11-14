@@ -210,7 +210,10 @@ if __name__ == "__main__":
     db = load_database()
     print db.size
     val = np.zeros(db.size)
-    count = 0
+    count = 1
+    for name_item in db.name_list:
+        print "{}. {} {}".format(count, name_item[0], name_item[1])
+        count += 1
     
 
     testSentence = "this is a test testing dillon domiano and henry linker also we want to test james the third henry sitton and others maby louis holiday and other louis"
@@ -222,17 +225,4 @@ if __name__ == "__main__":
         print "Sure {} {}".format(name.first_name, name.last_name)
 
 
-
-#    for k in db.name_item:
-#        t1 = k.last_name
-#        for l in db.name_item:
-#            t2 = l.last_name
-#            if t1 in t2:
-#                val[count] += 1 
-#
-#        count += 1
-#
-#    for n in range(db.size):
-#        print "{} : {} \n".format(db.name_item[n].last_name, val[n])
-#
 

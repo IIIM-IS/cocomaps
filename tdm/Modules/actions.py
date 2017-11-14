@@ -60,13 +60,13 @@ def getObjective(*args):
         value = process_template(values_tuple, template)
         if confirm_input(value):
             break
-
         
     returnValue = False
     errMsg = ''
 
     try : 
         logger.debug("Trying to run value: "+ str(value))
+        print "Starting new task {}".format(value)
         newTask = static.tasks[value]
         newTask = TaskHandler.TaskHandler.TaskHandler(newTask)
         returnValue, errMsg = newTask.run()
@@ -81,22 +81,26 @@ def getObjective(*args):
 
 def confirm_input(name = ""):
     termios.tcflush(sys.stdin, termios.TCIFLUSH)
-    inval = raw_input("Are you sure - {}\n".format(name))
-    # TODO connect to input so objective is defined
-    # e.g. "Are you sure you want a meeting with *"
-    values_tuple =MEx.computeWords(inval)
-    template = ['accept', 'deny']
-    value = process_template(values_tuple, template)
-    
+    value = 'deny'
+    print "Accept the {}\n".format(name)
+    i,o,e = select.select([sys.stdin], [], [], 10) # set max-time to 10 sek
+    if i:
+        inStr = sys.stdin.readline().strip()
+        #TODO connect inStr to name database and return
+        # value
+        values_tuple = MEx.computeWords(inStr)
+        template = ['accept', 'deny']
+        value = process_template(values_tuple, template)
+        
     if value == 'accept':
         return True
+    return False
     
 
 def process_template(values_tuple, template):
     for value in values_tuple:
         associate   = value[0]
         val         = value[1]
-        print "touple line = {} - value : {} | associate : {}\n".format(value, val, associate)
 
         if associate in template and not val==0:
             return associate
@@ -151,7 +155,6 @@ def headTurn(direction):
     return True, "actions:headTurn not implemented"
 
 
-
 def scheduleMeeting(*args):
     # A meeting needs three things, 
     #   Participants
@@ -161,28 +164,56 @@ def scheduleMeeting(*args):
     # ASSUMPTION : We can only get to here if it's through the getObjective 
     # function. Ergo InfoBag.Bag has a previous sentence in its buffer, 
     # This is important because now we can run a who_search
-    
-    print("Allright let's schedule a meeting " + InfoBag.Bag["personName"])
-    ## WHO
-    task = args[0]
-    name = ""
-    gotName = False
+    task = args[0] 
+    print("Allright let's schedule a meeting, " + InfoBag.Bag["personName"])
+
+    # Set last utterance to variable to check if names are there
+    in_val = InfoBag.Bag["lastUtterance"]
     iterCounter = 1
-    while not gotName and iterCounter < 3:
-        results = getWho("Who would you like to meet", task)
-        gotName = results[0]
-        name = results[1]
-        # TODO process name results to try to refine name results,
-        # i.e. connect to database
+    contacts = None
+    while True and iterCounter < 3:
+        names, possible_names = MEx.search_name(in_val)
+        print "debug : 01"
+        print names
+        print possible_names
+        if names:
+            for name in names:
+                if contacts:
+                    contacts.append(name)
+                else :
+                    contacts = [name]
+
+        if contacts: 
+            for name_item in contacts:
+                first_name = name_item.fist_name
+                last_name = name_item.last_name
+                full_name = first_name + ' ' + last_name
+                print("Will setup a meeting with : {}".format(full_name))
+                accept = confirm_input("Meeting")
+        
+        if possible_names:
+            print("Got the following possible values")
+            for name in possible_names:
+                 print  "Did you mean {} {}".format(name.first_name, name.last_name)
+                 accept = confirm_input("setup a meeting with him/her")
+                 if accept:
+                     contacts.append(name)
+
+        if contacts:
+            print "Would you like to meet with anyone else?"
+            accept = confirm_input("Meet someone else")
+
+            if not accept:
+                break
+            iterCounter -= 1
+            in_val = getWho(task,"Who else would you like to meet?")
+        else :
+            in_val = getWho(task, "Who would you like to meet")
+
 
         iterCounter += 1
-        print("Finished while loop with: {} / {}".format(gotName, name))
 
-    if not gotName:
-        return False, "Could not get name of person to meet with"
 
-    ## Where
-    ## When 
     
     return True, name
 
@@ -192,24 +223,13 @@ def makeACall():
 
 ## SMALL HELPING FUNCTIONS
 
-def getNameForMeeting():
-    # A specific vector for timeout to be 
-    # processed parallelled   
-    # Depricated due to question string not dying
-    timeOutVec =  [10, "Getting name"]
-    getWhoVec = "Who would you like to meet"
-
-    return dualProcess.dualProcess(timeOut, getWho,
-                                   timeOutVec, getWhoVec)
-
-
 ## END OF SMALL HELPING FUNCTIONS
 
 
 def getWho(*args):
     value  = args
-    outStr = value[0]
-    task   = value[1]
+    outStr = value[1]
+    task   = value[0]
     print(outStr + '\n')
     # Clear the input buffer
     termios.tcflush(sys.stdin, termios.TCIFLUSH)
@@ -220,12 +240,9 @@ def getWho(*args):
         #TODO connect inStr to name database and return
         # value
 
-        return True, inStr
-    return False, "Found no one - meeting"
+        return inStr
+    return "!"
     
-def who_search(inputStr):
-    """Given an input string [inputStr] which supposedly contains a name
-        find an object person by querying a name db"""
 
 def timeOut(*args):
     args = args[0]

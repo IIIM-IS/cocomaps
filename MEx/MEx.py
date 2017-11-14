@@ -18,6 +18,8 @@ if debugging:
     from debug.mexTester import query
     import database.buildDatabase as buildDatabase
     import random
+    from database.nameDatabase import load_database
+
 # inputStrings are a set of input strings simulating the texthandle
 # query is a set of query tests that can be sent with the texthandle
 else : 
@@ -25,6 +27,7 @@ else :
     dbFolder = __file__[:-7]+"databases/"
     os.sys.path.insert(0,dbFolder)
     import database.buildDatabase as buildDatabase
+    from database.nameDatabase import load_database
 
 # Build word database from file
 global DB
@@ -42,6 +45,7 @@ class MEx():
     def __init__(self):
         self.text = ""
         self.template = ""
+        self.name_db = load_database()
         self.daemon = True
         logger.info("Starting up MEx")
 
@@ -55,7 +59,6 @@ class MEx():
             returnItem[i] = DB.associates[i], evalued[i]
             
         return sorted(returnItem, key=lambda x: x[1], reverse=True)    
-
 
 
     def ensuretext(self, handle):
@@ -72,6 +75,11 @@ class MEx():
             handle = handle.split(" ")  
                                         
         return handle
+  
+    def search_name(self, handle):
+        return self.name_db.search(handle)
+
+
 
     def checkDictionary(self, words):
         # Takes in a new sentance and returns
@@ -114,8 +122,19 @@ def returnHighest(output):
 if __name__ == "__main__":
     # Prints out the entire database
     MExObject = MEx()
-    teststr = ["This is a meeting for a startup schedule", "How do you do today",
-               "Where do you want to go", "who should I call"]
+    teststr = ["Dear robot I would like to shedule a meeting with Shawnta Koles", "Robot call phil",
+               "please ask lacy about tobi pharris"]
     for test in teststr:
+        obj = MExObject.computeWords(test)
         print test
-        print MExObject.computeWords(test)
+        name, poss_name = MExObject.search_name(test)
+        print obj
+        for thing in name:
+            print "Certain : {} {}".format(thing.first_name, thing.last_name)
+        for thing in poss_name:
+            print "Possible : {} {}".format(thing.first_name, thing.last_name)
+        print  20*'-'
+        print '\n'
+
+
+
