@@ -2,3 +2,8 @@ PsyClone/
 older/
 tasks_backup/
 *.pyc
+*.log
+*.zip
+*.7z
+*.db
+
