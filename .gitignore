@@ -1,4 +1,4 @@
 PsyClone/
 older/
 tasks_backup/
-**.pyc
+*.pyc
