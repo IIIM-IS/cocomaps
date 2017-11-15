@@ -35,6 +35,7 @@ ring#.6
 * YES/NO Accept/Deny
 
 accept{
+accept#.9
 yes#.9
 sure#.8
 affirmative#.5
@@ -52,3 +53,8 @@ never#.5
 
 * ACTIONS
 * Here words are mapped to functions, based on the tdm function files actions.py
+abort{
+abort#.9
+stop#.8
+quit#.5
+}

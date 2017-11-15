@@ -30,8 +30,6 @@ import MEx.MEx as MEx
 # Currently assuming this file is the only file to use MEx
 # othervise move MEx init to tdm
 MEx = MEx.MEx()
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -50,6 +48,7 @@ def getObjective(*args):
         # Store last instance in bag, currently not used however might come
         # in handy later
         InfoBag.Bag["lastUtterance"] = inVal
+        logger.info("Input utterance {}".format(inVal))
         # Run the computational instance of the MEx
         values_tuple = MEx.computeWords(inVal)
 
@@ -64,47 +63,21 @@ def getObjective(*args):
     returnValue = False
     errMsg = ''
 
-    try : 
-        logger.debug("Trying to run value: "+ str(value))
-        print "Starting new task {}".format(value)
-        newTask = static.tasks[value]
-        newTask = TaskHandler.TaskHandler.TaskHandler(newTask)
-        returnValue, errMsg = newTask.run()
-        logger.debug("Finished correctly")
+ #   try : 
+    logger.debug("Trying to run value: "+ str(value))
+    print "Starting new task {}".format(value)
+    newTask = static.tasks[value]
+    newTask = TaskHandler.TaskHandler.TaskHandler(newTask)
+    returnValue, errMsg = newTask.run()
+    logger.debug("Finished correctly")
 
-    except :
-        logger.info("action.py - ERROR:")
-        logger.info(value)
-        logger.info(sys.exc_info()[0])
+ #   except :
+ #       logger.info("action.py - ERROR:")
+ #       logger.info(value)
+ #       logger.info(sys.exc_info()[0])
 
     return returnValue, errMsg
 
-def confirm_input(name = ""):
-    termios.tcflush(sys.stdin, termios.TCIFLUSH)
-    value = 'deny'
-    print "Accept the {}\n".format(name)
-    i,o,e = select.select([sys.stdin], [], [], 10) # set max-time to 10 sek
-    if i:
-        inStr = sys.stdin.readline().strip()
-        #TODO connect inStr to name database and return
-        # value
-        values_tuple = MEx.computeWords(inStr)
-        template = ['accept', 'deny']
-        value = process_template(values_tuple, template)
-        
-    if value == 'accept':
-        return True
-    return False
-    
-
-def process_template(values_tuple, template):
-    for value in values_tuple:
-        associate   = value[0]
-        val         = value[1]
-
-        if associate in template and not val==0:
-            return associate
-    return None
 
 def greetPerson(*args):
     # An action where robot greets person
@@ -119,8 +92,6 @@ def greetPerson(*args):
         return True, ""
     #iInfoBag.Bag["haveGreeted"] = True
     return False, "Unable to greet person"
-
-
 
 
 def answerQuestion(*args):
@@ -169,27 +140,30 @@ def scheduleMeeting(*args):
 
     # Set last utterance to variable to check if names are there
     in_val = InfoBag.Bag["lastUtterance"]
-    iterCounter = 1
+    iterCounter = 0
     contacts = None
-    while True and iterCounter < 3:
+    first_run = True
+    abort = False
+    while True and iterCounter < 5:
         names, possible_names = MEx.search_name(in_val)
         print "debug : 01"
         print names
         print possible_names
+        if abort_process(MEx.computeWords(in_val)):
+            abort = True
+            break
+
+        if first_run :
+            first_run = False
+        else :
+            if not names and not possible_names:
+                print("Sorry I don't know them...")
         if names:
             for name in names:
                 if contacts:
                     contacts.append(name)
                 else :
                     contacts = [name]
-
-        if contacts: 
-            for name_item in contacts:
-                first_name = name_item.fist_name
-                last_name = name_item.last_name
-                full_name = first_name + ' ' + last_name
-                print("Will setup a meeting with : {}".format(full_name))
-                accept = confirm_input("Meeting")
         
         if possible_names:
             print("Got the following possible values")
@@ -197,7 +171,19 @@ def scheduleMeeting(*args):
                  print  "Did you mean {} {}".format(name.first_name, name.last_name)
                  accept = confirm_input("setup a meeting with him/her")
                  if accept:
-                     contacts.append(name)
+                     if contacts:
+                         contacts.append(name)
+                     else :
+                         contacts = [name]
+
+        if contacts: 
+            print "I am setting up a meeting with"
+            for name_item in contacts:
+                first_name = name_item.first_name
+                last_name = name_item.last_name
+                full_name = first_name + ' ' + last_name
+                print full_name
+            accept = confirm_input("Meeting")
 
         if contacts:
             print "Would you like to meet with anyone else?"
@@ -210,21 +196,48 @@ def scheduleMeeting(*args):
         else :
             in_val = getWho(task, "Who would you like to meet")
 
-
         iterCounter += 1
-
-
-    
-    return True, name
+    if not contacts and not abort:
+        print "Sorry unable to schedule a meeting... :()"
+        return False, "Unable to setup a meeting"
+    elif abort:
+        print "User cancelled scheduling a meeting"
+        return True, "User aborted"
+    else :
+        print "Allrighty then, I will setup a meeting with "
+        for val in contacts:
+            print "{} {} - {}".format(val.first_name, val.last_name, val.email)
+        accept = confirm_input("meeting schedule")
+        if accept :
+            print "Next we will find a timeslot"
+            return True, name
+        else :
+            print "Aborted the meeting"
+            return False, "User aborted meeting plan"
 
 def makeACall():
     pass
 ## END OF MAIN FUNCTIONS
 
-## SMALL HELPING FUNCTIONS
-
-## END OF SMALL HELPING FUNCTIONS
-
+## PROCECCING FUNCTIONS
+def confirm_input(name = ""):
+    termios.tcflush(sys.stdin, termios.TCIFLUSH)
+    value = 'deny'
+    print "Accept/Deny : {}\n".format(name)
+    i,o,e = select.select([sys.stdin], [], [], 20) # set max-time to 10 sek
+    logger.info("Asking confirmation for {}".format(name))
+    if i:
+        inStr = sys.stdin.readline().strip()
+        #TODO connect inStr to name database and return
+        # value
+        logger.info("Got input : {}".format(inStr))
+        values_tuple = MEx.computeWords(inStr)
+        template = ['accept', 'deny']
+        value = process_template(values_tuple, template)
+        
+    if value == 'accept':
+        return True
+    return False 
 
 def getWho(*args):
     value  = args
@@ -242,14 +255,23 @@ def getWho(*args):
 
         return inStr
     return "!"
-    
 
-def timeOut(*args):
-    args = args[0]
-    T = args[0]
-    errMsg = args[1]
-    time.sleep(T)
-    return False, "Timer timeout: "+errMsg
+def abort_process(values_tuple):
+    result = process_template(values_tuple, ["abort"])
+    if result :
+        if confirm_input(" ABORT process"):
+            return True
+    return False
+
+def process_template(values_tuple, template):
+    for value in values_tuple:
+        associate   = value[0]
+        val         = value[1]
+
+        if associate in template and not val==0:
+            return associate
+    return None
+## END OF PROCESSING FUNCTIONS
 
 
 # Definition of callable functions, other functions are 
