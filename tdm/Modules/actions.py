@@ -78,7 +78,6 @@ def getObjective(*args):
 
     return returnValue, errMsg
 
-
 def greetPerson(*args):
     # An action where robot greets person
     '''
@@ -92,7 +91,6 @@ def greetPerson(*args):
         return True, ""
     #iInfoBag.Bag["haveGreeted"] = True
     return False, "Unable to greet person"
-
 
 def answerQuestion(*args):
     '''
@@ -124,7 +122,6 @@ def headTurn(direction):
         print("Facing forwards")
 
     return True, "actions:headTurn not implemented"
-
 
 def scheduleMeeting(*args):
     # A meeting needs three things, 
@@ -272,7 +269,6 @@ def process_template(values_tuple, template):
             return associate
     return None
 ## END OF PROCESSING FUNCTIONS
-
 
 # Definition of callable functions, other functions are 
 # called by these functions

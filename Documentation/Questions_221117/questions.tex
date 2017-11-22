@@ -1,0 +1,79 @@
+\documentclass[a4, 12pt]{letter}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[left=3cm, right=3cm, top=4cm, bottom=5cm]{geometry}
+\usepackage{array}
+
+\usepackage{mathtools,url}
+
+
+\usepackage{float}
+\usepackage{color}
+\usepackage{tikz}
+\usetikzlibrary{shadows.blur, arrows}
+\usepackage{footnote} % Should be in footnote part, but conflicts with color
+
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO}}: \textcolor{blue}{#1}}
+
+\title{A few good questions}
+\date{\vfill \today }
+\signature{Davíð Örn Jóhannesson \\ david@iiim.is }
+
+\usepackage{hyperref}
+\usepackage{longtable}
+
+\makeatletter %must be!
+
+\makeatother % must be!
+
+\begin{document}
+\begin{letter}{Thor List \\ CMLabs \\ }
+
+\opening{Thor.}
+%The following are a few questions regarding the CoCoMaps project. It has come to my attention that the documentation of Psyclone is disorganized and rather difficult to scale without intensive help. This view is based on the end user of Psyclone not being a computer science specialist but rather a novice like me. As such the following questions are specifically intended for me to understand Psyclone better and be able to program the task dialogue manager (TDM) into Psyclone. However I will try to structure it in such a way that you can use it to build a better source of documentation for Psyclone. It is my understanding that you want Psyclone to be a research tool and even used in industry. It is my strongest belief that if you want the project to thrive you need a good solid community that shares information and methods of using and implimenting your code. \\
+%I say this with the upmost respect for the work you have done and without any ill meaning. I find it questionable that given the high turnover of staff working on the project that such a 
+Before I get to the questions I need to setup the environment and variables so we understand each other. What we are talking about is the physical locations of the robots and the server. Therefore we have: A server; which we assume we can use the Ubuntu machine currently held up here. And two turtlebot roborts able to drive around and sense the environment. \\
+Within these robots we have a ton of software and processes. On each robot we have [please correct me if I am wrong and append if something is missing]
+\begin{itemize}
+	\item Mapping, Localization and planning (SLAM)
+	\item Image
+	\begin{itemize}
+		\item Human locator - ?ROS
+	\end{itemize}
+	\item Audio
+	\begin{itemize}
+		\item Recording 
+		\item Speaking
+	\end{itemize}
+\end{itemize}
+
+Then on the server side we have
+\begin{itemize}
+	\item Collaborate mapping
+	\item Facial recognition - ?ROS
+	\item YTTM
+	\item Task Dialogue Manager
+\end{itemize}
+
+\textbf{Structure Questions} : \\
+I am still finding it hard to understand where each software component goes. Where would YTTM and TDM be? On each robot or the server module? If it goes on the server module; would you then agree that we need to turn off other modules, such as facial recognition and mapping, in order to maintain as high a bandwidth for communications? Here I feel that Kris would suggest keep streaming the video feed from the robot that is in dialog since in the future facial expressions and general kinetic information can be recieved through there (outside the scope of current project). You can see how quickly we will overflow even a highly capable CPU if we are running to many objectives at once. \\
+The way I see it, and therefore the current TDM is inherently structured, is as it runs on the Server  side recieving the audio stream and deciding what to do. If that is the case we need to create a lockable stream so that the TDM is only talking to the robot that is currently in dialogue. \\
+
+
+\textbf{Psyclone Questions} : \\
+Lets start off with backend questions. I find it hard to understand how Psyclone works. Does it use threads or some split scheduling? This matters from my point of view since I think about how the TDM will run, will it run uninterrupted or will it get a timeslot allocation.  \\
+Do we run TDM inside or along-side Psyclone. The difference being that insede it takes up space and time scheduling and I wasn't able to load the Numpy library by doing that. \\
+
+\textbf{Future work}: \\
+As the letter above suggests we have quite a way to go so I must ask you how you think we can optimize the process. Do you think that the task of reviewing and updating the literature on psyclone is worth the effort we must put into it? It is a real question since the work required to get the documentation to a legible state requires quite an effort on your behalf. Obviously this can increase the reportoire of Psyclone, making it more user friendly and accessable. In the long run it can help sell your product. \\
+However, the quicker way, and the method that would result in faster prototyping, is for me to write the software; being aware of which connections to keep open and you can fill in the pieces regarding Psyclone. \\
+Given that you are the specialist on this topic and we are discussing the work that will eventually fall on your shoulders which approach would you prefer.  
+
+
+\closing{Best wishes and many thanks, }
+
+\ps 
+Don't forget that the current software is on the github repo : \url{https://github.com/IIIM-IS/cocomaps}
+\end{letter}
+\end{document}
