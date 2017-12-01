@@ -1,0 +1,257 @@
+<psySpec>
+
+	<include file="turtlebot.inc" />
+
+	<psyprobe location="%PsyDir%/html">
+		<!-- http://localhost:10000/robot/file.html -->
+		<alias name="robot" location="%HTMLDir%" default="index.html" />
+		<post name="CommandMoveForward" type="Robot.Command.Move.Forward" />
+		<post name="CommandMoveBackward" type="Robot.Command.Move.Backward" />
+		<post name="CommandTurnLeft" type="Robot.Command.Turn.Left" />
+		<post name="CommandTurnRight" type="Robot.Command.Turn.Right" />
+		<post name="CommandMoveForwardLeft" type="Robot.Command.Move.ForwardLeft" />
+		<post name="CommandMoveForwardRight" type="Robot.Command.Move.ForwardRight" />
+		<post name="CommandMoveBackwardLeft" type="Robot.Command.Move.BackwardLeft" />
+		<post name="CommandMoveBackwardRight" type="Robot.Command.Move.BackwardRight" />
+	</psyprobe>
+	
+	<catalog name="CCMMaster" type="CCMCatalog">
+		<parameter name="SystemID" type="Integer" value="2" />
+		<parameter name="StorageDir" type="String" value="%DataDir%/CCMData" />
+		<trigger name="ObjectInfo" type="Object.Information" />
+		<post name="CommandMoveForward" type="Robot.Command.Move.Forward" />
+		<post name="CommandMoveBackward" type="Robot.Command.Move.Backward" />
+		<post name="CommandTurnLeft" type="Robot.Command.Turn.Left" />
+		<post name="CommandTurnRight" type="Robot.Command.Turn.Right" />
+		<post name="CommandMoveForwardLeft" type="Robot.Command.Move.ForwardLeft" />
+		<post name="CommandMoveForwardRight" type="Robot.Command.Move.ForwardRight" />
+		<post name="CommandMoveBackwardLeft" type="Robot.Command.Move.BackwardLeft" />
+		<post name="CommandMoveBackwardRight" type="Robot.Command.Move.BackwardRight" />
+		<post name="CommandStop" type="Robot.Command.Stop" />
+		<post name="CommandNavigateTo" type="Robot.Request.Navigate" />
+		<setup>
+		 <map name="main" view="10" invertx="yes" />
+                        <identity id="1" type="robot" name="RobotOne" nickname="Turtle1" image="%DataDir%/turtlebot.bmp" />
+                        <identity id="2" type="robot" name="RobotTwo" nickname="Turtle2" image="%DataDir%/turtlebot2.bmp" />
+                        <identity id="3" type="human" name="Pierre Zanchetta" nickname="Pierre" image="%DataDir%/Pierre.bmp" />
+                        <identity id="4" type="human" name="David Johannesson" nickname="David" image="%DataDir%/David.bmp" />
+                        <identity id="5" type="human" name="Stijn Looijer" nickname="Stijn" image="%DataDir%/Stijn2.bmp" />
+                        <identity id="6" type="human" name="Stijn LooijerFour" nickname="StijnFour" image="%DataDir%/Stijn4.bmp" />
+                        <vantagepoints>
+                                <point id="1" label="Point 1" data="-0.0879950523376,-3.08201956749,0.86473396594,0.502230194383" overlap="1,0.9,0.7,0.4,0.3,0.8" />
+                                <point id="2" label="Point 2" data="-1.88780736923,-2.81544089317,0.64687359088,0.762597244568" overlap="0.9,1,0.7,0.6,0.3,0.4" />
+                                <point id="3" label="Point 3" data="-2.20547437668,-1.56117510796,0.745551117096,0.666448446466" overlap="0.6,0.8,1,0.6,0.4,0.7" />
+                                <point id="4" label="Point 4" data="-3.21872186661,1.2577047348,-0.368878214968,0.929477736432" overlap="0.4,0.5,0.4,1,0.6,0.1" />
+                                <point id="5" label="Point 5" data="-1.05981051922,0.661040782928,-0.811723785022,0.584041519783" overlap="0.8,0.7,0.4,0.6,1,0.2" />
+                                <point id="6" label="Point 6" data="-0.4779484272,-1.52302742004,-0.667880679385,0.744268364305" overlap="0.8,0.4,0.6,0.1,0.2,1" />
+                        </vantagepoints>
+		</setup>
+	</catalog>
+<!--	
+   	<catalog name="RobotStatusReplay" type="ReplayCatalog" root="%RecordingDir%/T2Demo1" maxsize="1000000000">
+		<trigger name="Status" type="Robot.Status" />
+		<trigger name="Blob" type="Robot.Vision.Blob" />
+		<trigger name="USB" type="Robot.Camera.USB" />
+		<trigger name="Color" type="Robot.Camera.Color" />
+		<trigger name="Depth" type="Robot.Camera.Depth" />
+		<trigger name="Registered" type="Robot.Camera.Registered" />
+		<trigger name="IR" type="Robot.Camera.IR" />
+		<trigger name="Map" type="Robot.Map" />
+		<trigger name="Button0Pressed" type="Robot.Button.0.Pressed" />
+		<trigger name="Button0Released" type="Robot.Button.0.Released" />
+		<trigger name="Button1Pressed" type="Robot.Button.1.Pressed" />
+		<trigger name="Button1Released" type="Robot.Button.1.Released" />
+		<trigger name="Button2Pressed" type="Robot.Button.2.Pressed" />
+		<trigger name="Button2Released" type="Robot.Button.2.Released" />
+	</catalog>
+-->
+	<catalog name="MessageDataCatalog" type="MessageDataCatalog">
+		<trigger name="RobotStatus" type="Robot.Status" />
+		<trigger name="Blob" type="Robot.Vision.Blob" />
+		<trigger name="USB" type="Robot.Camera.USB" />
+		<trigger name="Color" type="Robot.Camera.Color" />
+		<trigger name="Depth" type="Robot.Camera.Depth" />
+		<trigger name="Registered" type="Robot.Camera.Registered" />
+		<trigger name="IR" type="Robot.Camera.IR" />
+		<trigger name="Map" type="Robot.Map" />
+		<setup>
+			<store name="USBImage" trigger="USB" key="Image" keytype="data" 
+						 datatype="raw" mimetype="image/bmp" maxkeep="1" maxfrequency="1" />
+			<store name="USBImageRaw" trigger="USB" key="Image" keytype="data" 
+						 mimetype="application/binary" maxkeep="1" maxfrequency="1" />
+			<store name="ColorImage" trigger="Color" key="Image" keytype="data" 
+						 datatype="raw" mimetype="image/bmp" maxkeep="1" maxfrequency="1" />
+			<store name="ColorImageRaw" trigger="Color" key="Image" keytype="data" 
+						 mimetype="application/binary" maxkeep="1" maxfrequency="1" />
+			<store name="DepthImage" trigger="Depth" key="Image" keytype="data" 
+						 datatype="raw" mimetype="image/bmp" maxkeep="1" maxfrequency="1" />
+			<store name="DepthImageRaw" trigger="Depth" key="Image" keytype="data" 
+						 mimetype="application/binary" maxkeep="1" maxfrequency="1" />
+			<store name="RegisteredImage" trigger="Registered" key="Image" keytype="data" 
+						 datatype="raw" mimetype="image/bmp" maxkeep="1" maxfrequency="1" />
+			<store name="RegisteredImageRaw" trigger="Registered" key="Image" keytype="data" 
+						 mimetype="application/binary" maxkeep="1" maxfrequency="1" />
+			<store name="IRImage" trigger="IR" key="Image" keytype="data" 
+						 datatype="raw" mimetype="image/bmp" maxkeep="1" maxfrequency="1" />
+			<store name="IRImageRaw" trigger="IR" key="Image" keytype="data" 
+						 mimetype="application/binary" maxkeep="1" maxfrequency="1" />
+			<store name="Map" trigger="Map" key="Image" keytype="data" 
+						 datatype="raw" mimetype="image/bmp" maxkeep="1" maxfrequency="1" />
+			<store name="MapRaw" trigger="Map" key="Image" keytype="data" 
+						 mimetype="application/binary" maxkeep="1" maxfrequency="1" />
+			<store name="StatusJSON" trigger="RobotStatus" mimetype="json" maxkeep="1" maxfrequency="1" />
+			<store name="StatusText" trigger="RobotStatus" mimetype="text" maxkeep="1" maxfrequency="1" />
+			<store name="StatusXML" trigger="RobotStatus" mimetype="xml" maxkeep="1" maxfrequency="1" />
+		</setup>
+	</catalog>
+
+	<module name="RobotStatus">
+		<trigger name="Ready" type="Psyclone.Ready" />
+		<trigger name="CommandMoveForward" type="Robot.Command.Move.Forward" />
+		<trigger name="CommandMoveBackward" type="Robot.Command.Move.Backward" />
+		<trigger name="CommandTurnLeft" type="Robot.Command.Turn.Left" />
+		<trigger name="CommandTurnRight" type="Robot.Command.Turn.Right" />
+		<trigger name="CommandMoveForwardLeft" type="Robot.Command.Move.ForwardLeft" />
+		<trigger name="CommandMoveForwardRight" type="Robot.Command.Move.ForwardRight" />
+		<trigger name="CommandMoveBackwardLeft" type="Robot.Command.Move.BackwardLeft" />
+		<trigger name="CommandMoveBackwardRight" type="Robot.Command.Move.BackwardRight" />
+		<trigger name="NavigateCommand" type="Robot.Command.Navigate" />
+		<post name="NavigateConfirm" type="Robot.Navigate.Confirm" />
+		<post name="NavigateSuccess" type="Robot.Navigate.Success" />
+		<post name="NavigateFailed" type="Robot.Navigate.Failed" />
+		<post name="NavigateTimeout" type="Robot.Navigate.Timeout" />
+		<post name="NavigateBusy" type="Robot.Navigate.Busy" />
+		<parameter name="interval" type="Integer" value="5000" />
+		<parameter name="libpath" type="String" value="%PylibDir%" />
+		<!-- rostopic echo initialpose -->
+		<parameter name="initpose_x" type="Float" value="-2.91389679909" />
+                <parameter name="initpose_y" type="Float" value="-1.87885570526" />
+                <parameter name="initpose_oz" type="Float" value="-0.975857905076" />
+                <parameter name="initpose_ow" type="Float" value="0.21840638521" />
+		<crank name="RobotStatus" language="python2" script="%AppDir%/robotstatus.py" />
+		<post name="Status" type="Robot.Status" />
+		<post name="Blob" type="Robot.Vision.Blob" />
+		<post name="USB" type="Robot.Camera.USB" />
+		<post name="Color" type="Robot.Camera.Color" />
+		<post name="Depth" type="Robot.Camera.Depth" />
+		<post name="Registered" type="Robot.Camera.Registered" />
+		<post name="IR" type="Robot.Camera.IR" />
+		<post name="Map" type="Robot.Map" />
+		<post name="Button0Pressed" type="Robot.Button.0.Pressed" />
+		<post name="Button0Released" type="Robot.Button.0.Released" />
+		<post name="Button1Pressed" type="Robot.Button.1.Pressed" />
+		<post name="Button1Released" type="Robot.Button.1.Released" />
+		<post name="Button2Pressed" type="Robot.Button.2.Pressed" />
+		<post name="Button2Released" type="Robot.Button.2.Released" />
+	</module>
+
+	<catalog name="PositionCollector1" type="CCMCollector">
+		<query name="Master" source="CCMMaster" />
+		<trigger name="RobotStatus" type="Self.Position.Data" />
+		<trigger name="RobotDetection" type="Robot.Detected" />
+		<trigger name="HumanDetection" type="Human.Detected" />
+		<setup>
+			<obs name="Location" obstype="Location" trigger="RobotStatus">
+			</obs>
+			<obs name="Location" obstype="Location" trigger="RobotDetection">
+				<mapping entry="x" key="PosX" />
+				<mapping entry="y" key="PosY" />
+			</obs>
+			<obs name="Location" obstype="Location" trigger="HumanDetection">
+				<mapping entry="x" key="PosX" />
+				<mapping entry="y" key="PosY" />
+			</obs>
+		</setup>
+	</catalog>
+	
+	<module name="RobotSelf">
+		<parameter name="IdentityID" type="Integer" value="2" />
+		<parameter name="InvertPosX" type="String" value="Yes" />
+		<parameter name="Image" type="String" value="%DataDir%/turtlebot2.bmp" />
+		<trigger name="Map" type="Robot.Map" />
+		<trigger name="RobotStatus" type="Robot.Status" />
+		<query name="Master" source="CCMMaster" />
+		<crank name="RobotSelf" function="Perception::RobotSelf" />
+		<post name="IdentityData" type="Self.Identity.Data" />
+		<post name="PositionData" type="Self.Position.Data" />
+	</module>
+	
+	<module name="RobotNavigation">
+		<parameter name="HumanTimeout" type="Integer" value="30000" />
+		<parameter name="PointTimeout" type="Integer" value="10000" />
+		<trigger name="Ready" type="Psyclone.Ready" />
+		<trigger name="Face" type="Face.Detection.Person" />
+		<trigger name="NavigateRequest" type="Robot.Request.Navigate" />
+		<trigger name="NavigateConfirm" type="Robot.Navigate.Confirm" />
+		<trigger name="NavigateSuccess" type="Robot.Navigate.Success" />
+		<trigger name="NavigateFailed" type="Robot.Navigate.Failed" />
+		<trigger name="NavigateTimeout" type="Robot.Navigate.Timeout" />
+		<trigger name="NavigateBusy" type="Robot.Navigate.Busy" />
+		<query name="Master" source="CCMMaster" />
+		<crank name="RobotNavigation" function="Perception::RobotNavigation" />
+		<post name="NavigationActive" type="Robot.Status.Navigate.Active" />
+		<post name="NavigationComplete" type="Robot.Status.Navigate.Complete" />
+		<post name="NavigationFailed" type="Robot.Status.Navigate.Failed" />
+		<post name="NavigationTimeout" type="Robot.Status.Navigate.Timeout" />
+		<post name="NavigationBusy" type="Robot.Status.Navigate.Busy" />
+		<post name="NavigateCommand" type="Robot.Command.Navigate" />
+	</module>
+
+	<module name="FaceRecognition">
+		<parameter name="Username" type="String" value="Admin@Admin" />
+		<parameter name="Password" type="String" value="@@@dmin" />
+		<parameter name="ServerAddr" type="String" value="10.2.21.23" />
+		<parameter name="ServerPort" type="Integer" value="3500" />
+		<parameter name="PrintSuccess" type="String" value="Yes" />
+		<parameter name="PrintNoFace" type="String" value="Yes" />
+		<parameter name="MatchThreshold" type="Integer" value="50" />
+		<query name="Master" source="CCMMaster" />
+		<trigger name="Start" type="Psyclone.Ready" />
+		<trigger name="VideoFrame" type="Robot.Camera.USB" />
+		<crank name="FaceRecognition" function="Perception::FaceRecognition" />
+		<post name="Ready" type="Face.Detection.Ready" />
+		<post name="UnknownFace" type="Face.Detection.Unknown" />
+		<post name="Face" type="Face.Detection.Person" />
+	</module>
+
+	<module name="HumanDetection">
+		<parameter name="FaceToWidthScale" type="Float" value="3" />
+		<parameter name="AngleFromPixelsOffCentre" type="Float" value="3" />
+		<parameter name="VisualToDepthOffsetX" type="Integer" value="300" />
+		<parameter name="VisualToDepthOffsetY" type="Integer" value="200" />
+		<parameter name="DepthTopShade" type="Integer" value="200" />
+		<parameter name="VisualToDepthScaleX" type="Float" value="0.38" />
+		<parameter name="VisualToDepthScaleY" type="Float" value="0.60" />
+		<trigger name="Face" type="Face.Detection.Person" />
+		<trigger name="Depth" type="Robot.Camera.Registered" />
+		<trigger name="Status" type="Robot.Status" />
+		<trigger name="PositionData" type="Self.Position.Data" />
+		<query name="Master" source="CCMMaster" />
+		<crank name="HumanDetection" function="Perception::HumanDetection" />
+		<post name="Identity" type="Human.Identity.Data" />
+		<post name="Detection" type="Human.Detected" />
+	</module>
+
+	<module name="RobotDetection">
+		<parameter name="IdentityID" type="Integer" value="1" />
+		<parameter name="RobotBlobWidth" type="Float" value="0.1" />
+		<trigger name="Blob" type="Robot.Vision.Blob" />
+		<trigger name="Image" type="Robot.Camera.Color" />
+		<trigger name="Depth" type="Robot.Camera.Registered" />
+		<trigger name="Status" type="Robot.Status" />
+		<trigger name="PositionData" type="Self.Position.Data" />
+		<query name="Master" source="CCMMaster" />
+		<crank name="RobotDetection" function="Perception::RobotDetection" />
+		<post name="Identity" type="Robot.Identity.Data" />
+		<post name="Detection" type="Robot.Detected" />
+	</module>
+
+	<module name="Print">
+		<trigger name="Input1" type="Robot.Statusx" />
+		<trigger name="Input2" type="Robot.Button.*.*" />
+		<trigger name="CommandMove" type="Robot.Command.Move.*" />
+		<trigger name="CommandTurn" type="Robot.Command.Turn.*" />
+		<crank name="Print" function="Print" />
+	</module>
+	
+</psySpec>

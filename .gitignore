@@ -2,6 +2,8 @@ PsyClone/
 Documentation/
 older/
 tasks_backup/
+turtlebots/
+XMLFiles/
 *.pyc
 *.log
 *.zip
