@@ -43,11 +43,11 @@ logger = logging.getLogger(__name__)
 
 class MEx():
     def __init__(self):
+        logger.info("Starting up MEx")
         self.text = ""
         self.template = ""
         self.name_db = load_database()
         self.daemon = True
-        logger.info("Starting up MEx")
 
     def computeWords(self, text):
         logger.info("Checking sentance: {}".format(text))
@@ -109,7 +109,7 @@ def returnHighest(output):
     highest = np.amax(output)
     indx = np.where(output==highest)
     indx = indx[0][0]   # where returns tuple and this method short circuits
-                        # if there are two values highe or equal
+                        # if there are two values equal
     return DB.associates[indx], highest
 
 # Deprecated

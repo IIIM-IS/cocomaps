@@ -9,4 +9,5 @@ XMLFiles/
 *.zip
 *.7z
 *.db
+Stored/*
 
