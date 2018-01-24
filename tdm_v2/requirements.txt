@@ -1,0 +1,2 @@
+The system is built using standard python2.7 module and a numpy active
+library. (Numpy version 1.10.4)

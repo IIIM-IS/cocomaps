@@ -3,20 +3,25 @@ based on previous iterations and accumulated experience of working the
 second iteration can be optimized and connectors created for relevant 
 items.
 
-File structure of system 
+	.
 	├── ABOUT.md
 	├── Actions
 	│   └── __init__.py
 	├── __init__.py
+	├── LICENSE
+	├── Logging
+	│   └── __init__.py
 	├── MEx
 	│   └── __init__.py
 	├── TaskBuilder
 	│   ├── __init__.py
 	│   └── tasks
+	├── TODO
+	├── VERSION
 	└── YTTM_connector
 	    └── __init__.py
 
-	5 directories, 6 files
+	6 directories, 10 files
 
 Objective of each module: 
 	Actions : A library of executable actions the robot can 
@@ -26,6 +31,8 @@ Objective of each module:
 		the TDM. Other modules focus on selectin control
 		directions, creating file structure, connecting to
 		outside objects
+	Logging: Custom made logger (using logging lib) for this project. 
+		Used during debug sessions and during run.
 	MEx : Meaning Extractor, takes in a string and current object
 		location, w.r.t. task, and tries to spit out a probability
 		of what is the return value and/or the next action to
