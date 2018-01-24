@@ -10,4 +10,6 @@ XMLFiles/
 *.7z
 *.db
 Stored/*
+*.swp
+.*log
 
