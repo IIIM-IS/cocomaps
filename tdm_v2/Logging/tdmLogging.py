@@ -26,5 +26,5 @@ def setup_log():
     Setting up logging definition for the logger
     """
     logging.basicConfig(filename=log_name(),
-                       format = "%(asctime)s;%(name)3s;%(message)s",
+                       format = "%(asctime)s;%(name)s;%(levelname)3s;%(message)s",
                        level=logging.DEBUG)

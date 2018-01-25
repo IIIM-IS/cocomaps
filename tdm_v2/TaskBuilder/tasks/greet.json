@@ -1,0 +1,11 @@
+{
+	"name" : "greet",
+	"description" : "Start interaction by greeting person",
+	"keywords" : {},
+	"question_template" : [],
+	"misc" : [],
+	"fail_action" : "ResetCommunications",
+	"pass_action" : "GetObjective",
+	"max_time"    : 15000
+	
+}

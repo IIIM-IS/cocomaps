@@ -22,3 +22,7 @@ class MEx(object):
         self.logger = logging.getLogger(__name__)
         self.logger.debug("Starting up MEx")
 
+
+# todo, create word association databank using json. E.g. phone, call, ring, 
+# are all connected; create chains of words that return increased values 
+# for "parent" concept. 
