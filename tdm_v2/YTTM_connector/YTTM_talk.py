@@ -57,25 +57,21 @@ class YTTM_talk(Thread):
             time.sleep(.01) 
 
             # Debug
-            time.sleep(.2)
+            time.sleep(.75)
 
     def set_turns(self):
         """
         Ask the YTTM module whos turn it is. This will probably be done 
         by querying psyclone. 
         """
-        
+        # TODO Create definitions and figure out how to make this work 
+
         if self.check_for_turn == True:
             if timer()- self.global_start > .5:
                 self.my_turn = True
-                self.my_turn_start = timer()
                 self.logger.info("Set myTurn to true")
-                self.check_for_turn == False
+                self.check_for_turn = False
 
-        if self.my_turn:
-            if timer() - self.my_turn_start > .5:
-                self.check_for_turn == False
-            
     
 
 

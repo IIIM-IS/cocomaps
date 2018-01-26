@@ -20,15 +20,13 @@ class Nuance(Thread):
     def __init__(self):
         # Setup debug mode
         Thread.__init__(self)
-
         self.logger = logging.getLogger(__name__)
         self.logger.info("Started Nuance connector")
-
+        self.daemon = True
         self.start()
 
     def write(self, line):
         #TODO Connect to nuace
-
         #DEBUG
         self.logger.debug("Sending line to nuance: \n \t\t{}".format(line))
         print line
@@ -40,15 +38,8 @@ class Nuance(Thread):
         TDM
         """
         self.logger.debug("Reading nuance buffer")
-
         #TODO Connect to Nuance
-        temp = raw_input("\nNUNCA DEBUG MODE:\n\tENTER ANSWER: ")
-        self.logger.debug("Nuance input: \n\t\t{}".format(temp))
+        read_data = raw_input("\nNUNCA DEBUG MODE:\n\tENTER ANSWER: ")
+        self.logger.debug("Nuance input: \n\t\t{}".format(read_data))
 
-    def tester(self):
-        self.write("This is output number 1")
-
-        self.read()
-
-
-
+        return read_data

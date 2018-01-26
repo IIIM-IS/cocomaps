@@ -11,10 +11,12 @@ About
 # Standard modules
 import os
 import time
+from timeit import default_timer as timer
+import numpy as np
 
 # Custom modules
 from MEx import MEx
-from Tasks import TaskHandler
+from Tasks import TaskBuilder
 from YTTM_connector import YTTM_talk
 from Nuance import Nuance
 
@@ -47,13 +49,43 @@ class TDM(object):
         self.MEx    = MEx.MEx()
         self.YTTM   = YTTM_talk.YTTM_talk()
         self.Nuance = Nuance.Nuance()
-        self.Tasks  = TaskHandler.TaskHandler(self.Nuance)
+        self.Tasks  = TaskBuilder.TaskBuilder()
+
+
+    def __del__(self):
+        """
+        Deconstructor for TDM object to measure if object exists correctly
+        """
+        print "TDM exited correctly"
+
+
+    def run_task(self, task, parent=None):
+        """
+        Run an instance of a task, can call "subtasks" by calling new instance 
+        of start_at
+        """
+        # Initializie the new task
+        task._start_time = timer()
+
+        # Currently unknown if all processable tasks will have questions
+        if task.question_template:
+            # Send a question to nuance output
+            self.Nuance.write(
+                task.question_template[
+                   np.random.randint(0, len(task.question_template))
+                ]
+            )
+            # Wait for response
+            self.MEx.eval(self.Nuance.read(), task.keywords)
 
 
     def start_at(self, json_name):
         """
         Run an instance of the tdm starting from the named json file
         """
+        new_task_instance = self.Tasks.Task[json_name]
+        self.run_task(new_task_instance)
+        
 
 
     def check_for_person(self):
@@ -71,7 +103,7 @@ class TDM(object):
 if __name__ == "__main__":
     obj = TDM()
     # Test nuance output, send line for interpretation
-    obj.start_at("greet")
+    obj.start_at("get_objective")
     time.sleep(1)
     print "Debugging TDM finished"
     print 10*'*'

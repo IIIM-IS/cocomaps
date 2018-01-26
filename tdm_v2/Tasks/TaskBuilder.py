@@ -124,8 +124,10 @@ class TaskBuilder(object):
                     self.logger.info("Added task :{}".format(tmp_task.name))
         self.logger.info("Finished creating tasks")
 
-# Error definitions specific to the object
 
+
+
+# Error definitions specific to the object
 class WrongCallbackLocationError(Exception):
     def __init__(self, value):
         self.value = value
