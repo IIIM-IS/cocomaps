@@ -1,0 +1,12 @@
+{
+	"name" : "greet",
+	"description" : "Start interaction by greeting person",
+	"keywords" : [],
+	"question_template" : ["Hello there, how can I help?", 
+				"I am robot, I will conquer",
+				"Skynet online, how may I assist"],
+	"misc" : {"Tries":2},
+	"fail_action" : "Wait",
+	"pass_action" : "ReturnValue",
+	"max_time"    : 15
+}

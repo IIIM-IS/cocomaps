@@ -17,8 +17,20 @@ api = None
 
 def PsyCrank(apilink):
     api = cmsdk2.PsyAPI.fromPython(apilink)
+    name = api.getModuleName()
 
     # Initialize the TDM by calling an instance of object TDM
     _TDM = TDM.TDM()
 
     # TODO: Add functionality and connectors to the psycrank
+
+    while api.shouldContinue():
+        msg = None
+        msg = api.wautForNewMessage(20)
+
+        if _TDM.check_for_person():
+            _TDM.start_at("greet")
+
+
+
+

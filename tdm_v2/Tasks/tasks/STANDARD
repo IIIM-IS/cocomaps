@@ -1,0 +1,10 @@
+{
+	"name" : "",
+	"description" : "",
+	"keywords" : [],
+	"question_template" : [],
+	"misc" : [],
+	"fail_action" : "",
+	"pass_action" : "",
+	"max_time"    : 0
+}

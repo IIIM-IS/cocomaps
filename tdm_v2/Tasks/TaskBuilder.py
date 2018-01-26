@@ -13,12 +13,13 @@ Objective
 import json
 import os
 import logging
+from timeit import default_timer as timer
 
 class Task(object):
     """
     A wrapper around an actual json filename, using later
     defined specific implemmentation to load and store
-    the set of tasks defined in tdm_v2/TaskBuilder/tasks/
+    the set of tasks defined in tdm_v2/TaskBuilder/tasks/ 
     """
     def __init__(self, name, description, keywords, question_template, 
                  misc, fail_action, pass_action, max_time):
@@ -26,9 +27,9 @@ class Task(object):
         Initialize a task object; include adding dynamically addjusted
         variables
         """
-
         # Info from .json struct
         # TODO Add values that can help
+        # Static values
         self.name = name
         self.description = description
         self.keywords = keywords
@@ -38,10 +39,15 @@ class Task(object):
         self.pass_action = pass_action
         self.max_time = max_time
 
-        # Dynamically added values
+        # Dynamic values set and changed during runtime
         self._parent = None
         self._start_time = -1
         self._elapsed = 0
+
+    def elapsed(self):
+        if self._start_time !=-1:
+            return timer() - self._start_time
+        return -1
 
     @staticmethod
     def object_decoder(obj):
@@ -59,7 +65,7 @@ class TaskBuilder(object):
     """
     Using an object stucture to store the json built tasks
     """
-    def __init__(self, _type="run"):
+    def __init__(self, _type="run", logger=None):
 
         # For debugging purposes I can pass inn a specific logger (terminal)
         # if there isn't a logger then we can create the specific logger
@@ -70,14 +76,17 @@ class TaskBuilder(object):
             self.logger = logging.getLogger(__name__)
         elif _type=="debug":
             self.debug = 1
-            fileh = logging.FileHandler('TaskBuilder_debug.log', 'a')
-            formatter = logging.Formatter("%(asctime)s-%(funcName)s%(message)s")
-            fileh.setFormatter(formatter)
-            self.logger = logging.getLogger()  # root logger
-            for hdlr in self.logger.handlers[:]:  # remove all old handlers
-                self.logger.removeHandler(hdlr)
-            self.logger.addHandler(fileh)
-            self.logger.setLevel(logging.DEBUG)
+            if logger == None:
+                fileh = logging.FileHandler('TaskBuilder.debug', 'w')
+                formatter = logging.Formatter("%(asctime)s-%(filename)s-%(funcName)s%(message)s")
+                fileh.setFormatter(formatter)
+                self.logger = logging.getLogger()  # root logger
+                for hdlr in self.logger.handlers[:]:  # remove all old handlers
+                    self.logger.removeHandler(hdlr)
+                self.logger.addHandler(fileh)
+                self.logger.setLevel(logging.DEBUG)
+            else:
+                self.logger = logger;
         else:
             raise IOError("TaskBuilder needs to be set to 'debug' or 'run'")
     
@@ -91,10 +100,10 @@ class TaskBuilder(object):
         # call comes either from debug, i.e. here
         # or from running i.e. tdm_v2 folder
         temp = self.curr_loc.split('/')
-        if temp[-1] == "TaskBuilder":
+        if temp[-1] == "Tasks":
             add_value = '/tasks/'
         elif temp[-1] == "tdm_v2":
-            add_value = 'TaskBuilder/tasks/'
+            add_value = '/Tasks/tasks/'
         else:
             raise WrongCallbackLocationError("Unable to build Task, wrong \
                                              location for function callback")
@@ -114,8 +123,6 @@ class TaskBuilder(object):
                     self.Task[tmp_task.name] = tmp_task
                     self.logger.info("Added task :{}".format(tmp_task.name))
         self.logger.info("Finished creating tasks")
-
-
 
 # Error definitions specific to the object
 
