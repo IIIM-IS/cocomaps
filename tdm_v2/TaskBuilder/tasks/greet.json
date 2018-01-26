@@ -7,5 +7,4 @@
 	"fail_action" : "ResetCommunications",
 	"pass_action" : "GetObjective",
 	"max_time"    : 15000
-	
 }

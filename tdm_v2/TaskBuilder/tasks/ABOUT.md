@@ -2,8 +2,8 @@ The task files are json structured file that can be used to represent taks,
 questions or other objectives that the robot needs to evaluate and/or 
 perform. 
 The task fields are as follows:
-	name = Name of the task
-	description = "Long string explaining what the objective of the
+	_name = Name of the task
+	_description = "Long string explaining what the objective of the
 			task is and what its output should be"
 	
  	{keywords, value} = string keywords, float 0<x<=1 representing words 
@@ -15,7 +15,7 @@ The task fields are as follows:
 	pass_action	= define what to do if task is failed or is aborted
 
 # Info fields, fields in struct that are dynamic and are used more for 
-	max_time	= time allowed until task is aborted
+	_max_time	= time allowed until task is aborted
 
 
 

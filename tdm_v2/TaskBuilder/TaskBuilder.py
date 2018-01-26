@@ -44,16 +44,15 @@ class Task(object):
         self._elapsed = 0
 
     @staticmethod
-    def obj_decoder(obj):
+    def object_decoder(obj):
         """
         Object decoder for tasks
         """
-        try:
+        if "name" in obj:
             return Task(obj["name"], obj["description"], obj["keywords"],
                         obj["question_template"], obj["misc"], obj["fail_action"],
                         obj["pass_action"], obj["max_time"])
-        except:
-            raise JsonFileError(".json file not found")
+        return obj
 
 
 class TaskBuilder(object):
@@ -71,11 +70,14 @@ class TaskBuilder(object):
             self.logger = logging.getLogger(__name__)
         elif _type=="debug":
             self.debug = 1
-            logging.basicConfig(filename="TaskBuilder_debug.log",
-                               level=logging.DEBUG,
-                               format="%(asctime)s-%(funcName)s%(message)s",
-                               fileMode="w")
-            self.logger = logging.getLogger("TaskBuilder")
+            fileh = logging.FileHandler('TaskBuilder_debug.log', 'a')
+            formatter = logging.Formatter("%(asctime)s-%(funcName)s%(message)s")
+            fileh.setFormatter(formatter)
+            self.logger = logging.getLogger()  # root logger
+            for hdlr in self.logger.handlers[:]:  # remove all old handlers
+                self.logger.removeHandler(hdlr)
+            self.logger.addHandler(fileh)
+            self.logger.setLevel(logging.DEBUG)
         else:
             raise IOError("TaskBuilder needs to be set to 'debug' or 'run'")
     
@@ -104,16 +106,13 @@ class TaskBuilder(object):
         for task_file in os.listdir(self.task_file_location):
             file_type = os.path.splitext(task_file)[1]
             if file_type == ".json":
-                print file_type
                 long_file_name = self.task_file_location+task_file
-                print long_file_name
                 self.logger.debug("Loading file {}".format(long_file_name))
                 with open(long_file_name, 'rb') as fptr:
-                    text = fptr.read()
-                    print text
-                    tmp_task = json.loads(text, object_hook=Task.obj_decoder)
-                    self.Task[tmp_task["name"]] = tmp_task
-                    self.logger.info("Added task :{}".format(tmp_task["name"]))
+                    txt = fptr.read()
+                    tmp_task = json.loads(txt, object_hook=Task.object_decoder)
+                    self.Task[tmp_task.name] = tmp_task
+                    self.logger.info("Added task :{}".format(tmp_task.name))
         self.logger.info("Finished creating tasks")
 
 
@@ -128,13 +127,17 @@ class WrongCallbackLocationError(Exception):
 
 class JsonFileError(Exception):
     def __init__(self, value):
+
         self.value = value
+
     def __str__(self):
         return repr(self.value)
 
-
+# Debug main function, run if function is called directly
 if __name__=="__main__":
     obj = TaskBuilder( _type="debug")
-
     print "Finished running main for Taskbuilder.py"
-
+    print 2*'\n'
+    print 50*"*"
+    os.system("cat TaskBuilder_debug.log")
+    print 50*"*"
