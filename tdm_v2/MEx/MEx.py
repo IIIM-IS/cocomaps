@@ -11,6 +11,8 @@ About
 
 import logging
 from threading import Thread
+import json
+import numpy as np
 
 
 class MEx(Thread):
@@ -24,7 +26,7 @@ class MEx(Thread):
         self.logger = logging.getLogger(__name__)
         self.logger.debug("Starting up MEx")
 
-        self.DB = self.create_word_association_database()
+        self.create_word_association_database()
 
 
     def create_word_association_database(self):
@@ -34,19 +36,64 @@ class MEx(Thread):
         to other words and meanings
         """
         self.logger.info("Creating MEx database")
-        DB = None
+        
+        print __file__
+        curr_loc = __file__[:-7]
+        file_name = curr_loc+"/word_association_db.json"
+        with open(file_name, "rb") as fid:
+            DB = json.loads(fid.read())
 
-        return DB
+        self.logger.debug("Created database")
+        for key in DB.keys():
+            self.logger.debug("\t{}".format(key))
+            for value in DB[key]:
+                self.logger.debug("\t\t{} - {}".format(value, DB[key][value]))
 
-    def eval(self, words, keys):
+        self.DB = DB
+
+    def eval_backend(self, words, input_keys):
         """
-        Evaluate words, assume words are sentances, and try to use the 
-        MEx database to map those words to the keys(meanings)
+        Backend of word evaluation, computed after searching for possible
+        persons and or abort sequences in the sentance.
+        Processing method, assume words are sentances, and try to use the 
+        MEx database to map those words to the keys(meanings) and compute
+        probability of sentance
         """
         self.logger.debug("Processing words/keys:\n\t\t{}\n\t\t{}".format(words,
-                                                                       keys))
-        pass
+                                                                       input_keys))
 
+        p_out = np.zeros(len(input_keys))
+        # Compare each key to the word in the sentace, return the probability
+        # that the key is connected to the word
+        for idx, key in enumerate(input_keys):
+            self.logger.debug("Processing key: {}".format(key))
+            for word in words:
+                if word in self.DB[key].keys():
+                    self.logger.debug("\t\tAdding value with: '{}'".format(word))
+                    p_out[idx] += self.DB[key][word]
+
+        # Normalize the output
+        p_out = p_out/(len(words)*100)  #100 because items are stored in range
+                                        # 0-100
+
+        return p_out
+
+    def eval(self, words, input_keys):
+        """
+        First search for possible humans by using the person detector, then 
+        search for possible abort sentances, if abort sentances set misc output
+        to reason and follow up
+        """
+
+        # Check for abort
+        p = self.eval_backend(words, ["abort"])
+        if p > .5:
+            return None, None, True
+        else :
+            persons = None
+            return self.eval_backend(words, input_keys), persons, False
+            
+            
 # todo, create word association databank using json. E.g. phone, call, ring, 
 # are all connected; create chains of words that return increased values 
 # for "parent" concept. 

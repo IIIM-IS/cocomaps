@@ -5,7 +5,7 @@
 	"question_template" : [	"What would you like to do?", 
 				"How can I help you?" ],
 	"misc" : [],
-	"fail_action" : "Reset",
+	"fail_action" : "print 'Reset()'",
 	"pass_action" : "ReturnValue",
 	"max_time"    : 20
 }

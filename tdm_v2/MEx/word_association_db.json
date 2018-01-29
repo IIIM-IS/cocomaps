@@ -1,0 +1,44 @@
+{
+	"ScheduleMeeting": {
+		"schedule":80,
+		"meeting":90,
+		"meet":80,
+		"make":30,
+		"appointment":75
+	},
+	"GeneralQuestion":{
+		"question":60,
+		"ask":60,
+		"why":40,
+		"how":40,
+		"who":40,
+		"when":40
+	},
+	"MakeCall":{
+		"call":80,
+		"phone":60,
+		"schedule":30,
+		"ring":60
+	},
+
+	"accept":{
+		"yes":90,
+		"accept":90,
+		"sure":80,
+		"affarmative":50,
+		"fine":50,
+		"okay":50,
+		"true":50
+	},
+	"deny":{
+		"no":90,
+		"negative":80,
+		"not":70
+	},
+	"abort":{
+		"abort":90,
+		"stop":80,
+		"quit":60
+	}
+}
+

@@ -39,7 +39,11 @@ class Nuance(Thread):
         """
         self.logger.debug("Reading nuance buffer")
         #TODO Connect to Nuance
-        read_data = raw_input("\nNUNCA DEBUG MODE:\n\tENTER ANSWER: ")
+        read_data = raw_input("\nNUANCE: DEBUG MODE:\n\tENTER ANSWER: ")
         self.logger.debug("Nuance input: \n\t\t{}".format(read_data))
 
-        return read_data
+        
+        # TODO the Python-Nunace output must be a set, now a string, i.e.
+        # turn a string into a array of words to process. Array of one is
+        # okay
+        return read_data.split(" ")

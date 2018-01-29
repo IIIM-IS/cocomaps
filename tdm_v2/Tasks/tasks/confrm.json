@@ -5,7 +5,7 @@
 	"question_template" : [	"Do you accept", 
 				"Would you like to continue"],
 	"misc" : [],
-	"fail_action" : "Reset",
+	"fail_action" : "print 'Reset()'",
 	"pass_action" : "ReturnValue",
 	"max_time"    : 5
 }

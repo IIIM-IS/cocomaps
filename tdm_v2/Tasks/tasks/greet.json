@@ -6,7 +6,7 @@
 				"I am robot, I will conquer",
 				"Skynet online, how may I assist"],
 	"misc" : {"Tries":2},
-	"fail_action" : "Wait",
+	"fail_action" : "print 'No fail action'",
 	"pass_action" : "ReturnValue",
 	"max_time"    : 15
 }

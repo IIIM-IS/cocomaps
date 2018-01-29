@@ -75,8 +75,70 @@ class TDM(object):
                    np.random.randint(0, len(task.question_template))
                 ]
             )
-            # Wait for response
-            self.MEx.eval(self.Nuance.read(), task.keywords)
+            counter = 0
+            asked = True
+            while True:
+                # Wait for response
+                
+                if not asked:
+                    self.Nuance.write(
+                        task.question_template[
+                           np.random.randint(0, len(task.question_template))
+                        ]
+                    )
+                
+                prob, persons, ABORT = self.MEx.eval(self.Nuance.read(), task.keywords)
+                self.logger.debug("Output : {} | {} | {}".format(prob, persons, ABORT))
+
+                if ABORT:
+                    if not self.confirm("Abort action"):
+                            # NOTE : This might be the worst idea in the history of 
+                            # mankind with respect to security...
+                            eval(task.fail_action)
+                            self.logger.info("User aborted action")
+                            break
+
+                if np.amax(prob) > 0:
+                    # Most probable next objective is 
+                    print 
+                    cont_obj = task.keywords[prob.argmax(axis=0)]
+                    if self.confirm("Continue with action: {}".format(cont_obj)):
+                        self.logger.info("User accepted action to continue: \
+                                         {}".format(cont_obj))
+                        break
+                    # move onto the next question, and or task
+
+                counter += 1
+
+                if task.misc and "Tries" in task.misc.keys():
+                    if counter > task.misc["Tries"]:
+                        self.logger.info("Stopped asking, maxed number of \
+                                         tries")
+                        break
+                asked = False
+
+
+    def confirm(self, output_string):
+        """
+        Ask user to confirm the next output, input
+        """
+        self.Nuance.write(output_string)
+        prob, _, ABORT = self.MEx.eval(self.Nuance.read(), ["accept", "deny"])
+        if(prob[0] >= prob[1]) or ABORT:
+            return True
+        return False
+
+    
+    def deny(self, output_string):
+        """
+        Appothise of confirm, ask user if he wants to abort the action
+        """
+        self.Nuance.write(output_string)
+        prob, _, ABORT = self.MEx.eval(self.Nuance.read(), ["accept", "deny"])
+        if(prob[0] >= prob[1]) or ABORT:
+            return False
+        return True
+
 
 
     def start_at(self, json_name):
