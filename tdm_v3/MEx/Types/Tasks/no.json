@@ -1,0 +1,13 @@
+{
+	"_type":"Task",
+	"name":"no",
+	"description":"Reject value, used to search for yes/no",
+	"out_strings":[],
+	"fail_action":"",
+	"pass_action":"",
+	"keywords":[],
+	"dictionary":{"no":90, "deny":80, "reject":70, "stop":60},
+	"max_time":20,
+	"max_tries":0,
+	"action":["no"]
+}

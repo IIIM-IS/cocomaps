@@ -1,0 +1,13 @@
+{
+	"_type":"Task",
+	"name":"tell_joke",
+	"description":"Tell a very funny joke",
+	"out_strings":["Have you heard this one?"],
+	"fail_action":"RetryAction",
+	"pass_action":"get_objective",
+	"keywords":[],
+	"dictionary":{"funny":30,"joke":80,"humor":40,"laugh":60},
+	"max_time":60,
+	"max_tries":3,
+	"action":["talk","joke"]
+}

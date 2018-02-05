@@ -1,0 +1,16 @@
+{
+	"_type":"Task",
+	"name":"get_objective",
+	"description":"Ask user for input. Decide what task should be run if any",
+	"out_strings":["What would you like me to do?", 
+			"How can I hel you?",
+			"What task would you like me to perform?",
+			"What should robot do?"],
+	"fail_action":"RetryAction",
+	"pass_action":"RunNextTask",
+	"keywords":["start_generator", "ask_question", "tell_joke"],
+	"dictionary":{},
+	"max_time":60,
+	"max_tries":3,
+	"action":["talk", "get_input", "new_task"]
+}

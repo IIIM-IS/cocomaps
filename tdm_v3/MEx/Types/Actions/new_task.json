@@ -1,0 +1,6 @@
+{
+	"_type":"Action",
+	"name":"new_task",
+	"description":"Start a new task",
+	"function_call":"new_task"
+}

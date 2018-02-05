@@ -1,0 +1,13 @@
+{
+	"_type":"Task",
+	"name":"abort",
+	"description":"Abort the current objective",
+	"out_strings":["User aborted action"],
+	"fail_action":"get_objective",
+	"pass_action":"get_objective",
+	"keywords":[],
+	"dictionary":{"abort":90, "stop":80, "cancel":70},
+	"max_time":90,
+	"max_tries":3,
+	"action":["check_abort", "talk", "reset"]
+}

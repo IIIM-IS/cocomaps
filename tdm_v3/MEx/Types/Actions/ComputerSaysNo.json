@@ -1,0 +1,6 @@
+{
+	"_type":"Action",
+	"name":"ComputerSaysNo",
+	"description":"Function used during development, means that the current objective has not been coded",
+	"function_call":"ComputerSaysNo"
+}

@@ -1,0 +1,16 @@
+{
+	"_type":"Task",
+	"name":"ask_question",
+	"description":"Start the process of letting the user ask question",
+	"out_strings":["what would you like to know?",
+			"What should I tell you?",
+			"I know everything"],
+	"fail_action":"get_objective",
+	"pass_action":"get_objective",
+	"keywords":[],
+	"dictionary":{"question":60, "tell":30, "know":45, 
+			"help":50, "answer":50},
+	"max_time":30,
+	"max_tries":2,
+	"action":["talk", "ComputerSaysNo"]
+}

@@ -1,0 +1,6 @@
+{
+	"_type":"Action",
+	"name":"check_abort",
+	"description":"Check if there are signs of aborting current objective",
+	"function_call":"abort"
+}

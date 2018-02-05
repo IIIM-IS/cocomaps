@@ -1,0 +1,6 @@
+{
+	"_type":"Action",
+	"name":"joke",
+	"description":"Tell a very funny joke to the user",
+	"function_call":"RandomJoke"
+}

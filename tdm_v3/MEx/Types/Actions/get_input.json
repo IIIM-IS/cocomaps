@@ -1,0 +1,6 @@
+{
+	"_type":"Action",
+	"name":"get_input",
+	"description":"Ask user for input",
+	"function_call":"get_input"
+}
