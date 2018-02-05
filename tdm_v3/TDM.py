@@ -15,6 +15,7 @@ import os
 from timeit import default_timer as timer
 import time
 import numpy as np
+import json
 
 # Specifically regarding logging
 import tdm_logger 
@@ -41,17 +42,36 @@ class TDM(object):
         self.MEx = MEx.MEx()
         self.YTTM = YTTM.YTTM_talk()
         self.NUANCE = Nuance.Nuance()
-
-        # The action library takes in str value refering to which action to 
-        # perform. There is an open amount of calls (i.e. *args) so all other 
-        # information can be passed. 
-        # Pass additional values in as a packed dict
-
+        
+        with open("TDM_version.json", 'rb') as fid:
+            data = fid.read()
+            data = json.loads(data)
+        self.data = data    
+        self.version = data["Version"]
 
     def get_input_request(self):
         obj = self.MEx.Types["Tasks"]["get_objective"]
         print obj.description
 
+    def version_notes(self):
+        print 10*'*'
+        print "\t\tVersion notes"
+        print 10*'*'
+        print "Author \t:{}".format(self.data["author"])
+        print "Version no\t: {}".format(self.data["Version"])
+        print "Release date\t: {}".format(self.data["Release"])
+        print "Stable\t\t: {}".format(self.data["Stable"])
+        print "Active modules"
+        print "\tMEx\t: {}".format(self.data["MEx"])
+        print "\tYTTM\t: {}".format(self.data["YTTM"])
+        print "\tNuance\t: {}".format(self.data["Nuance"])
+        print "\tPsyclone\t: {}".format(self.data["Psyclone"])
+        print "Available objects"
+        print "\t {}".format(self.data["objects"])
+        print "Author release notes"
+        print "\t{}".format(self.data["Notes"])
+        print 10*'*'
+        print 10*'*'
 
     def initialize(self):
         """
@@ -60,13 +80,17 @@ class TDM(object):
             and greet it, then ask for a task to perform.
         """
         self.logger.debug("Starting initialization")
-        self.logger.info("Initialization of system starting")
+        self.logger.info("Initialization of system starting, {}".format(
+            self.version
+        ))
 
         greet_task = self.MEx.Types["Tasks"]["greet"]
         self.task_manager(greet_task)
 
         time.sleep(1)
-        self.NUANCE.write("Exiting mode")
+        self.logger.debug("Exiting correctly")
+        self.logger.info("Exiting correctly")
+        self.NUANCE.write("Exiting correctly")
 
     def task_manager(self, task):
         """
@@ -80,8 +104,8 @@ class TDM(object):
 
         break_reason = None
         for idx, action in enumerate(task.action):
-            # GoToGetObjective is a short circuit that breaks the current
-            # flow and starts a new task setup
+            # new_taskis a short circuit that breaks the current
+            # flow and starts a new task 
             if action != "new_task":
                 self.logger.info("Running task {}, action {}".format(
                                                                     task.name,
@@ -100,15 +124,18 @@ class TDM(object):
                                                     ans_case,
                                                     reason
                 ))
+                # Checking if the action returend false, and if it was
+                # because of returning rejected (i.e. getting thrown out
+                # by a question, want to continue == No)
                 if ans_case == False and reason == "rejected":
                     self.logger.debug("Rejected hypothesis ")
                     break
 
-
+            # Check if the current action name is 'new_task', and ensure that
+            # the reason for return is not rejected, then start new task
             elif action=="new_task" and reason != "rejected":
                 break_reason = "new_task"
                 break 
-
 
         if break_reason == "new_task":
             self.logger.debug("Starting new task from {} to {}".format(
@@ -121,8 +148,11 @@ class TDM(object):
                                                 "MEx":self.MEx})
             if ans_case :
                 self.logger.info("Starting new task : {}".format(task.name))
+                # task_manager function actually starts the new task
                 self.task_manager(task)
             else:
+                # A reset switch, something went wrong and therefore we want 
+                # to start anew with the question what can robot do
                 self.NUANCE.write("Something went wrong. Restarting process")
                 restart_task = self.MEx.Types["Tasks"]["get_objective"]
                 self.task_manager(restart_task)
@@ -134,14 +164,10 @@ class TDM(object):
         # can run it up again if so required.
 
         # Technically, when we reach this point we have a good exit from TDM
-
-
-
-
         
 # Main is used as a debugging function
 if __name__ == "__main__":
     obj = TDM()
 
-    obj.initialize()
+    obj.version_notes()
     

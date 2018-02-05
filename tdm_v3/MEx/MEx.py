@@ -81,8 +81,26 @@ class MEx(Thread):
                                 _type, temp_obj.name
                         ))
                         self.Types[_type][temp_obj.name] = temp_obj
+
+    def abort_search(self, W):
+        """
+        Check the input value for abort signals
+        """
+        p = 0
+        for word in W:
+            self.logger.debug("Word: {}".format(word))
+            if word in self.Types["Tasks"]["abort"].dictionary:
+                p += p + \
+                    float(self.Types["Tasks"]["abort"].dictionary[word])/100
+        if p > 0:
+            return True
+        return False
     
     def dict_search(self, _type, search_keys, W):
+        """
+        General use case of search for a value within string input W and 
+        referencing search_kyes
+        """
         self.logger.debug("Processing words: '{}' ; with _type:{} ; search_keys:{}".format(
                                                                 W, _type, search_keys))
         p = np.zeros(len(search_keys))
@@ -93,7 +111,8 @@ class MEx(Thread):
                    p[idx] += p[idx] + \
                         float(self.Types[_type][key].dictionary[word])/100
         self.logger.info("P values for words {}".format(p))
-        return p/len(W)
+        return p/len(W), self.abort_search(W)
+
 
 def get_object_decoder(_type):
     if _type == "Actions":
@@ -112,11 +131,14 @@ if __name__ == "__main__":
     obj = MEx()
     sentenses = ["Could you tell me a joke",
                 "Please start up generator three",
-                "Answer me this question"]
+                "Answer me this question",
+                "Whatever, abort action"]
     keywords =  ["start_generator", "ask_question", "tell_joke"]
     for sent in sentenses:
         obj.logger.debug(sent)
-        p=obj.dict_search("Tasks",keywords, sent.lower().split())
+        p, abort=obj.dict_search("Tasks",keywords, sent.lower().split())
+        if abort:
+            print obj.logger.debug("Aborted")
 
         print keywords[np.argmax(p)]
 

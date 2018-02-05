@@ -1,0 +1,12 @@
+{
+	"author":"David Orn Johannesson",
+	"Version":"3.0.1",
+	"Release":"05.02.18",
+	"Stable":false,
+	"Notes":"First release of the system. Needs serious debugging and lots of fixes",
+	"YTTM":false,
+	"MEx":true,
+	"objects":["Tasks", "Locations"],
+	"Nuance":false,
+	"Psyclone":false
+}

@@ -13,6 +13,7 @@ Objective
 """
 
 from timeit import default_timer as timer
+import time
 import numpy as np
 import logging
 
@@ -83,9 +84,15 @@ def new_task(_dict):
         for count in range(_dict["Task"].max_tries):
             # Assuming there is value in the NUANCE buffer, compute the
             # probability of each type
-            p = _dict["MEx"].dict_search("Tasks" ,
+            p, abort = _dict["MEx"].dict_search("Tasks" ,
                                     _dict["Task"].keywords,
                                     _dict["NUANCE"].word_buffer)
+
+            if abort:
+                _dict["confirm_string"] = "Would you like to abort"
+                check_abort = confirm(_dict)
+                if check_abort == True:
+                    return False, "rejected"
             if p.sum() == 0:
                 # Unable to detect value in range. Must ask user again 
                 # and wait for new input
@@ -137,9 +144,15 @@ def confirm(_dict):
     _dict["NUANCE"].read()
     logger.debug("Asking from confirmation")
 
-    p = _dict["MEx"].dict_search("Tasks", 
+    p, abort = _dict["MEx"].dict_search("Tasks", 
                              _dict["MEx"].Types["Tasks"]["confirm"].keywords,
                             _dict["NUANCE"].word_buffer)
+
+    if abort:
+        _dict["confirm_string"] = "Would you like to abort"
+        check_abort = confirm(_dict)
+        if check_abort == True:
+            return False, "rejected"
 
     if p.sum() != 0:
         if p[0] > p[1]:
@@ -161,8 +174,15 @@ def move(_dict):
     # to figure out if there are relevant values within the buffer that 
     # indicate which point to move the other robot to
     logger.debug("Started move:")
-    p = _dict["MEx"].dict_search("Locations",  _dict["Task"].keywords,
+    p, abort = _dict["MEx"].dict_search("Locations",  _dict["Task"].keywords,
                                             _dict["NUANCE"].word_buffer)
+
+    if abort:
+        _dict["confirm_string"] = "Would you like to abort"
+        check_abort = confirm(_dict)
+        if check_abort == True:
+            return False, "rejected"
+
     point = None
     check_again = False
     if p.sum() != 0:
@@ -184,8 +204,14 @@ def move(_dict):
             # Read the user input
             new_input = _dict["NUANCE"].read()
             #Compare probability
-            p = _dict["MEx"].dict_search("Locations",  _dict["Task"].keywords,
+            p, abort = _dict["MEx"].dict_search("Locations",  _dict["Task"].keywords,
                                             _dict["NUANCE"].word_buffer)
+
+            if abort:
+                _dict["confirm_string"] = "Would you like to abort"
+                check_abort = confirm(_dict)
+                if check_abort == True:
+                    return False, "rejected"
             if p.sum() != 0:
                 point = _dict["MEx"].Types["Locations"][_dict["Task"].keywords[np.argmax(p)]]
                 confirm_question_string = "Did you select point {}".format(point.name)
@@ -214,6 +240,12 @@ def move(_dict):
 
     return True, []
 
+def navigate_screen(_dict):
+    """
+    Navigate custom screen, specifically for demo 1
+    """
+    return True, []
+
 
 # * * * * * * Functions that are more for show 
 def joke(_dict):
@@ -234,7 +266,13 @@ def ComputerSaysNo(_dict):
     Development function to close possible dead ends. It means that the 
     system functionally hasn't been setup in that manner. 
     """
-    pass
+    _dict["NUANCE"].write("Sorry")
+    time.sleep(1)
+    _dict["NUANCE"].write("Computer says no")
+    time.sleep(2)
+    _dict["NUANCE"].write("COUGH")
+
+    return True, []
 # * * * * * * * * PASS ACTIONS DEFINITION
 def Continue(_dict):
     """
@@ -250,12 +288,6 @@ def RunNextTask(_dict):
 
 # * * * * * * * * FAIL ACTIONS DEFINITION
 
-def RetryAction():
-    """
-    Try to run the objective again. The maximum times an objective is 
-    tried is defined in task.max_tries. 
-    """
-    pass
 
 
 # * * * * * * * * * CALLER FUNCTION, USED IN TDM
@@ -276,13 +308,14 @@ def Action_Call(str_val, _dict):
                     "get_input":get_input,
                     "new_task":new_task,
                     "move":move,
+                    "navigate_screen":navigate_screen,
                     "check_abort":check_abort,
                     "confirm":confirm,
                     "joke":joke,
                     "ComputerSaysNo":ComputerSaysNo,
                     "Continue":ComputerSaysNo,
-                    "RunNextTask":RunNextTask,
-                    "RetryAction":RetryAction}
+                    "RunNextTask":RunNextTask
+                   }
     # send the information forward to the called function.
     return action__dict[str_val](_dict)
 
