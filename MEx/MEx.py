@@ -1,140 +1,113 @@
-#!/usr/bin/env python2.7
-#/home/david/IIIM/Projects/cocomaps/MEx/MEx.py
-"""
-    Thurdsay, 2. November 2017
-    Author :    David Orn
-                david@iiim.is
-    Copyright : Icelandic Institute for Intelligent Machines (http://www.iiim.is)
-
-"""
-# Import libraries, in final version ensure that these dependencies are met
-import time, logging, os
+#! /usr/bin/env python
+#################################################################################
+#     File Name           :     MEx.py
+#     Created By          :     david
+#     Email               :     david@iiim.is
+#     Creation Date       :     [2017-11-14 17:58]
+#     Last Modified       :     [2018-02-12 11:02]
+#     Description         :     (M)eaning (Ex)tractor for the cocomaps project
+#                               between IIIM and CMLabs. 
+#                               Creates a dictionary using keyword search.
+#     Version             :     3.1
+#################################################################################
+import json
+import os
+import logging
+import sys
 import numpy as np
 
-# Debug library imported
-debugging = False
-if debugging:
-    from debug.mexTester import inStrings
-    from debug.mexTester import query
-    import database.buildDatabase as buildDatabase
-    import random
-    from database.nameDatabase import load_database
-
-# inputStrings are a set of input strings simulating the texthandle
-# query is a set of query tests that can be sent with the texthandle
-else : 
-    #Load a new instance of the database
-    dbFolder = __file__[:-7]+"databases/"
-    os.sys.path.insert(0,dbFolder)
-    import database.buildDatabase as buildDatabase
-    from database.nameDatabase import load_database
-
-# Build word database from file
-global DB
-DB = buildDatabase.makeDataBase()
-
-# Logging parameters
-logging.basicConfig(format='[%(name)s]>[%(asctime)s]|: %(message)s', 
-                    level=logging.DEBUG, 
-                    filename='MEx.log')
-logger = logging.getLogger(__name__)
 
 
-
-class MEx():
+class MEx(object):
+    """
+    Top object storer. Creates and stores all types, reads in the dictionary 
+    and computes word connections. 
+    """
     def __init__(self):
-        logger.info("Starting up MEx")
-        self.text = ""
-        self.template = ""
-        self.name_db = load_database()
-        self.daemon = True
+        """
+        Load dictionary from file, handle location issues.
+        """
+        # Start up a logger for monitoring and debugging reasons
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Creating MEx dictionary object")
 
-    def computeWords(self, text):
-        logger.info("Checking sentance: {}".format(text))
-        words = self.ensuretext(text)
-        evalued = self.checkDictionary(words)
+        # Get the local path absolute extension
+        self.curr = str(os.path.abspath(__file__))
+        # There is an issue, somethimes an additional value (c) is added
+        # to string. New method introduced to mitigate error
+        loc = [pos for pos, char in enumerate(self.curr) if char=='/']
+        self.curr = self.curr[:loc[-1]+1]
+        # Create a dictionary file location variable
+        dict_file = self.curr + "dictionary.json"
 
-        returnItem = [None]*DB.associatesCount
-        for i in range(DB.associatesCount):
-            returnItem[i] = DB.associates[i], evalued[i]
-            
-        return sorted(returnItem, key=lambda x: x[1], reverse=True)    
+        # Create a holding place for the dictionary
+        self._dict = {}
+        # Load the dictionary
+        self.make_dict(dict_file)
 
-
-    def ensuretext(self, handle):
-        # Given a specific handle return a processed string
-        # or an empty value 
-        logger.debug("Running MEx.ensuretext with : " + handle)
-        if not isinstance(handle, basestring):
-            logger.info("Instance is not string")
-            logger.info(type(handle))
-            return None
-        else :
-            # Split the string for further computation
-            handle = handle.lower()
-            handle = handle.split(" ")  
-                                        
-        return handle
-  
-    def search_name(self, handle):
-        return self.name_db.search(handle)
+        self.logger.info("MEx has been built")
 
 
+    def make_dict(self, dict_file):
+        """
+        Load a dictionary from a specific file, 
+        input:
+            dict_file : absolute string path to dictionary .json file
+        output:
+            appends a dictionary structure to the MEx class
+        """
+        self.logger.debug("Dict file: {}".format(dict_file))
+        with open(dict_file, 'rb') as fid:
 
-    def checkDictionary(self, words):
-        # Takes in a new sentance and returns
-        # the weighted probability of all possible
-        # templates
-        output = np.zeros(DB.associatesCount)
-        for word in words: 
-            associations, values = DB.get(word)
-            if not values is None:
-                padding_with_zeros = self.queryDB(associations, values)
-                output += padding_with_zeros 
-                # Used to have a short circuit, but to match multiple
-                # we want to process entire sentance
-        return output
+            raw_text = fid.read()
+            raw_json = json.loads(raw_text)
 
-    def queryDB(self, associations, values):
-        temp = np.zeros(DB.associatesCount)
-        counter = 0
-        for value in values:
-            place = DB.associates.index(associations[counter])
-            temp[place] = value
-            counter += 1
-        return temp
-            
+        # Create dictionary structure
+        for key in raw_json.keys():
+            self.logger.debug("Adding key: {}".format(key))
+            self.logger.debug("With values : {}".format(raw_json[key]))
+            self._dict[key] = raw_json[key]
 
-def returnHighest(output):
-    highest = np.amax(output)
-    indx = np.where(output==highest)
-    indx = indx[0][0]   # where returns tuple and this method short circuits
-                        # if there are two values equal
-    return DB.associates[indx], highest
 
-# Deprecated
-#def checkComparison(vector):
-#    if np.amax(vector) >= 1:
-#        return True
-#    return False
+    def dict_search(self, _dict):
+        """
+        Only action types can search the dictionary. The actions have a 
+        field named keywords that dictate which key within the dictionary
+        is used to search for values
 
+        inputs:
+            _dict = Python dictionary with key attributes
+                CurrentAction = action object currently searching for value
+                * DEBUG
+                Words = "Array of words split from sentense that user inputs"
+        """
+        #TODO : Add word buffer evaluation to the methodology. 
+        action = _dict["CurrentAction"] 
+        word_buffer = _dict["Words"]
+        p = np.zeros(len(action.keywords))
         
-if __name__ == "__main__":
-    # Prints out the entire database
-    MExObject = MEx()
-    teststr = ["Dear robot I would like to shedule a meeting with Shawnta Koles", "Robot call phil",
-               "please ask lacy about tobi pharris"]
-    for test in teststr:
-        obj = MExObject.computeWords(test)
-        print test
-        name, poss_name = MExObject.search_name(test)
-        print obj
-        for thing in name:
-            print "Certain : {} {}".format(thing.first_name, thing.last_name)
-        for thing in poss_name:
-            print "Possible : {} {}".format(thing.first_name, thing.last_name)
-        print  20*'-'
-        print '\n'
+        for idx,key in enumerate(action.keywords):
+            for word in _dict["search_words"]:
+                if key in self._dict.keys():
+                    if word in self._dict[key].keys():
+                        p[idx] += self._dict[key][word]
+
+    def print_available(self):
+        """
+        Print available types within currently loaded structure
+        """
+        
+        print "Available objects in current structure \n"
+        for _type in self._dict.keys():
+            print "Type: {}".format(_type)
+            for object in self._dict[_type].keys():
+                print "\t\t{}".format(object)
 
 
+
+if __name__=="__main__":
+    sys.path.append("..")
+    import tdm_logger
+    tdm_logger.setup_logging()
+    obj = MEx()
 

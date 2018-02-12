@@ -1,6 +1,0 @@
-{
-	"_type":"Action",
-	"name":"talk",
-	"description":"Send text to output buffer",
-	"function_call":"write"
-}

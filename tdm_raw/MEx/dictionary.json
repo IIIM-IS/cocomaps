@@ -1,6 +1,0 @@
-{
-	"hello":{"hello":80, "hi":30},
-	"move":{"start":50, "generator":90, "enable":50},
-	"point1":{"one":50, "first":50, "desk":50},
-	"point2":{"two":50, "second":50, "poster":50}
-}
