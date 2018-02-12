@@ -1,8 +1,0 @@
-{
-	"_type":"Action",
-	"name":"new_task",
-	"description":"Start a new task",
-	"run":"new_task",
-	"question":true,
-	"keywords":["tell_joke", "start_generator", "answer_question"]
-}

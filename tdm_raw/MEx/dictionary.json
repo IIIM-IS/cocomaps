@@ -1,0 +1,6 @@
+{
+	"hello":{"hello":80, "hi":70, "day":30},
+	"move":{"move":80, "go":60},
+	"point1":{"first":70, "desk":80},
+	"point2":{"second":70, "poster"}
+}
