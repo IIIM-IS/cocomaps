@@ -20,7 +20,7 @@ def PsyCrank(apilink):
     name = api.getModuleName()
 
     # Initialize the TDM by calling an instance of object TDM
-    _TDM = TDM.TDM()
+    _TDM = TDM.TDM(api=api)
 
     # TODO: Add functionality and connectors to the psycrank
 
@@ -28,8 +28,17 @@ def PsyCrank(apilink):
         msg = None
         msg = api.wautForNewMessage(20)
 
+        # Process is as follows, once we meet a criteria of starting 
+        # encounter (e.g. person found, person dist < 3m, facing person)
+        # start by greating. 
+        # Then move onto getting a task
+
         if _TDM.check_for_person():
-            _TDM.start_at("greet")
+            if _TDM.start_name("greet"):
+                _TDM.start_name("get_objective")
+            
+            # If person gets lost
+            _TDM.reset_TDM()
 
 
 

@@ -11,7 +11,7 @@ About
     action structure is most relevant
 """
 __author__ = "David"
-from CMSDK_lib import cmsdk2.py
+from CMSDK_lib import cmsdk2
 import TDM
 
 def PsyCrank(apilink):
@@ -19,7 +19,7 @@ def PsyCrank(apilink):
     name = api.getModuleName()
 
     # Initialize TDM to be used for the system
-    _TDM = TDM.TDM()
+    _TDM = TDM.TDM(api)
 
     while api.shouldContinue():
         msg = api.waitForNewMessage(50)

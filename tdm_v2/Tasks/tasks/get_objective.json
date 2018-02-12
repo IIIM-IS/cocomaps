@@ -3,9 +3,10 @@
 	"description" : "Ask user for what task they would like to input",
 	"keywords" : ["ScheduleMeeting", "MakeCall", "GeneralQuestion"],
 	"question_template" : [	"What would you like to do?", 
-				"How can I help you?" ],
+				"How can I help you?", 
+				"Have you got a task for me?"],
 	"misc" : [],
 	"fail_action" : "print 'Reset()'",
-	"pass_action" : "ReturnValue",
-	"max_time"    : 20
+	"pass_action" : "Next_task",
+	"max_time"    : 60
 }

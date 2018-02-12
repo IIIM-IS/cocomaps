@@ -124,8 +124,12 @@ class TaskBuilder(object):
                     self.logger.info("Added task :{}".format(tmp_task.name))
         self.logger.info("Finished creating tasks")
 
-
-
+def Meetin_scheduler(object):
+    """
+    Assuming that for the CoCoMaps project we are going to schedule a meeting,
+    althugh this function can be changed to further what ever setting required
+    """
+    
 
 # Error definitions specific to the object
 class WrongCallbackLocationError(Exception):
@@ -145,6 +149,7 @@ class JsonFileError(Exception):
 # Debug main function, run if function is called directly
 if __name__=="__main__":
     obj = TaskBuilder( _type="debug")
+    print obj.Task["ScheduleMeeting"].misc
     print "Finished running main for Taskbuilder.py"
     print 2*'\n'
     print 50*"*"

@@ -1,0 +1,10 @@
+{
+	"name" : "ScheduleMeeting",
+	"description" : "Schedule a meeting between several persons, search db to ensure that there is an open spot",
+	"keywords" : ["Who", "Where", "When"],
+	"question_template" : ["Would you like to schedule a meeting?"],
+	"misc" : {"Function_call":true},
+	"fail_action" : "print 'Reset()'",
+	"pass_action" : "ReturnValue",
+	"max_time"    : 90
+}

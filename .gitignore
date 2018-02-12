@@ -1,15 +1,29 @@
+# File structure
 PsyClone/
 Documentation/
 older/
 tasks_backup/
 turtlebots/
 XMLFiles/
+Stored/*
+
+
+# Unwanted endings
 *.pyc
 *.log
 *.zip
 *.7z
+*.gz
 *.db
-Stored/*
 *.swp
-.*log
+
+# Libraries, general and specific
+*.so
+tdm_v2/Psyclone
+tdm_v2/cmsdk2.py
+
+# Regarding Latex (specifically the short reviews)
+TDM_overview/*
+*.tex
+*.aux
 

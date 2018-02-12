@@ -1,0 +1,27 @@
+{
+	"ID0":{
+		"name":"David Orn Johannesson",
+		"e-mail":"david@iiim.is"
+	},
+	"ID1":{
+		"name":"Thor List",
+		"e-mail":"list@cmlabs.com"
+	},
+	"ID2":{
+		"name":"Pierre Zanchetta",
+		"e-mail":"pierre@iiim.is"
+	},
+	"ID3":{
+		"name":"Kris Thorsisson",
+		"e-mail":"thorisson@iiim.is"
+	},
+	"ID4":{
+		"name":"Jacky Mallet",
+		"e-mail":"jacky@iiim.is"
+	},
+	"ID5":{
+		"name":"Ragga Sigurdardottir",
+		"e-mail":"ragga@iiim.is"
+	}		
+}
+

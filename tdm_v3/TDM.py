@@ -32,16 +32,15 @@ class TDM(object):
     A class object, called from the cranc function and used to
     control the steams, dialogue and action
     """
-    def __init__(self):
+    def __init__(self, api=None):
         # TDM starts up logging preferences
         tdm_logger.setup_logging()
         self.logger = logging.getLogger(__name__)
         self.logger.info("Started TDM")
-
-
-        self.MEx = MEx.MEx()
-        self.YTTM = YTTM.YTTM_talk()
-        self.NUANCE = Nuance.Nuance()
+        self.api = api
+        self.MEx = MEx.MEx(api)
+        self.YTTM = YTTM.YTTM_talk(api)
+        self.NUANCE = Nuance.Nuance(api)
         
         with open("TDM_version.json", 'rb') as fid:
             data = fid.read()
@@ -65,7 +64,7 @@ class TDM(object):
         print "\tMEx\t: {}".format(self.data["MEx"])
         print "\tYTTM\t: {}".format(self.data["YTTM"])
         print "\tNuance\t: {}".format(self.data["Nuance"])
-        print "\tPsyclone\t: {}".format(self.data["Psyclone"])
+        print "\tPsyclone: {}".format(self.data["Psyclone"])
         print "Available objects"
         print "\t {}".format(self.data["objects"])
         print "Author release notes"
