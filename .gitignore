@@ -6,8 +6,9 @@ tasks_backup/
 turtlebots/
 XMLFiles/
 Stored/*
-TDM_
 
+# Symbolic link
+sync_TDM
 
 # Unwanted endings
 *.pyc
