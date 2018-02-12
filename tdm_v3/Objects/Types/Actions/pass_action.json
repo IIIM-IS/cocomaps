@@ -1,0 +1,7 @@
+{
+	"_type":"Action",
+	"name":"pass_action",
+	"description":"Resolve pass action of Task",
+	"run":"resolve_pass",
+	"keywords":null
+}

@@ -1,172 +1,173 @@
 #!/usr/bin/python2.7
 """
-02.01.18
+08.02.18
 Author
-    david@iiim.is
-
-About 
-    Task Dialog(ue) Manager (TDM) for CoCoMaps project, a collaborative project
-    with CMLabs and IIIM. The manager controls high level (course granular 
-    timing) decision as well as giving instructions to the robot. 
+    David Orn Johannesson | david@iiim.is
+Objective
+    Control sequence for dialogue of the CoCoMaps project.
 """
-__author__="david"
-# General input values
+
+
 import os
 from timeit import default_timer as timer
-import time
-import numpy as np
 import json
+import re
 
-# Specifically regarding logging
-import tdm_logger 
+# Logging imports
 import logging
-# Objective specific imports
+import tdm_logger
+
+# Projects specific imports
 from MEx import MEx
-from Nuance import Nuance
-from YTTM import YTTM
-from MEx.Types.Actions.action_lib import Action_Call
+from Objects import Objects
+from Algortihms import TDM_queues
 
 
 class TDM(object):
     """
-    A class object, called from the cranc function and used to
-    control the steams, dialogue and action
+    Control sequence for the main objective. 
     """
-    def __init__(self, api=None):
-        # TDM starts up logging preferences
+    def __init__(self):
         tdm_logger.setup_logging()
         self.logger = logging.getLogger(__name__)
-        self.logger.info("Started TDM")
-        self.api = api
-        self.MEx = MEx.MEx(api)
-        self.YTTM = YTTM.YTTM_talk(api)
-        self.NUANCE = Nuance.Nuance(api)
-        
-        with open("TDM_version.json", 'rb') as fid:
+        self.logger.info("Starting TDM")
+
+        # Initializing objects, need to create new tasks.
+        self.obj =  Objects.Objects()
+
+        # Initialize objects
+        self.task_queue = TDM_queues.Task_queue(self.obj)
+
+        # Initialize variables
+        self.new_msg = False
+        self.greeted = False
+        self.start_time = 0
+
+        # Add other information 
+        self.create_version()
+
+
+    def run(self):
+        """
+        General run method. Called from top level each time it is my turn
+        i.e. YTTM gives turn to robot
+        """
+        debug_count =  0
+        while True and debug_count < 10:
+            if not self.greeted:
+                # Put new task onto stack
+                self.task_queue.insert_task({"Type":"Tasks","Name":"greet"})
+                self.greeted = True
+                self.start_time = timer()
+
+            _dict = self.task_queue.run()
+
+            if _dict["Return"] == "Question":
+                pass
+            elif _dict["Return"] == "NewTask":
+                pass
+            elif _dict["Return"] == "Debug":
+                print "Returned debug value"
+            elif _dict["Return"] == "Task_queue:Empty":
+                print "Task queue emptied"
+            elif _dict["Return"] == "Action_stack:Empty":
+                print "Task queue emptied"
+
+
+
+
+            if self.task_queue.isEmpty():
+                self.task_queue.insert_task({"Type":"Tasks", "Name":"get_objective"})
+
+            debug_count += 1
+            print debug_count
+
+
+
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
+# * * * * * * * * *     SOME DECENT HELP FUNCTIONS      * * * * * * * * * * * *  
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
+
+    def q_str(self, task):
+        """
+        Return random string from task.out_strings for output
+        """
+        if task.out_strings:
+            return task.out_strings[
+                np.random.randint(0,len(task.out_strings)+1)
+            ]
+        return []
+
+
+    def elapsed(self):
+        """
+        Helper function for getting time elapsed since self.start_time
+        was called last
+        """
+        if self.start_time != 0:
+            return timer()-self.start_time()
+        return 0
+            
+
+
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+# * * * * * * * * OTHER FUNCTIONS USED FOR INFORMATION  * * * * * * 
+# * * * * * * * *         SHARING PURPOSES.             * * * * * * 
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+    def print_available(self):
+        """
+        Print all available types and objects within structure
+        """
+        self.task_queue.print_available()
+
+    def create_version(self):
+        """
+        Get information about the current iteration version, 
+        what is active and what needs more work
+        """
+        current_folder = os.getcwd().split('/')[-1]
+        tdm_version_file = "TDM_version.json"
+        if current_folder != "TDM":
+            tdm_version_file = "TDM/"+tdm_version_file
+            
+        with open(tdm_version_file, 'rb') as fid:
             data = fid.read()
             data = json.loads(data)
         self.data = data    
         self.version = data["Version"]
 
-    def get_input_request(self):
-        obj = self.MEx.Types["Tasks"]["get_objective"]
-        print obj.description
-
     def version_notes(self):
-        print 10*'*'
+        """
+        Print out the version notes for TDM
+        """
+        print 70*'*'
         print "\t\tVersion notes"
-        print 10*'*'
-        print "Author \t:{}".format(self.data["author"])
+        print 70*'*'
+        print "Author \t\t: {}".format(self.data["author"])
         print "Version no\t: {}".format(self.data["Version"])
         print "Release date\t: {}".format(self.data["Release"])
         print "Stable\t\t: {}".format(self.data["Stable"])
         print "Active modules"
         print "\tMEx\t: {}".format(self.data["MEx"])
-        print "\tYTTM\t: {}".format(self.data["YTTM"])
-        print "\tNuance\t: {}".format(self.data["Nuance"])
-        print "\tPsyclone: {}".format(self.data["Psyclone"])
         print "Available objects"
-        print "\t {}".format(self.data["objects"])
+        for obj in self.data["objects"]:
+            print "\t {}".format(obj)
         print "Author release notes"
         print "\t{}".format(self.data["Notes"])
-        print 10*'*'
-        print 10*'*'
+        print 70*'*'
+        print 70*'*'
 
-    def initialize(self):
-        """
-        The initialization process does the foGllowing 
-            Once a person has been ackn. drive to the person
-            and greet it, then ask for a task to perform.
-        """
-        self.logger.debug("Starting initialization")
-        self.logger.info("Initialization of system starting, {}".format(
-            self.version
-        ))
 
-        greet_task = self.MEx.Types["Tasks"]["greet"]
-        self.task_manager(greet_task)
-
-        time.sleep(1)
-        self.logger.debug("Exiting correctly")
-        self.logger.info("Exiting correctly")
-        self.NUANCE.write("Exiting correctly")
-
-    def task_manager(self, task):
-        """
-        Task Manager: Key function in class. A set of logical rules to 
-        follow when executing a task. The json file decides how the 
-        task is run and the action field in the json file is how the
-        task is run (i.e. using keywords to run the sys)
-        """
-        self.logger.debug("Running task manager on {}".format(task.name))
-        n = len(task.action)
-
-        break_reason = None
-        for idx, action in enumerate(task.action):
-            # new_taskis a short circuit that breaks the current
-            # flow and starts a new task 
-            if action != "new_task":
-                self.logger.info("Running task {}, action {}".format(
-                                                                    task.name,
-                                                                    action))
-
-                self.logger.debug("Running action {}".format(action))
-                ans_case, reason = Action_Call(action, 
-                                                        {"Task":task,
-                                                         "NUANCE":self.NUANCE,
-                                                         "MEx":self.MEx,
-                                                         "YTTM":self.YTTM})
-                # _dict is a return dict so, we can build a set of contingencies 
-                # either in Actions or here to encounter what to do. 
-                self.logger.debug("Action call : {}, {}, {}".format(
-                                                    action,
-                                                    ans_case,
-                                                    reason
-                ))
-                # Checking if the action returend false, and if it was
-                # because of returning rejected (i.e. getting thrown out
-                # by a question, want to continue == No)
-                if ans_case == False and reason == "rejected":
-                    self.logger.debug("Rejected hypothesis ")
-                    break
-
-            # Check if the current action name is 'new_task', and ensure that
-            # the reason for return is not rejected, then start new task
-            elif action=="new_task" and reason != "rejected":
-                break_reason = "new_task"
-                break 
-
-        if break_reason == "new_task":
-            self.logger.debug("Starting new task from {} to {}".format(
-                                                            task.name,
-                                                            task.pass_action
-                                                            ))
-            ans_case, task = Action_Call("new_task", {"Task":task, 
-                                                "YTTM":self.YTTM,
-                                                "NUANCE":self.NUANCE,
-                                                "MEx":self.MEx})
-            if ans_case :
-                self.logger.info("Starting new task : {}".format(task.name))
-                # task_manager function actually starts the new task
-                self.task_manager(task)
-            else:
-                # A reset switch, something went wrong and therefore we want 
-                # to start anew with the question what can robot do
-                self.NUANCE.write("Something went wrong. Restarting process")
-                restart_task = self.MEx.Types["Tasks"]["get_objective"]
-                self.task_manager(restart_task)
-
-        
-        # Finished process, wait for a short time. Then ask user for a new 
-        # input. 
-        # I see no reason for the TDM not to just stop. Then psyclone 
-        # can run it up again if so required.
-
-        # Technically, when we reach this point we have a good exit from TDM
-        
-# Main is used as a debugging function
 if __name__ == "__main__":
     obj = TDM()
-
     obj.version_notes()
-    
+    obj.print_available()
+    print 10*'*/ '
+    print "Starting run..."
+    print 10*'*/ '
+    obj.run()

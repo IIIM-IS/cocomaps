@@ -1,0 +1,5 @@
+{
+	"name":"Function_test",
+	"description":"Testing to see if I can write a response function into json structure",
+	"func":"print_func_name"
+}

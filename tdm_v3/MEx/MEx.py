@@ -1,149 +1,113 @@
-#!/usr/bin/python2.7
-"""
-01.02.18
-Author
-    david@iiim.is
+#! /usr/bin/env python
+#################################################################################
+#     File Name           :     MEx.py
+#     Created By          :     david
+#     Email               :     david@iiim.is
+#     Creation Date       :     [2017-11-14 17:58]
+#     Last Modified       :     [2018-02-12 11:02]
+#     Description         :     (M)eaning (Ex)tractor for the cocomaps project
+#                               between IIIM and CMLabs. 
+#                               Creates a dictionary using keyword search.
+#     Version             :     3.1
+#################################################################################
+import json
+import os
+import logging
+import sys
+import numpy as np
 
-About
-    The meaning extractor takes in a sentance or a set of words and tries to 
-    map them to specific output responses. 
-"""
-__author__ = "david"
-import json, os, logging, sys, numpy as np
-from threading import Thread
 
-from Types import Actions_def
-from Types import Locations_def
-from Types import Tasks_def
 
-class MEx(Thread):
+class MEx(object):
     """
-    (M)eaning (Ex)tractor is built from current location by reading all possible
-    types in folder Types, one directory up from current location
+    Top object storer. Creates and stores all types, reads in the dictionary 
+    and computes word connections. 
     """
-    def __init__(self, api=None):
-        Thread.__init__(self)
-
-        # Start a logging object
+    def __init__(self):
+        """
+        Load dictionary from file, handle location issues.
+        """
+        # Start up a logger for monitoring and debugging reasons
         self.logger = logging.getLogger(__name__)
-        self.logger.info("MEx starting up")
-        self.logger.debug("MEx started up")
+        self.logger.info("Creating MEx dictionary object")
+
+        # Get the local path absolute extension
+        self.curr = str(os.path.abspath(__file__))
+        # There is an issue, somethimes an additional value (c) is added
+        # to string. New method introduced to mitigate error
+        loc = [pos for pos, char in enumerate(self.curr) if char=='/']
+        self.curr = self.curr[:loc[-1]+1]
+        # Create a dictionary file location variable
+        dict_file = self.curr + "dictionary.json"
+
+        # Create a holding place for the dictionary
+        self._dict = {}
+        # Load the dictionary
+        self.make_dict(dict_file)
+
+        self.logger.info("MEx has been built")
+
+
+    def make_dict(self, dict_file):
+        """
+        Load a dictionary from a specific file, 
+        input:
+            dict_file : absolute string path to dictionary .json file
+        output:
+            appends a dictionary structure to the MEx class
+        """
+        self.logger.debug("Dict file: {}".format(dict_file))
+        with open(dict_file, 'rb') as fid:
+
+            raw_text = fid.read()
+            raw_json = json.loads(raw_text)
+
+        # Create dictionary structure
+        for key in raw_json.keys():
+            self.logger.debug("Adding key: {}".format(key))
+            self.logger.debug("With values : {}".format(raw_json[key]))
+            self._dict[key] = raw_json[key]
+
+
+    def dict_search(self, _dict):
+        """
+        Only action types can search the dictionary. The actions have a 
+        field named keywords that dictate which key within the dictionary
+        is used to search for values
+
+        inputs:
+            _dict = Python dictionary with key attributes
+                CurrentAction = action object currently searching for value
+                * DEBUG
+                Words = "Array of words split from sentense that user inputs"
+        """
+        #TODO : Add word buffer evaluation to the methodology. 
+        action = _dict["CurrentAction"] 
+        word_buffer = _dict["Words"]
+        p = np.zeros(len(action.keywords))
         
-        temp = os.getcwd()
-        char_loc = temp.find("tdm_v3")+6
-        print char_loc
-        self.MasterLocation = temp[:char_loc] + '/MEx/'
-        print self.MasterLocation
+        for idx,key in enumerate(action.keywords):
+            for word in _dict["search_words"]:
+                if key in self._dict.keys():
+                    if word in self._dict[key].keys():
+                        p[idx] += self._dict[key][word]
+
+    def print_available(self):
+        """
+        Print available types within currently loaded structure
+        """
         
-        # Read in Types used in project
-        self.Types = {}
-        with open(self.MasterLocation+"MEx.init", 'rb') as fid:
-            for line in fid:
-                clean_line = line.rstrip()
-                self.Types[clean_line] = {}
-        
-        # Having aquired which objects will be used in the system we can
-        # load all possible objects and create a dictionary
-        self.create_objects()
-
-        # If there is an available API input then input specific api
-        if api:
-            self.api = api
+        print "Available objects in current structure \n"
+        for _type in self._dict.keys():
+            print "Type: {}".format(_type)
+            for object in self._dict[_type].keys():
+                print "\t\t{}".format(object)
 
 
-        self.logger.info("MEx initialized without errors")
-        self.logger.debug("MEx initialized without errors")
 
-    def create_objects(self):
-        """
-        Create a dictionary based on the file structure. Read each json file 
-        and connect each type to a word
-        """
-        for _type in self.Types:
-            location = self.MasterLocation+"Types/"+_type
-            sys.path.append(location)
-            curr_decoder = get_object_decoder(_type)
-            self.logger.debug("Adding _type {}".format(_type))
-            for json_file in os.listdir(location):
-                if os.path.splitext(json_file)[1]==".json":
-                    temp_obj = None
-                    self.logger.debug("Decoding file: {}".format(json_file))
-                    with open(location+"/"+json_file, 'rb') as fid:
-                        text = fid.read()
-                        self.logger.debug("{}".format(text))
-                        if text:
-                            temp_json = json.loads(text)
-                            temp_obj  = curr_decoder(temp_json)
-                            
-                    if temp_obj:
-                        self.logger.debug("{} \n {}".format(temp_obj, type(temp_obj)))
-                        self.logger.debug("Adding type:{} with name: {}".format(
-                                _type, temp_obj.name
-                        ))
-                        self.Types[_type][temp_obj.name] = temp_obj
-
-    def abort_search(self, W):
-        """
-        Check the input value for abort signals
-        """
-        p = 0
-        for word in W:
-            self.logger.debug("Word: {}".format(word))
-            if word in self.Types["Tasks"]["abort"].dictionary:
-                p += p + \
-                    float(self.Types["Tasks"]["abort"].dictionary[word])/100
-        if p > 0:
-            return True
-        return False
-    
-    def dict_search(self, _type, search_keys, W):
-        """
-        General use case of search for a value within string input W and 
-        referencing search_kyes
-        """
-        self.logger.debug("Processing words: '{}' ; with _type:{} ; search_keys:{}".format(
-                                                                W, _type, search_keys))
-        p = np.zeros(len(search_keys))
-        for word in W:
-            self.logger.debug("Word: {}".format(word))
-            for idx, key in enumerate(search_keys):
-                if word in self.Types[_type][key].dictionary:
-                   p[idx] += p[idx] + \
-                        float(self.Types[_type][key].dictionary[word])/100
-        self.logger.info("P values for words {}".format(p))
-        return p/len(W), self.abort_search(W)
-
-
-def get_object_decoder(_type):
-    if _type == "Actions":
-        return Actions_def._Type.obj_decoder
-    elif _type == "Tasks":
-        return Tasks_def._Type.obj_decoder
-    elif _type == "Locations":
-        return  Locations_def._Type.obj_decoder
-    else :
-        return None
-
-# Debugging method
-if __name__ == "__main__":
-    from tdm_logger import setup_logging
-    setup_logging()
+if __name__=="__main__":
+    sys.path.append("..")
+    import tdm_logger
+    tdm_logger.setup_logging()
     obj = MEx()
-    sentenses = ["Could you tell me a joke",
-                "Please start up generator three",
-                "Answer me this question",
-                "Whatever, abort action"]
-    keywords =  ["start_generator", "ask_question", "tell_joke"]
-    for sent in sentenses:
-        obj.logger.debug(sent)
-        p, abort=obj.dict_search("Tasks",keywords, sent.lower().split())
-        if abort:
-            print obj.logger.debug("Aborted")
-
-        print keywords[np.argmax(p)]
-
-
-
-
-
 
