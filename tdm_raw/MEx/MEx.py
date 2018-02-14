@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2017-11-14 17:58]
-#     Last Modified       :     [2018-02-12 17:39]
+#     Last Modified       :     [2018-02-13 11:49]
 #     Description         :     (M)eaning (Ex)tractor for the cocomaps project
 #                               between IIIM and CMLabs. 
 #                               Creates a dictionary using keyword search.
@@ -15,8 +15,6 @@ import os
 import logging
 import sys
 import numpy as np
-
-
 
 class MEx(object):
     """
@@ -58,7 +56,6 @@ class MEx(object):
         """
         self.logger.debug("Dict file: {}".format(dict_file))
         with open(dict_file, 'rb') as fid:
-
             raw_text = fid.read()
             raw_json = json.loads(raw_text)
 
@@ -82,15 +79,25 @@ class MEx(object):
                 Words = "Array of words split from sentense that user inputs"
         """
         #TODO : Add word buffer evaluation to the methodology. 
-        action = _dict["CurrentAction"] 
-        word_buffer = _dict["Words"]
-        p = np.zeros(len(action.keywords))
+        # action = _dict["CurrentAction"] <- Real version impl.
+       # p = np.zeros(len(action.keywords))
+        p = np.zeros(len(_dict["SearchTypes"]))
         
-        for idx,key in enumerate(action.keywords):
-            for word in _dict["search_words"]:
+        #for idx,key in enumerate(action.keywords): <- Real world
+        for idx,key in enumerate(_dict["SearchTypes"]): # <- raw version
+            for word in _dict["Words"]:
                 if key in self._dict.keys():
                     if word in self._dict[key].keys():
                         p[idx] += self._dict[key][word]
+
+        if p.sum()==0:
+            _dict["Result"] = "NoValueFound"
+        else :
+            _dict["Result"] = _dict["SearchTypes"][np.argmax(p)]
+
+        return _dict
+
+
 
     def print_available(self):
         """
