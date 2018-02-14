@@ -11,5 +11,5 @@
 
 	<post name="OutputMsg" type="output.speech.utterancec"/>
 	<post name="perform_task" type="Task.Perform"/>
-	<crank name="tdm_raw" function="PsyCranck"/>
+	<crank name="tdm_raw" language="python2" script="TDM/tdm_raw.py"/>
 </module>
