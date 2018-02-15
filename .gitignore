@@ -1,7 +1,7 @@
 # File structure
-PsyClone/
-Documentation/
 Stored/*
+CoCoDist_Tests/*
+CoCoDist_Tests
 
 # Symbolic link
 sync_TDM
