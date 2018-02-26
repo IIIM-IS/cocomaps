@@ -4,7 +4,7 @@
 #     Created By          :     David Orn Johannesson
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-02-09 11:47]
-#     Last Modified       :     [2018-02-12 13:23]
+#     Last Modified       :     [2018-02-12 17:49]
 #     Description         :     TDM specific algorithm approaches and 
 #                                   types.
 #     Version             :     0.1
@@ -144,6 +144,7 @@ class Action_stack(object):
             action = self.stack[0]
             _dict = {}
             _dict["Task"] = action.parent
+            _dict[""]
             return action.run()
 
         else:
