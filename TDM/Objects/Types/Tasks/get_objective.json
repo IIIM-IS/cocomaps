@@ -7,5 +7,6 @@
 		"What can robot do for you?"
 	],
 	"description":"Greet the person using talk function",
-	"action":["talk", "new_task"]
+	"action":["talk", "new_task"],
+	"pass_action":"new_task"
 }

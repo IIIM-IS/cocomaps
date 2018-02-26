@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2017-11-14 17:58]
-#     Last Modified       :     [2018-02-12 11:02]
+#     Last Modified       :     [2018-02-26 13:57]
 #     Description         :     (M)eaning (Ex)tractor for the cocomaps project
 #                               between IIIM and CMLabs. 
 #                               Creates a dictionary using keyword search.
@@ -92,6 +92,7 @@ class MEx(object):
                     if word in self._dict[key].keys():
                         p[idx] += self._dict[key][word]
 
+
     def print_available(self):
         """
         Print available types within currently loaded structure
@@ -102,7 +103,6 @@ class MEx(object):
             print "Type: {}".format(_type)
             for object in self._dict[_type].keys():
                 print "\t\t{}".format(object)
-
 
 
 if __name__=="__main__":

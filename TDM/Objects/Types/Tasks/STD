@@ -1,9 +1,8 @@
 {
-	"_type":"Task",
+	"_type":"",
 	"name":"",
-	"out_strings":[""],
+	"out_strings":[],
 	"description":"",
-	"keywords":[""],
 	"pass_action":"",
 	"action":[]
 }

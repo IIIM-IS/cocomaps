@@ -23,8 +23,9 @@ def write_to_buffer(self, _dict):
     Return a object
     """
     logger.debug("Creating a msg")
-    if _dict["msg_type"] == "speak":
-        return MessageTypes.talk_message(_dict)
+    if _dict["msg"] == "speak":
+        msg = cmsdk2.DataMessage("OutputMsg", _dict["out_msg"])
+        return {"Result":"out_msg", "Text":msg}
 
 
 def new_task(self, _dict):
@@ -41,9 +42,33 @@ def resolve_pass(self, _dict):
     """
     pass
 
+def start_screen_navigation(self, _dict):
+    """
+    Start a screen navigation task
+    """
+    return {"Result":"new_task", "name":"screen_navigation"}
+
+
+def get_objective(self, _dict):
+    """
+    Get specific objective
+    """
+    return {"Result":"new_task", "name":"get_objective"}
+
+
+
+def move_menu(self, _dict):
+    """
+    Navigate through the menu system. 
+    """
+
 
 action_dict = {
     "write_to_buffer":write_to_buffer,
     "new_task":new_task,
-    "resolve_pass":resolve_pass
+    "resolve_pass":resolve_pass,
+    "start_screen_navigation":start_screen_navigation,
+    "get_objective":get_objective,
+    "move_menu":move_menu,
 }
+

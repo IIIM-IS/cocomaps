@@ -1602,3 +1602,258 @@
 2018-02-12 13:22:07,314 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
 2018-02-12 13:22:07,314 - MEx.MEx - INFO - MEx has been built
 2018-02-12 13:22:07,315 - Algorithms - DEBUG - Running top task : greet
+2018-02-26 14:21:31,993 - __main__ - INFO - Starting TDM
+2018-02-26 14:21:31,994 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:21:31,994 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:21:31,994 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:21:31,994 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:21:31,994 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:21:31,994 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:21:31,994 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:21:31,994 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:21:31,995 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:21:31,995 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:21:31,995 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:21:31,995 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:21:31,995 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:21:31,995 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:21:31,995 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:21:31,995 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:21:31,995 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:21:31,995 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:21:31,996 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:21:31,996 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:21:31,996 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:21:31,996 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:21:31,996 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:21:31,996 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:22:19,516 - __main__ - INFO - Starting TDM
+2018-02-26 14:22:19,516 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:22:19,516 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:22:19,516 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:22:19,516 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:22:19,516 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:22:19,517 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:22:19,517 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:22:19,517 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:22:19,517 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:22:19,517 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:22:19,517 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:22:19,517 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:22:19,517 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:22:19,517 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:22:19,518 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:22:19,518 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:22:19,518 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:22:19,518 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:22:19,518 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:22:19,518 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:22:19,518 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:22:19,518 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:22:19,518 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:22:19,518 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:22:52,235 - __main__ - INFO - Starting TDM
+2018-02-26 14:22:52,235 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:22:52,236 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:22:52,237 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:22:52,237 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:22:52,237 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:22:52,237 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:22:52,237 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:22:52,237 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:22:52,237 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:22:52,237 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:22:52,237 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:22:52,237 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:22:52,237 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:22:52,238 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:22:52,238 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:22:52,238 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:23:19,717 - __main__ - INFO - Starting TDM
+2018-02-26 14:23:19,718 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:23:19,718 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:23:19,718 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:23:19,718 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:23:19,718 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:23:19,718 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:23:19,718 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:23:19,718 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:23:19,719 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:23:19,719 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:23:19,719 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:23:19,719 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:23:19,719 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:23:19,719 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:23:19,719 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:23:19,719 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:23:19,719 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:23:19,720 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:23:19,720 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:23:19,720 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:23:19,720 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:23:19,720 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:23:19,720 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:23:19,720 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:23:58,931 - __main__ - INFO - Starting TDM
+2018-02-26 14:23:58,932 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:23:58,932 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:23:58,932 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:23:58,932 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:23:58,932 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:23:58,932 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:23:58,932 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:23:58,933 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:23:58,933 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:23:58,933 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:23:58,933 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:23:58,933 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:23:58,933 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:23:58,933 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:23:58,933 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:23:58,933 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:23:58,934 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:23:58,934 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:23:58,934 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:23:58,934 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:23:58,934 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:23:58,934 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:23:58,934 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:23:58,934 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:25:08,078 - __main__ - INFO - Starting TDM
+2018-02-26 14:25:08,078 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:25:08,078 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:25:08,078 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:25:08,078 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:25:08,078 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:25:08,079 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:25:08,079 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:25:08,079 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:25:08,079 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:25:08,079 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:25:08,079 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:25:08,079 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:25:08,079 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:25:08,080 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:25:08,080 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:25:08,080 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:25:08,080 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:25:08,080 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:25:08,080 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:25:08,080 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:25:08,080 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:25:08,080 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:25:08,081 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:25:08,081 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:25:09,081 - Algorithms - DEBUG - Running top task : greet
+2018-02-26 14:26:36,505 - __main__ - INFO - Starting TDM
+2018-02-26 14:26:36,505 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:26:36,506 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:26:36,507 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:26:36,507 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:26:36,507 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:26:36,507 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:26:36,507 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:26:36,507 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:26:36,507 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:26:36,507 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:26:36,507 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:26:36,507 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:26:36,507 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:26:36,508 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:26:36,508 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:26:37,508 - Algorithms - DEBUG - Running top task : greet
+2018-02-26 14:27:08,377 - __main__ - INFO - Starting TDM
+2018-02-26 14:27:08,377 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:27:08,377 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:27:08,377 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:27:08,377 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:27:08,378 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:27:08,378 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:27:08,378 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:27:08,378 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:27:08,378 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:27:08,378 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:27:08,378 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:27:08,378 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:27:08,378 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:27:08,379 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:27:08,379 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:27:08,379 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:27:08,379 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:27:08,379 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:27:08,379 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:27:08,379 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:27:08,379 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:27:08,379 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:27:08,379 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:27:08,379 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:27:09,380 - Algorithms - DEBUG - Running top task : greet
+2018-02-26 14:39:22,132 - __main__ - INFO - Starting TDM
+2018-02-26 14:39:22,132 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:39:22,132 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:39:22,132 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:39:22,132 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:39:22,132 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:39:22,133 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:39:22,133 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:39:22,133 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:39:22,133 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:39:22,133 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:39:22,133 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:39:22,133 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:39:22,133 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:39:22,133 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:39:22,134 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:39:22,134 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:39:22,134 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:39:22,134 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:39:22,134 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:39:22,134 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:39:22,134 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:39:22,134 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:39:22,134 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:39:22,134 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:39:23,135 - Algorithms - DEBUG - Running top task : greet
+2018-02-26 14:39:56,726 - __main__ - INFO - Starting TDM
+2018-02-26 14:39:56,726 - Objects.Objects - INFO - Creating Objects
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - def file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/Objects/Objects.init
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - Loading type : Tasks
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - 	File: greet.json
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - 	File: get_objective.json
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - 	File: start_generator.json
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - Loading type : Locations
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - 	File: pointA.json
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - Loading type : Actions
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - 	File: pass_action.json
+2018-02-26 14:39:56,727 - Objects.Objects - DEBUG - 	File: talk.json
+2018-02-26 14:39:56,728 - Objects.Objects - DEBUG - 	File: new_task.json
+2018-02-26 14:39:56,728 - Objects.Objects - INFO - Objects have been built
+2018-02-26 14:39:56,728 - Algorithms.Word_Bag - DEBUG - Started up Word_Bag
+2018-02-26 14:39:56,728 - Algorithms - DEBUG - Creting empty task queue
+2018-02-26 14:39:56,728 - MEx.MEx - INFO - Creating MEx dictionary object
+2018-02-26 14:39:56,728 - MEx.MEx - DEBUG - Dict file: /mnt/497390c7-a95c-4628-9e7d-7921b0098936/ROS_shared/CoCoDist_Linux/TDM/MEx/dictionary.json
+2018-02-26 14:39:56,728 - MEx.MEx - DEBUG - Adding key: tell_joke
+2018-02-26 14:39:56,728 - MEx.MEx - DEBUG - With values : {u'joke': 80, u'tell': 30, u'laugh': 10}
+2018-02-26 14:39:56,728 - MEx.MEx - DEBUG - Adding key: start_generator
+2018-02-26 14:39:56,728 - MEx.MEx - DEBUG - With values : {u'start': 50, u'enable': 50, u'generator': 90}
+2018-02-26 14:39:56,729 - MEx.MEx - DEBUG - Adding key: answer_question
+2018-02-26 14:39:56,729 - MEx.MEx - DEBUG - With values : {u'answer': 60, u'question': 80}
+2018-02-26 14:39:56,729 - MEx.MEx - INFO - MEx has been built
+2018-02-26 14:39:57,729 - Algorithms - DEBUG - Running top task : greet

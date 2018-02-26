@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#:''/usr/bin/python2.7
 """
 08.02.18
 Author
@@ -6,21 +6,18 @@ Author
 Objective
     Control sequence for dialogue of the CoCoMaps project.
 """
-
-
 import os
 from timeit import default_timer as timer
 import json
-import re
 
 # Logging imports
 import logging
 import tdm_logger
 
 # Projects specific imports
-from MEx import MEx
 from Objects import Objects
-from Algortihms import TDM_queues
+from Algorithms import TDM_queues
+from Algorithms import Word_Bag
 
 
 class TDM(object):
@@ -33,15 +30,17 @@ class TDM(object):
         self.logger.info("Starting TDM")
 
         # Initializing objects, need to create new tasks.
-        self.obj =  Objects.Objects()
+        self.obj = Objects.Objects()
+        # Initialize word bag
+        self.WB = Word_Bag.Word_Bag()
 
         # Initialize objects
-        self.task_queue = TDM_queues.Task_queue(self.obj)
+        self.task_queue = TDM_queues.Task_queue(self.obj, self.WB)
 
         # Initialize variables
         self.new_msg = False
         self.greeted = False
-        self.start_time = 0
+        self.start_time = timer()
 
         # Add other information 
         self.create_version()
@@ -52,8 +51,7 @@ class TDM(object):
         General run method. Called from top level each time it is my turn
         i.e. YTTM gives turn to robot
         """
-        debug_count =  0
-        while True and debug_count < 10:
+        if timer() - self.start_time > 1 and self.WB.new_words:
             if not self.greeted:
                 # Put new task onto stack
                 self.task_queue.insert_task({"Type":"Tasks","Name":"greet"})
@@ -62,33 +60,33 @@ class TDM(object):
 
             _dict = self.task_queue.run()
 
-            if _dict["Return"] == "Question":
-                pass
-            elif _dict["Return"] == "NewTask":
-                pass
-            elif _dict["Return"] == "Debug":
-                print "Returned debug value"
-            elif _dict["Return"] == "Task_queue:Empty":
-                print "Task queue emptied"
-            elif _dict["Return"] == "Action_stack:Empty":
-                print "Task queue emptied"
-
-
-
+            if _dict["Result"] == "out_msg":
+                return _dict["Text"]
+            if  _dict["Result"] == "new_task":
+                self.task_queue.insert_task({"Type":"Tasks", "Name":_dict["Name"]})
+            elif _dict["Result"] == "Task_queue:Empty":
+                self.logger.info("Emptied queue")
+            elif _dict["Result"] == "Action_stack:Empty":
+                self.logger.info("Emptied action stack")
 
             if self.task_queue.isEmpty():
+                # If task queue is emptied then ask again for a new objective 
+                # to complete
                 self.task_queue.insert_task({"Type":"Tasks", "Name":"get_objective"})
 
-            debug_count += 1
-            print debug_count
 
-
+    def input_text(self, input):
+        """
+        Add text from Nuance into the word bag and store until used
+        """
+        self.WB.add(input)
 
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
 # * * * * * * * * *     SOME DECENT HELP FUNCTIONS      * * * * * * * * * * * *  
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
+    
 
     def q_str(self, task):
         """
@@ -153,7 +151,7 @@ class TDM(object):
         print "Release date\t: {}".format(self.data["Release"])
         print "Stable\t\t: {}".format(self.data["Stable"])
         print "Active modules"
-        print "\tMEx\t: {}".format(self.data["MEx"])
+        print "\tMEx"
         print "Available objects"
         for obj in self.data["objects"]:
             print "\t {}".format(obj)
@@ -170,4 +168,8 @@ if __name__ == "__main__":
     print 10*'*/ '
     print "Starting run..."
     print 10*'*/ '
+    obj.WB.new_words = True
+    T=timer()
+    while timer()-T < 1:
+        pass
     obj.run()

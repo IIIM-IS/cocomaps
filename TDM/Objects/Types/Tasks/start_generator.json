@@ -3,7 +3,6 @@
 	"name":"start_generator",
 	"out_strings":["Which generator"],
 	"description":"Greet the person using talk function",
-	"keywords":["point"],
-	"pass_action":"navigate_screen",
+	"pass_action":"start_screen_navigation",
 	"action":["ask", "move", "new_task"]
 }

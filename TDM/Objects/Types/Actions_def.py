@@ -16,12 +16,12 @@ class _Type(object):
     """
     def __init__(self, _type, name, description, run, 
                 keywords):
-        print " HAHAH "
         self._type = _type
         self.name = name
         self.description = description
         self.keywords = keywords
         self.run = action_dict[run]
+        self.out_str = False
 
     
     @staticmethod
