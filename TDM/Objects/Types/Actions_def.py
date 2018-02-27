@@ -15,12 +15,14 @@ class _Type(object):
     associated with
     """
     def __init__(self, _type, name, description, run, 
-                keywords):
+                keywords, question):
         self._type = _type
         self.name = name
         self.description = description
         self.keywords = keywords
         self.run = action_dict[run]
+
+        self.question = question
         self.out_str = False
 
     
@@ -32,7 +34,7 @@ class _Type(object):
         print "Decoding"
         if "_type" in obj and obj["_type"]=="Action":
             return _Type(obj["_type"], obj["name"], obj["description"],
-                        obj["run"], obj["keywords"])
+                        obj["run"], obj["keywords"], obj["question"])
         return obj
 
         

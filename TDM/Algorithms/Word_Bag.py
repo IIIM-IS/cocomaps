@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-02-26 12:39]
-#     Last Modified       :     [2018-02-26 13:57]
+#     Last Modified       :     [2018-02-26 17:10]
 #     Description         :     Store input values when available try to 
 #                               use them when available
 #     Version             :     0.1

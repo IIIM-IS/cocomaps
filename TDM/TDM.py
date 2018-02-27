@@ -51,15 +51,15 @@ class TDM(object):
         General run method. Called from top level each time it is my turn
         i.e. YTTM gives turn to robot
         """
+        if not self.greeted:
+            # Put new task onto stack
+            self.task_queue.insert_task({"Type":"Tasks","Name":"greet"})
+            self.greeted = True
+            self.start_time = timer()
+
         if timer() - self.start_time > 1 and self.WB.new_words:
-            if not self.greeted:
-                # Put new task onto stack
-                self.task_queue.insert_task({"Type":"Tasks","Name":"greet"})
-                self.greeted = True
-                self.start_time = timer()
 
             _dict = self.task_queue.run()
-
             if _dict["Result"] == "out_msg":
                 return _dict["Text"]
             if  _dict["Result"] == "new_task":
@@ -68,6 +68,8 @@ class TDM(object):
                 self.logger.info("Emptied queue")
             elif _dict["Result"] == "Action_stack:Empty":
                 self.logger.info("Emptied action stack")
+            elif _dict["Result"] == "NoCurrentAction":
+                self.logger.info("No action performed")
 
             if self.task_queue.isEmpty():
                 # If task queue is emptied then ask again for a new objective 
@@ -75,7 +77,7 @@ class TDM(object):
                 self.task_queue.insert_task({"Type":"Tasks", "Name":"get_objective"})
 
 
-    def input_text(self, input):
+    def add_message(self, input):
         """
         Add text from Nuance into the word bag and store until used
         """
@@ -169,7 +171,9 @@ if __name__ == "__main__":
     print "Starting run..."
     print 10*'*/ '
     obj.WB.new_words = True
-    T=timer()
-    while timer()-T < 1:
-        pass
     obj.run()
+    while 1:
+        T = timer()
+        while timer()-T < 1.2:
+            None
+        obj.run()

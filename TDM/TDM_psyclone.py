@@ -1,39 +1,54 @@
-#! /usr/bin/env python
-#################################################################################
-#     File Name           :     tdm_raw.py
-#     Created By          :     david
-#     Email               :     david@iiim.is
-#     Creation Date       :     [2018-02-12 17:13]
-#     Last Modified       :     [2018-02-26 15:09]
-#     Description         :     A shorter verion of the TDM used for unofficial
-#                               demo 2
-#     Version             :     1.0
-#################################################################################
-
-import cmsdk2
+#!/usr/bin/python2.7
+"""
+02.01.18
+Author
+    David Orn : david@iiim.is
+About
+    This file contains the actual psyclone to TDM connector
+    to be run during operations. 
+    Development reasons are to figure out how best to operate
+    the system and what functions are needed, finally what
+    action structure is most relevant
+"""
+__author__ = "David"
+import cmsdk2 
 import TDM
+
+print "This is a test"
 
 def PsyCrank(apilink):
     api = cmsdk2.PsyAPI.fromPython(apilink)
+    name = api.getModuleName()
+
+    # Initialize TDM to be used for the system
+    print "This is going"
     _TDM = TDM.TDM()
 
-    # Print version notes
-    _TDM.version_notes()
-
     while api.shouldContinue():
-        msg = api.waitForNewMessage(50)
+        msg = api.waitForNewMessage(200)
 
         if msg:
-            trigger_name = msg.getCurrentTriggerName()
-            if trigger_name == "NewWords":
-                # Read values from Nunace and store
-                # in tdm until it's tdm's time to
-                # answer
-                _TDM.input_text(msg.getString("Utterance"))
-            elif trigger_name == "MyTurn":
-                res_msg = _TDM.run()
-                if res_msg["Result"] == "out_msg":
-                    api.postOutputMessage("Utterance", res_msg["Text"])
-                elif res_msg["Result"] == "move":
-                    api.postOutputMessage("Move", res_msg["Location"])
+            trigger_name = cmsdk2.getCurrentTriggerName()
 
+            if trigger_name == "NewWords":
+                _TDM.add_message(msg.getString("Utterance"))
+
+            elif trigger_name == "MyTurn":
+                # Do something to check that it's my turn 
+                internal_msg = _TDM.run()
+                
+                # Output speech comes through here
+                if internal_msg["Result"] == "out_msg":
+                    api.postOutputMessage("Utterance", internal_msg["Text"])
+
+                elif internal_msg["Result"] == "Location":
+                    api.postOutputMessage("Location", internal_msg["Location"])
+
+                else :
+                    print "trigger name: {}".format(trigger_name)
+            api.postOutputMessage("RobotGivesTurn", 1)
+
+
+
+        else:
+            print "Nothing to report"

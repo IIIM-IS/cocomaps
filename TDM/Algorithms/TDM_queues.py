@@ -4,7 +4,7 @@
 #     Created By          :     David Orn Johannesson
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-02-09 11:47]
-#     Last Modified       :     [2018-02-26 15:45]
+#     Last Modified       :     [2018-02-26 18:05]
 #     Description         :     TDM specific algorithm approaches and 
 #                                   types.
 #     Version             :     0.1
@@ -53,6 +53,7 @@ class Task_queue(object):
         """
         Insert new task. FIFO
         """
+        logger.debug("Adding to queue: {}".format(_dict["Name"]))
         assert _dict["Type"] == "Tasks", ("Insert error, type not Task")
         new_task = self.Objects.new_object(_dict)
         self.task_list.append(new_task)
@@ -63,7 +64,9 @@ class Task_queue(object):
         for action in new_task.action:
             _dict["Type"] = "Actions"
             _dict["Name"] = action
-
+            
+            # Rip relevant information from the task that called 
+            # each function if applicable
             if new_task.out_strings and action=="talk":
                 _dict["q_str"] = Q_str(new_task)
             elif new_task.name == "get_input":
@@ -78,6 +81,7 @@ class Task_queue(object):
         first. If a task is met the action is popped of the Action_stack. 
         If all actions are finished the task is popped of the Task_queue
         """
+        logger.debug(self.print_stack())
         if not self.isEmpty():
             if not self.AS.isEmpty():
                 logger.debug("Running top task : {}".format(
@@ -113,7 +117,7 @@ class Task_queue(object):
         """
         Print out the task stack currently un use
         """
-        print "Tasks in queue :"
+        print "Tasks stack :"
         for task in self.task_list:
             print "\t{}".format(task.name)
 
@@ -150,23 +154,42 @@ class Action_stack(object):
         Main objective function. Calls the relevant function, 'handles' 
         various errors through the dictionary object.
         """
+        logger.debug(self.print_stack())
+        _dict = {}
         if self.stack:
             action = self.stack[0]
             # First action should be to talk. That should always be 
             # the first action
-            if action.out_str and action.name == "talk":
-                _dict = {}
+            print "Action : {}".format(action.question)
+            if action.question:
+                logger.debug("Saying something: {}".format(action.out_str))
                 _dict["msg"] = "speak"
                 _dict["out_msg"] = action.out_str 
                 _dict = action.run(_dict)
+                if "Fail" not in _dict.keys():
+                    self.pop()
                 return _dict
+            # Second approach is to see if there is required information. 
+            # If there are keywords, try to see if the current input value 
+            # can give reference to keywords
+
+            elif action.keywords:
+                _dict["Words"] = word_bag.get()
+                _dict["CurrentAction"] = action
+                # Compute the probability of keyword
+                p = MEx.dict_search(_dict)
+                if p.sum() == 0:
+                    _dict["Result"] = "Fail"
+                    _dict["Reason"] = "No:Keyword"
+                    return _dict
+                else :
+                    _dict["keyword_result"] = action.keywords[np.argmax(p)]
+                    self.pop()
+                    return action.run(_dict)
             
+            else: 
+                return {"Result":"NoCurrentAction"}
 
-            return action.run()
-
-        else:
-            action.pass_action()
-            return {"Results":"Action_stack:Empty"}
 
 
 
@@ -185,21 +208,19 @@ class Action_stack(object):
         Insert a new action onto action stack. 
 
         inputs
-            _dict   = Python dictionary with following attributes
-                Action = action object to be put onto stack
-                q_str  = if Action.question==True then q_str is 
-                            available as output question string
+            _dict : Python dictionary
+                "q_str" : Question string, if applicable
         """
-
+        logger.debug("Adding to qstack : {}".format(_dict["Name"]))
         action = self.Objects.new_object({"Type":"Actions", 
                                           "Name":_dict["Name"]})
         # Store information about who called
         action.parent = _dict["Parent"]
-        # Store the question string that will be output
-        if "q_str" in _dict.keys():
+
+        # Store the question string that will be output. The string is
+        # defined in the Task but the action uses it
+        if action.question:
             action.out_str = _dict["q_str"]
-        if "keywords" in _dict.keys():
-            action.keywords = _dict["keywords"]
         
         assert action._type == "Action"
         self.stack.append(action)
@@ -235,7 +256,6 @@ class Action_stack(object):
     
 def Q_str(task):
     return task.out_strings[
-        np.random.randint(0,len(task.out_strings)+1)
+        np.random.randint(0,len(task.out_strings))
     ]
-
 

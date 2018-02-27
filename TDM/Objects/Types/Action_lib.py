@@ -18,38 +18,40 @@ import logging
 import MessageTypes
 logger = logging.getLogger("Action_lib")
 
-def write_to_buffer(self, _dict):
+def write_to_buffer( _dict):
     """
     Return a object
     """
     logger.debug("Creating a msg")
     if _dict["msg"] == "speak":
-        msg = cmsdk2.DataMessage("OutputMsg", _dict["out_msg"])
+        msg = cmsdk2.DataMessage()
+        logger.debug("Adding string msg: '{}'".format(_dict["out_msg"]))
+        msg.setString("OutputMsg", _dict["out_msg"])
         return {"Result":"out_msg", "Text":msg}
 
 
-def new_task(self, _dict):
+def new_task( _dict):
     """
     Start a new task with the input dict
     """
-    # TODO : Implement methodology
-    pass
+    return {"Result":"new_task", "name":_dict["keyword_result"]}
+    
 
 
-def resolve_pass(self, _dict):
+def resolve_pass( _dict):
     """
     Solve the pass action of the task
     """
     pass
 
-def start_screen_navigation(self, _dict):
+def start_screen_navigation( _dict):
     """
     Start a screen navigation task
     """
     return {"Result":"new_task", "name":"screen_navigation"}
 
 
-def get_objective(self, _dict):
+def get_objective( _dict):
     """
     Get specific objective
     """
@@ -57,7 +59,7 @@ def get_objective(self, _dict):
 
 
 
-def move_menu(self, _dict):
+def move_menu( _dict):
     """
     Navigate through the menu system. 
     """

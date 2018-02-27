@@ -1,0 +1,15 @@
+
+<module name="TDM_raw">
+	<description>
+		Simplefied task manager for demo 2
+		Takes in new words from the nuance object (text format)
+		once YTTM gives turn it sends out information to other
+		robot
+	</description>
+	<trigger name="NewWords" type="input.speech.info.semantic" />
+	<trigger name="MyTurn" type="dialog.on.i-accept-turn"/>
+
+	<post name="OutputMsg" type="output.speech.utterancec"/>
+	<post name="perform_task" type="Task.Perform"/>
+	<crank name="tdm_raw" language="python2" script="TDM/tdm_raw.py"/>
+</module>
