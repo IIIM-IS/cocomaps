@@ -3,7 +3,8 @@ Stored
 Stored/*
 CoCoDist_Tests/*
 CoCoDist_Tests
-
+TMP
+TMP/*
 # Symbolic link
 sync_TDM
 

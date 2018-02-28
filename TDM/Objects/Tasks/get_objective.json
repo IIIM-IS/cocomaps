@@ -1,0 +1,12 @@
+{
+	"_type":"Task",
+	"name":"get_objective",
+	"out_strings":[
+		"What task should we try to accomplish",
+		"What to do now?",
+		"What can robot do for you?"
+	],
+	"description":"Greet the person using talk function",
+	"action":["talk", "new_task"],
+	"pass_action":"new_task"
+}

@@ -1,130 +1,141 @@
-#:''/usr/bin/python2.7
-"""
-08.02.18
-Author
-    David Orn Johannesson | david@iiim.is
-Objective
-    Control sequence for dialogue of the CoCoMaps project.
-"""
-import os
-from timeit import default_timer as timer
-import json
+#! /usr/bin/env python
+#################################################################################
+#     File Name           :     TDM.py
+#     Created By          :     david
+#     Email               :     david@iiim.is
+#     Creation Date       :     [2018-02-28 14:44]
+#     Last Modified       :     [2018-02-28 20:19]
+#     Description         :     (T)ask (D)ialog (M)anager for the cocomaps project
+#                               control the flow of task by requiering information
+#                               asking for that relevant information and trying
+#                               to move a task forward until user is happy with
+#                               result. (Happy = Task Reached)
+#     Version             :     4.0.1
+#################################################################################
 
-# Logging imports
+# Timing and other system imports
+from timeit import default_timer as timer
+import os, json
+
+# For logging reasosn
 import logging
 import tdm_logger
 
-# Projects specific imports
-from Objects import Objects
-from Algorithms import TDM_queues
-from Algorithms import Word_Bag
-
+# Project specific imports
+from Objects.TDM_objects import Objects
+from Objects.TDM_objects import ActionStack
+from Objects.TDM_objects import Word_Bag
+from MEx.MEx import MEx
 
 class TDM(object):
     """
-    Control sequence for the main objective. 
+    Task dialog manager object. Stores the current state of interaction and
+    returns values that are required to achieve certain tasks.
     """
     def __init__(self):
+        """
+        Initialize all relevant information based on internal structure.
+        Load all possible objects and load the MEx dictionary
+        """
+        # TODO add timing functionality to the system
+
+        # Setup a default logging methodology.
         tdm_logger.setup_logging()
         self.logger = logging.getLogger(__name__)
         self.logger.info("Starting TDM")
 
-        # Initializing objects, need to create new tasks.
-        self.obj = Objects.Objects()
-        # Initialize word bag
-        self.WB = Word_Bag.Word_Bag()
+        # Create databases
+        self.OBJ = Objects()
+        self.MEx = MEx()
+        self.Word_Bag = Word_Bag()
 
-        # Initialize objects
-        self.task_queue = TDM_queues.Task_queue(self.obj, self.WB)
+        # Create empty stack for actions
+        self.Action_stack = ActionStack(self.MEx)
 
-        # Initialize variables
-        self.new_msg = False
+        # Dynamic variables for runtime
+        self.current_state = "Empty"
         self.greeted = False
-        self.start_time = timer()
-
-        # Add other information 
-        self.create_version()
-
+        self.current_task = None
 
     def run(self):
+        if self.Action_stack.getErrorCount() > 3:
+            self.clean()
+        if self.current_state == "Information":
+            # Check if the information missing from the action is in the 
+            # word bag. If so move to action state. Else return question 
+            # to get information for current action.
+            enough_info, probability = self.Action_stack.info_check(self.Word_Bag)
+            if enough_info:
+                # If information is in the value set to 
+                # action and start execution
+                self.current_state = "Action"
+                return self.Action_stack.run_action(probability)
+            else :
+                # Run the action of aquiring more information
+                return self.Action_stack.get_info(self.current_task)
+
+
+        elif self.current_state == "Empty":
+            # Special case, the task list is empty, happens at beginning 
+            # when everything is initialized and at reset intervals
+            if not self.greeted:
+                # Create greet action and put state machine in action format
+                self.add_task(self.OBJ.new_object({
+                    "Type":"Task",
+                    "Name":"Greet"
+                }))
+                self.greeted = True
+                return self.run()
+
+            else : 
+                # If the 
+                self.add_task(self.OBJ.new_object({
+                    "Type":"Task",
+                    "Name":"GetObjective"
+                }))
+                return self.run()
+        else :
+            # If this is running something went wrong
+            raise ValueError("TDM-run(else) line 62 - input of wrong type")
+
+    def add_task(self, task):
         """
-        General run method. Called from top level each time it is my turn
-        i.e. YTTM gives turn to robot
+        Add a task to the current run. Take all actions in the task and 
+        add to stack to be evalued consequitively.
         """
-        if not self.greeted:
-            # Put new task onto stack
-            self.task_queue.insert_task({"Type":"Tasks","Name":"greet"})
-            self.greeted = True
-            self.start_time = timer()
-
-        if timer() - self.start_time > 1 and self.WB.new_words:
-
-            _dict = self.task_queue.run()
-            if _dict["Result"] == "out_msg":
-                return _dict["Text"]
-            if  _dict["Result"] == "new_task":
-                self.task_queue.insert_task({"Type":"Tasks", "Name":_dict["Name"]})
-            elif _dict["Result"] == "Task_queue:Empty":
-                self.logger.info("Emptied queue")
-            elif _dict["Result"] == "Action_stack:Empty":
-                self.logger.info("Emptied action stack")
-            elif _dict["Result"] == "NoCurrentAction":
-                self.logger.info("No action performed")
-
-            if self.task_queue.isEmpty():
-                # If task queue is emptied then ask again for a new objective 
-                # to complete
-                self.task_queue.insert_task({"Type":"Tasks", "Name":"get_objective"})
-
-
-    def add_message(self, input):
-        """
-        Add text from Nuance into the word bag and store until used
-        """
-        self.WB.add(input)
-
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
-# * * * * * * * * *     SOME DECENT HELP FUNCTIONS      * * * * * * * * * * * *  
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  
+        # Check if action stack is empty. We can't start a new task 
+        # if something is on the action task
+        if self.Action_stack.isEmpty():
+            self.Action_stack.resetErrorCount()
+            self.current_task = task
+            # Add action to action stack
+            for action in task.actions:
+                self.Action_stack.add(self.OBJ.new_object({
+                    "Type":"Actions",
+                    "Name":action
+                }))
+                # If a new task is created the system automatically 
+                # sets the default input to information
+                self.current_state = "Information"
+        else : # What happens if the system tries to create a new task
+                # while the action stack isn't empty
+            return {"Fail":True, "Reason":"InternalError: Tried to create new task while action stack not empty"}
     
-
-    def q_str(self, task):
+    def clean(self):
         """
-        Return random string from task.out_strings for output
+        Empty both stacks. 
         """
-        if task.out_strings:
-            return task.out_strings[
-                np.random.randint(0,len(task.out_strings)+1)
-            ]
-        return []
-
-
-    def elapsed(self):
+        self.current_task = None
+        self.Action_stack.clean()
+    def add_words(self, input):
         """
-        Helper function for getting time elapsed since self.start_time
-        was called last
+        Top level for adding the input stream into the Word_Bag
         """
-        if self.start_time != 0:
-            return timer()-self.start_time()
-        return 0
-            
-
-
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-# * * * * * * * * OTHER FUNCTIONS USED FOR INFORMATION  * * * * * * 
-# * * * * * * * *         SHARING PURPOSES.             * * * * * * 
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-
-    def print_available(self):
-        """
-        Print all available types and objects within structure
-        """
-        self.task_queue.print_available()
-
+        self.Word_Bag.add(input)
+                
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
+# # # # # # # Functions for information, decorations  # # # # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
     def create_version(self):
         """
         Get information about the current iteration version, 
@@ -161,19 +172,3 @@ class TDM(object):
         print "\t{}".format(self.data["Notes"])
         print 70*'*'
         print 70*'*'
-
-
-if __name__ == "__main__":
-    obj = TDM()
-    obj.version_notes()
-    obj.print_available()
-    print 10*'*/ '
-    print "Starting run..."
-    print 10*'*/ '
-    obj.WB.new_words = True
-    obj.run()
-    while 1:
-        T = timer()
-        while timer()-T < 1.2:
-            None
-        obj.run()

@@ -1,8 +1,0 @@
-{
-	"_type":"Action",
-	"name":"get_objective",
-	"description":"Start a new task of the specific three below",
-	"run":"new_task",
-	"question":true,
-	"keywords":["tell_joke", "start_generator", "answer_question"]
-}

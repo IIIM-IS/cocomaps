@@ -1,0 +1,8 @@
+{
+	"_type":"Action",
+	"name":"talk",
+	"description":"Send text to output buffer",
+	"run":"write_to_buffer",
+	"question":true,
+	"keywords":null
+}
