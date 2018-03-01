@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2017-11-14 17:58]
-#     Last Modified       :     [2018-02-26 17:23]
+#     Last Modified       :     [2018-02-28 21:59]
 #     Description         :     (M)eaning (Ex)tractor for the cocomaps project
 #                               between IIIM and CMLabs. 
 #                               Creates a dictionary using keyword search.
@@ -69,7 +69,7 @@ class MEx(object):
             self._dict[key] = raw_json[key]
 
 
-    def dict_search(self, _dict):
+    def dict_search(self, keywords, word_bag):
         """
         Only action types can search the dictionary. The actions have a 
         field named keywords that dictate which key within the dictionary
@@ -81,16 +81,24 @@ class MEx(object):
                 * DEBUG
                 Words = "Array of words split from sentense that user inputs"
         """
-        #TODO : Add word buffer evaluation to the methodology. 
-        action = _dict["CurrentAction"] 
-        word_buffer = _dict["Words"]
-        p = np.zeros(len(action.keywords))
-        
-        for idx,key in enumerate(action.keywords):
-            for word in _dict["search_words"]:
-                if key in self._dict.keys():
-                    if word in self._dict[key].keys():
-                        p[idx] += self._dict[key][word]
+        # TODO expand search to previous inputs, i.e. use older values
+        # from the word bag to try and decide what to do. Make sure that
+        # older sentences give lower value
+
+        self.logger.debug("Searcing sentence {}. With keywords {}".format(
+                            word_bag.get(),
+                            keywords
+        ))
+
+        p = np.zeros(len(keywords))
+
+        for word in word_bag.get():
+            for idx, key in enumerate(keywords):
+                # Assumptions, keywords must have dictionary definitions
+                # or this breaks
+                if word in self._dict[key].keys():
+                    p[idx] += self._dict[key][word]
+        self.logger.debug("Results are {}".format(p))
 
         return p
 

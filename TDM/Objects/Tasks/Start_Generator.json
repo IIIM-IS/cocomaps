@@ -1,0 +1,8 @@
+{
+	"_type":"Task",
+	"name":"Start_Generator",
+	"out_strings":["Which generator"],
+	"description":"Greet the person using talk function",
+	"pass_action":"start_screen_navigation",
+	"actions":["ask", "move", "new_task"]
+}

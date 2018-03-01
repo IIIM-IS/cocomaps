@@ -1,0 +1,8 @@
+{
+	"_type":"Task",
+	"name":"Tell_Joke",
+	"out_strings":["Why did the chicken cross the road"],
+	"description":"Tell the user a small joke",
+	"pass_action":"start_screen_navigation",
+	"actions":["talk"]
+}

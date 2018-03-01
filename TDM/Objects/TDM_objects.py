@@ -1,10 +1,11 @@
 #! /usr/bin/env python
+
 #################################################################################
 #     File Name           :     Objects.py
 #     Created By          :     David Orn Johannesson
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-02-09 08:59]
-#     Last Modified       :     [2018-02-28 20:18]
+#     Last Modified       :     [2018-03-01 13:55]
 #     Description         :     An object holder for the different types
 #                                   used inside TDM. Stores the values 
 #                                   and defines type specific actions
@@ -77,7 +78,7 @@ class Objects(object):
         for file in os.listdir(self.curr+'/'+_type+"/"):
             if os.path.splitext(file)[1] == ".json":
                 self.logger.debug("\tFile: {}".format(file))
-                with open(self.curr+"/Types/"+_type+"/"+file) as fid:
+                with open(self.curr+"/"+_type+"/"+file) as fid:
                     tmp_obj = json.loads(fid.read(),
                                          object_hook = obj_dec)
                     self.objects[_type][tmp_obj.name]=tmp_obj
@@ -146,13 +147,17 @@ class ActionStack(object):
     
     def info_check(self, word_bag):
         # check if top of action stack has the information required
-        self.logger.debug("Checking for information")
+        self.logger.debug("Checking for information, stack size: {}".format(self.stack_size))
         if not self.isEmpty():
             action = self.stack[0]
+            self.logger.debug("Running datasearch on {}, is question {}, task name {}".format(
+                action.name, action.question, action.name))
             if action.question:
                 # If the action has question i.e. requires information 
                 # check if possible answer is in word bag, otherwise 
                 # give the system a question to ask the user
+                print "Current action : {}".format(action.name)
+                print "Current action keywords {}".format(action.keywords)
                 p = self.MEx.dict_search(action.keywords, word_bag)
                 if p.sum() > 0:
                     return True, p
@@ -162,20 +167,31 @@ class ActionStack(object):
                 None
             else:
                 # If there are no questions then this action ca
-                return True, 0
+                return True, -1
                 
         else :
             self.ErrorCount += 1
             return False 
 
-    def run_action(self, p):
+    def run_action(self, task, p):
         """
         Run an action from the stack. Input the probability computation
         from info_check so that the information isn't computed twice
         """
         if not self.isEmpty():
             action = self.stack[0]
-            return action.run(p)
+            
+            # - - - - - - MAIN INPUT - - - - - - - - - #
+            _dict = {}
+            _dict["action"] = action
+            _dict["p"]      = p
+            if action.name == "talk":
+                _dict["out_msg"] = task.out_strings[
+                    np.random.randint(0, len(task.out_strings))
+                ]
+
+
+            return action.run(_dict)
         else : 
             self.ErrorCount += 1
             return {"Fail":True, "Reason":"RunActionNotAvailable:StackEmpty"}
@@ -185,15 +201,15 @@ class ActionStack(object):
         Create a question based on the top level task and the current action
         to ask the user so that information relevant to the action can be found
         """
+        # TODO, encode this into both Tasks, additional questioning and
+        # the actions. Additional words to explain
+        self.logger.debug("Running get info for task: {}".format(task.name))
         if not self.isEmpty():
             action = self.stack[0]
-            rand_q = task.question[
-                np.random.randint(0, len(task.qestion))
+            rand_q = task.out_strings[
+                np.random.randint(0, len(task.out_strings))
             ]
             out_str = "Trying to solve object: {}".format(rand_q)
-            out_str = out_str + ". Unable to solve {}".format(action.info[
-                np.random.randint(0, len(action.info))
-            ])
             return {"Result":"Talk", "Text":out_str}
 
     def getErrorCount(self):
@@ -234,6 +250,7 @@ class Word_Bag(object):
 
     def get(self, no=0):
         if no <= self.len:
+            self.new_words = False
             return self.buffer[no]
         return {"Fail":True, "Reson":"ValueError:OutOfRange"}
 

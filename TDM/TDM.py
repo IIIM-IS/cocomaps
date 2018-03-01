@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-02-28 14:44]
-#     Last Modified       :     [2018-02-28 20:19]
+#     Last Modified       :     [2018-03-01 14:07]
 #     Description         :     (T)ask (D)ialog (M)anager for the cocomaps project
 #                               control the flow of task by requiering information
 #                               asking for that relevant information and trying
@@ -16,6 +16,7 @@
 # Timing and other system imports
 from timeit import default_timer as timer
 import os, json
+import time # For debugging reasons
 
 # For logging reasosn
 import logging
@@ -58,8 +59,10 @@ class TDM(object):
         self.current_task = None
 
     def run(self):
+        self.logger.debug("Current status: {}".format(self.current_state))
         if self.Action_stack.getErrorCount() > 3:
             self.clean()
+            return {"Fail":True, "Reason":"ToManyErrorCounts"}
         if self.current_state == "Information":
             # Check if the information missing from the action is in the 
             # word bag. If so move to action state. Else return question 
@@ -69,34 +72,60 @@ class TDM(object):
                 # If information is in the value set to 
                 # action and start execution
                 self.current_state = "Action"
-                return self.Action_stack.run_action(probability)
+                _dict = {}
+                _dict["p"] = probability
+
+                # Compute probability of keywords in sentence
+                value = self.Action_stack.run_action(self.current_task, 
+                                                   probability)
+                if "Internal" in value.keys():
+                    if value["Internal"] == "new_task":
+                        self.logger.debug("Starting up new task: {}".format(value["name"]))
+                        self.add_task(self.OBJ.new_object(
+                            {"Type":"Tasks",
+                             "Name":value["name"]}
+                                                         ))
+                        return {"Result":"NothingToDo"}
+                return value
             else :
                 # Run the action of aquiring more information
                 return self.Action_stack.get_info(self.current_task)
 
-
+        elif self.current_state == "Action":
+            # POSSIBLE : Add connection to outside to look for confirmation
+            # that task is complete.
+            self.Action_stack.pop()
+            if self.Action_stack.isEmpty():
+                self.current_state = "Empty"
+            else:
+                self.logger.debug("Setting current state to information")
+                self.current_state = "Information"
+            return self.run()
         elif self.current_state == "Empty":
+            self.logger.debug("Trying to reset empty queue")
             # Special case, the task list is empty, happens at beginning 
             # when everything is initialized and at reset intervals
             if not self.greeted:
                 # Create greet action and put state machine in action format
+                self.logger.debug("Adding Greet task to Task stack")
                 self.add_task(self.OBJ.new_object({
-                    "Type":"Task",
+                    "Type":"Tasks",
                     "Name":"Greet"
                 }))
                 self.greeted = True
                 return self.run()
 
             else : 
-                # If the 
+                self.logger.debug("Adding Get_Objective to empty Task stack")
                 self.add_task(self.OBJ.new_object({
-                    "Type":"Task",
-                    "Name":"GetObjective"
-                }))
-                return self.run()
+                    "Type":"Tasks",
+                "Name":"Get_Objective"
+            }))
+            return self.run()
         else :
             # If this is running something went wrong
             raise ValueError("TDM-run(else) line 62 - input of wrong type")
+
 
     def add_task(self, task):
         """
@@ -172,3 +201,23 @@ class TDM(object):
         print "\t{}".format(self.data["Notes"])
         print 70*'*'
         print 70*'*'
+
+
+if __name__=="__main__":
+    obj = TDM()
+    test_sentences = [
+        "Move the other robot to location three",
+        "Start up the generator",
+        "Tell me a joke"
+    ]
+
+    data = obj.run()
+    print "Initial data : {}".format(data)
+    data2 = obj.run()
+    print "Run 2 returns :{}".format(data2)
+    for sent in test_sentences:
+        obj.add_words(sent)
+        for k in range(3):
+            data = obj.run()
+        print "data: {}".format(data)
+

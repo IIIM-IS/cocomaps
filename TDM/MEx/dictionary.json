@@ -1,5 +1,5 @@
 {
-	"tell_joke":{"joke":80, "tell":30, "laugh":10},
-	"start_generator":{"start":50, "generator":90, "enable":50},
-	"answer_question":{"answer":60, "question":80}
+	"Tell_Joke":{"joke":80, "tell":30, "laugh":10},
+	"Start_Generator":{"start":50, "generator":90, "enable":50},
+	"Answer_Question":{"answer":60, "question":80}
 }

@@ -15,12 +15,12 @@ class _Type(object):
     Type class, top level decision, selecting which tasks to get to
     and which actions to perform
     """
-    def __init__(self, _type, name, description, out_strings, action, pass_action):
+    def __init__(self, _type, name, description, out_strings, actions, pass_action):
         self._type = _type
         self.name = name
         self.description = description
         self.out_strings = out_strings
-        self.action      = action
+        self.actions     = actions
         self.pass_action = action_dict[pass_action]
 
         self.action_stack = None
@@ -34,5 +34,5 @@ class _Type(object):
         """
         if "_type" in obj and obj["_type"]=="Task":
             return _Type(obj["_type"], obj["name"], obj["description"], 
-                        obj["out_strings"],  obj["action"], obj["pass_action"])
+                        obj["out_strings"],  obj["actions"], obj["pass_action"])
             return obj

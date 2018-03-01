@@ -3,6 +3,6 @@
 	"name":"talk",
 	"description":"Send text to output buffer",
 	"run":"write_to_buffer",
-	"question":true,
+	"question":false,
 	"keywords":null
 }
