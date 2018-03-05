@@ -1,8 +1,10 @@
 {
 	"_type":"Task",
 	"name":"Start_Generator",
-	"out_strings":["Which generator"],
+	"out_strings":["Which generator to start",
+			"What generator?",
+			"Where to captain?"],
 	"description":"Greet the person using talk function",
-	"pass_action":"start_screen_navigation",
-	"actions":["ask", "move", "new_task"]
+	"pass_action":"Select_Menu_1",
+	"actions":["talk", "move", "start_specific"]
 }

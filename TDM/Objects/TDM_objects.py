@@ -5,7 +5,7 @@
 #     Created By          :     David Orn Johannesson
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-02-09 08:59]
-#     Last Modified       :     [2018-03-01 13:55]
+#     Last Modified       :     [2018-03-02 15:51]
 #     Description         :     An object holder for the different types
 #                                   used inside TDM. Stores the values 
 #                                   and defines type specific actions
@@ -184,6 +184,7 @@ class ActionStack(object):
             # - - - - - - MAIN INPUT - - - - - - - - - #
             _dict = {}
             _dict["action"] = action
+            _dict["task"] = task
             _dict["p"]      = p
             if action.name == "talk":
                 _dict["out_msg"] = task.out_strings[
@@ -209,8 +210,8 @@ class ActionStack(object):
             rand_q = task.out_strings[
                 np.random.randint(0, len(task.out_strings))
             ]
-            out_str = "Trying to solve object: {}".format(rand_q)
-            return {"Result":"Talk", "Text":out_str}
+            out_str = "Trying to solve task : {}".format(task.name)
+            return {"Result":"Talk", "msg":out_str}
 
     def getErrorCount(self):
         return self.ErrorCount
@@ -249,10 +250,11 @@ class Word_Bag(object):
 
 
     def get(self, no=0):
-        if no <= self.len:
+
+        if self.buffer != None and no <= len(self.buffer):
             self.new_words = False
             return self.buffer[no]
-        return {"Fail":True, "Reson":"ValueError:OutOfRange"}
+        return "" 
 
     def clean(self):
         self.logger.info("Cleaning Word_Bag")

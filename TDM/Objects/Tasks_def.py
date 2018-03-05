@@ -21,7 +21,7 @@ class _Type(object):
         self.description = description
         self.out_strings = out_strings
         self.actions     = actions
-        self.pass_action = action_dict[pass_action]
+        self.pass_action = pass_action
 
         self.action_stack = None
         self.parent = None

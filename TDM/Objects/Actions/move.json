@@ -1,0 +1,8 @@
+{
+	"_type":"Action",
+	"name":"move",
+	"description":"Return a point that the other robot should move to",
+	"run":"move",
+	"question":true,
+	"keywords":["Point1", "Point2"]
+}

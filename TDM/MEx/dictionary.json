@@ -1,5 +1,14 @@
 {
 	"Tell_Joke":{"joke":80, "tell":30, "laugh":10},
-	"Start_Generator":{"start":50, "generator":90, "enable":50},
-	"Answer_Question":{"answer":60, "question":80}
+	"Start_Generator":{"start":50, "generator":90, "enable":50, "starts":20,
+			"generate":30, "power":50},
+	"Move":{"move":60, "send":80, "go":50},
+	"Point1":{"first":80, "left":50},
+	"Point2":{"second":80, "be":30, "right":50},
+	"Menu1":{"first":80, "top":50},
+	"m1button1":{"top":80, "first":70},
+	"m1button2":{"middle":80, "center":70, "second":50},
+	"m1button3":{"end":80, "lowest":60, "third":50},
+	"m2button1":{"top":80, "first":70},
+	"m2button2":{"middle":80, "center":70, "second":50}
 }

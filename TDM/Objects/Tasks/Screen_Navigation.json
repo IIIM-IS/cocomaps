@@ -1,8 +1,9 @@
 {
 	"_type":"Task",
 	"name":"Screen_Navigation",
-	"out_strings":["Which menu to chose?"],
+	"out_strings":["Which menu to chose?",
+			"What menu should I select?"],
 	"description":"Select menu from the screen naviagtion system",
-	"pass_action":"move_menu",
-	"actions":["talk", "screen_nav", "get_input"]
+	"pass_action":"Select_Menu_1",
+	"actions":["talk", "specific_task"]
 }

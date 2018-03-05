@@ -25,7 +25,29 @@ def new_task( _dict):
 
     return {"Internal":"new_task", 
             "name":action.keywords[np.argmax(p)]}
+
+def start_specific(_dict):
+    """
+    Start the specific pass action in the task
+    """
+    return {"Internal":"new_task",
+            "name":_dict["task"].pass_action}
+
+def menu(_dict):
+    """
+    Return a keyword search for  relevant menu slection
+    """
+    return {"Result":"Menu", "ButtonName":_dict["action"].keywords[np.argmax(_dict["p"])]}
+
     
+def move(_dict):
+    """
+    Return a name of a point that the executor should move to
+    """
+    action  = _dict["action"]
+    p       = _dict["p"]
+
+    return {"Result":"Move", "Point":action.keywords[np.argmax(p)]}
 
 
 def resolve_pass( _dict):
@@ -63,5 +85,8 @@ action_dict = {
     "start_screen_navigation":start_screen_navigation,
     "get_objective":get_objective,
     "move_menu":move_menu,
+    "move":move,
+    "menu":menu,
+    "start_specific":start_specific
 }
 

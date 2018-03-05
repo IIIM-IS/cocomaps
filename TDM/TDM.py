@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-02-28 14:44]
-#     Last Modified       :     [2018-03-01 14:07]
+#     Last Modified       :     [2018-03-02 10:13]
 #     Description         :     (T)ask (D)ialog (M)anager for the cocomaps project
 #                               control the flow of task by requiering information
 #                               asking for that relevant information and trying
@@ -58,6 +58,10 @@ class TDM(object):
         self.greeted = False
         self.current_task = None
 
+        self.talking_delay_start = 0
+        self.talking_delay = 0
+        self.info_time = 0
+
     def run(self):
         self.logger.debug("Current status: {}".format(self.current_state))
         if self.Action_stack.getErrorCount() > 3:
@@ -67,7 +71,15 @@ class TDM(object):
             # Check if the information missing from the action is in the 
             # word bag. If so move to action state. Else return question 
             # to get information for current action.
-            enough_info, probability = self.Action_stack.info_check(self.Word_Bag)
+            if self.info_time_elapsed():
+                self.info_time = timer()
+                enough_info, probability = self.Action_stack.info_check(self.Word_Bag)
+            else :
+                # If a minimum time since we last checked for information hasn't
+                # elapsed we can wait
+                return {"Result":"NothingToDo"}
+
+            
             if enough_info:
                 # If information is in the value set to 
                 # action and start execution
@@ -126,6 +138,39 @@ class TDM(object):
             # If this is running something went wrong
             raise ValueError("TDM-run(else) line 62 - input of wrong type")
 
+    def talk_delay(self, speak_sentance):
+        """
+        Don't allow the system to speak a while after talking. This is done so 
+        that two output don't stream sequentially without the system pausing 
+        in between 
+        """
+        word_count = len(speak_sentance.split(" "))
+        
+        delay = word_count * 0.25
+        self.talking_delay_start = timer()
+        self.talking_delay = delay
+    
+    def info_time_elapsed(self):
+        self.logger.debug("Checking for elapsed info time")
+        if self.info_time == 0:
+            return True
+        else :
+            if timer() - self.info_time > 5:
+                return True
+        return False
+
+
+    def can_talk(self):
+        """
+        Boolean task to check if the sytem can actually speak
+        """
+        if self.talking_delay_start == 0:
+            return True
+
+        if timer() - self.talking_delay_start >= self.talking_delay:
+            return True
+        return False
+
 
     def add_task(self, task):
         """
@@ -134,28 +179,36 @@ class TDM(object):
         """
         # Check if action stack is empty. We can't start a new task 
         # if something is on the action task
-        if self.Action_stack.isEmpty():
-            self.Action_stack.resetErrorCount()
-            self.current_task = task
-            # Add action to action stack
-            for action in task.actions:
-                self.Action_stack.add(self.OBJ.new_object({
-                    "Type":"Actions",
-                    "Name":action
-                }))
-                # If a new task is created the system automatically 
-                # sets the default input to information
-                self.current_state = "Information"
-        else : # What happens if the system tries to create a new task
-                # while the action stack isn't empty
-            return {"Fail":True, "Reason":"InternalError: Tried to create new task while action stack not empty"}
-    
+        self.logger.debug("Adding new task to stack")
+        if not self.Action_stack.isEmpty():
+            self.Action_stack.clean()
+
+        self.Action_stack.resetErrorCount()
+        self.current_task = task
+        # Add action to action stack
+        for action in task.actions:
+            self.logger.debug("Adding action :{}".format(action))
+            self.Action_stack.add(self.OBJ.new_object({
+                "Type":"Actions",
+                "Name":action
+            }))
+            # If a new task is created the system automatically 
+            # sets the default input to information
+            self.current_state = "Information"
+
     def clean(self):
         """
         Empty both stacks. 
         """
         self.current_task = None
         self.Action_stack.clean()
+        
+        self.add_task(self.OBJ.new_object({
+            "Type":"Tasks",
+            "Name":"Get_Objective"
+        }))
+
+
     def add_words(self, input):
         """
         Top level for adding the input stream into the Word_Bag

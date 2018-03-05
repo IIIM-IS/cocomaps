@@ -4,5 +4,5 @@
 	"description":"Start a new task",
 	"run":"new_task",
 	"question":true,
-	"keywords":["Tell_Joke", "Start_Generator", "Answer_Question"]
+	"keywords":["Tell_Joke", "Start_Generator", "Move"]
 }

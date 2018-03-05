@@ -1,0 +1,8 @@
+{
+	"_type":"Action",
+	"name":"screen_nav",
+	"description":"Navigate screen for information",
+	"run":"start_screen_navigation",
+	"question":true,
+	"keywords":["Menu1"]
+}

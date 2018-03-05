@@ -1,7 +1,11 @@
 {
 	"_type":"Task",
 	"name":"Tell_Joke",
-	"out_strings":["Why did the chicken cross the road"],
+	"out_strings":[ "Error 404, joke not found", 
+			"Robots are not funny",
+			"I am a supreme being, I don't tell jokes",
+			"Jokes are for stupid people",
+			"A rabbi a priest and a imam walk into a bar, and have a glass of water. The end"],
 	"description":"Tell the user a small joke",
 	"pass_action":"start_screen_navigation",
 	"actions":["talk"]
