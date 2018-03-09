@@ -1,0 +1,17 @@
+{
+	"type":"Task",
+	"name":"KnockKnock",
+	"keywords":{
+		"Who":["who"]
+	},
+	"questions":  {
+		"primary":["You need to ask who is there"],
+		"secondary":[
+			["Owls say", "Yes they do", "You need to ask, Owls who"], 
+			["Art", "Art to D too, of course", "Ask Art who"],
+			["Stopwatch","Stopwatch you are doing and pay attention", "Ask, Stopwatch who"]
+		],
+		"timeout":["Fine I won't ask you a question"]
+	},
+	"action":"TellJoke"
+}

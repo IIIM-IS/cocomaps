@@ -1,8 +1,0 @@
-{
-	"_type":"Action",
-	"name":"menu1",
-	"description":"Get user to select a menu value",
-	"run":"menu",
-	"question":true,
-	"keywords":["m1button1", "m1button2", "m1button2"]
-}

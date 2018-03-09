@@ -4,16 +4,14 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2017-11-14 17:58]
-#     Last Modified       :     [2018-02-28 21:59]
+#     Last Modified       :     [2018-03-07 18:22]
 #     Description         :     (M)eaning (Ex)tractor for the cocomaps project
 #                               between IIIM and CMLabs. 
 #                               Creates a dictionary using keyword search.
 #     Version             :     3.1
 #################################################################################
-import json
-import os
+
 import logging
-import sys
 import numpy as np
 
 
@@ -23,51 +21,21 @@ class MEx(object):
     Top object storer. Creates and stores all types, reads in the dictionary 
     and computes word connections. 
     """
-    def __init__(self):
+    def __init__(self, tasks):
         """
-        Load dictionary from file, handle location issues.
+        Create the dictionary set fom the information stored in the
+        tasks types
         """
-        # Start up a logger for monitoring and debugging reasons
         self.logger = logging.getLogger(__name__)
-        self.logger.info("Creating MEx dictionary object")
+        self.dict = {}
+        for key in tasks.Tasks.keys():
+            for _type in tasks.Tasks[key].keywords:
+                words = []
+                for word in tasks.Tasks[key].keywords[_type]: 
+                    words.append(word)
+                self.dict[_type] = words
 
-        # Get the local path absolute extension
-        self.curr = str(os.path.abspath(__file__))
-        # There is an issue, somethimes an additional value (c) is added
-        # to string. New method introduced to mitigate error
-        loc = [pos for pos, char in enumerate(self.curr) if char=='/']
-        self.curr = self.curr[:loc[-1]+1]
-        # Create a dictionary file location variable
-        dict_file = self.curr + "dictionary.json"
-
-        # Create a holding place for the dictionary
-        self._dict = {}
-        # Load the dictionary
-        self.make_dict(dict_file)
-
-        self.logger.info("MEx has been built")
-
-
-    def make_dict(self, dict_file):
-        """
-        Load a dictionary from a specific file, 
-        input:
-            dict_file : absolute string path to dictionary .json file
-        output:
-            appends a dictionary structure to the MEx class
-        """
-        self.logger.debug("Dict file: {}".format(dict_file))
-        with open(dict_file, 'rb') as fid:
-
-            raw_text = fid.read()
-            raw_json = json.loads(raw_text)
-
-        # Create dictionary structure
-        for key in raw_json.keys():
-            self.logger.debug("Adding key: {}".format(key))
-            self.logger.debug("With values : {}".format(raw_json[key]))
-            self._dict[key] = raw_json[key]
-
+        self.print_available()
 
     def dict_search(self, keywords, word_bag):
         """
@@ -81,10 +49,6 @@ class MEx(object):
                 * DEBUG
                 Words = "Array of words split from sentense that user inputs"
         """
-        # TODO expand search to previous inputs, i.e. use older values
-        # from the word bag to try and decide what to do. Make sure that
-        # older sentences give lower value
-
         self.logger.debug("Searcing sentence {}. With keywords {}".format(
                             word_bag.get(),
                             keywords
@@ -92,15 +56,26 @@ class MEx(object):
 
         p = np.zeros(len(keywords))
 
-        for word in word_bag.get():
-            for idx, key in enumerate(keywords):
-                # Assumptions, keywords must have dictionary definitions
-                # or this breaks
-                if word in self._dict[key].keys():
-                    p[idx] += self._dict[key][word]
-        self.logger.debug("Results are {}".format(p))
+        
+        for i in range(word_bag.len):
+            alpha = 1.0/(1.0 - np.exp(-(i+1)))
+            for word in word_bag.get(no=i):
+                self.logger.debug("{}/{} : {}".format(i, alpha, word))
+                for idx, key in enumerate(keywords):
+                    # Assumptions, keywords must have dictionary definitions
+                    # or this breaks
+                    if self.is_in_dict(word, self.dict[key]):
+                        self.logger.debug("word: {}".format(word))
+                        p[idx] += 1*alpha
 
+        self.logger.debug("Results are {}".format(p))
         return p
+
+    def is_in_dict(self, word, keys):
+        for key in keys:
+            if key == word:
+                return True
+        return False
 
 
     def print_available(self):
@@ -109,15 +84,11 @@ class MEx(object):
         """
         
         print "Available objects in current structure \n"
-        for _type in self._dict.keys():
+        for _type in self.dict.keys():
             print "Type: {}".format(_type)
-            for object in self._dict[_type].keys():
+            for object in self.dict[_type]:
                 print "\t\t{}".format(object)
 
 
 if __name__=="__main__":
-    sys.path.append("..")
-    import tdm_logger
-    tdm_logger.setup_logging()
-    obj = MEx()
-
+    pass

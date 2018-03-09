@@ -1,0 +1,23 @@
+{
+	"type":"Task",
+	"name":"GetObjective",
+	"keywords":{
+		"Move":["move", "go", "run", "send"],
+		"Joke":["joke", "tell", "funny"],
+		"StartGen":["start", "generator", "power"]
+	},
+	"questions":{
+		"primary":[
+			"What would you like me to do?",
+			"What task would you like me to perform?"
+		],
+		"secondary":[
+			"I need to know what you want me to do",
+			"Could you please tell me what to do",
+			"Please be more specific of which task I should perform"
+		],
+		"timeout":[
+		]
+	},
+	"action":[]
+}

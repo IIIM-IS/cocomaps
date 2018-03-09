@@ -1,0 +1,12 @@
+{
+	"type":"Task",
+	"name":"Greet",
+	"keywords":{
+	},
+	"questions":  {
+		"primary":[],
+		"secondary":[],
+		"timeout":[]
+	},
+	"action":"Greet"
+}

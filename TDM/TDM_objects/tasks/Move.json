@@ -1,0 +1,23 @@
+{
+	"type":"Task",
+	"name":"Move",
+	"keywords":	{
+		"PanelPoint1Data":["first", "left", "one", "main"],
+		"PanelPoint2Data":["second", "right", "two", "backup"]
+	},
+	"questions":	{
+		"primary":[
+			"Where to",
+			"Where would you like to move"
+		],
+		"secondary":[
+			"I need a location to send controller to",
+			"Please be more specific"
+		],
+		"timeout":[
+			"I was unable to move the controller",
+			"It's taking to long to move the robot"
+		]
+	},
+	"action":"Move_Controller"
+}

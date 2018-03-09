@@ -3,274 +3,286 @@
 #     File Name           :     TDM.py
 #     Created By          :     david
 #     Email               :     david@iiim.is
-#     Creation Date       :     [2018-02-28 14:44]
-#     Last Modified       :     [2018-03-02 10:13]
-#     Description         :     (T)ask (D)ialog (M)anager for the cocomaps project
-#                               control the flow of task by requiering information
-#                               asking for that relevant information and trying
-#                               to move a task forward until user is happy with
-#                               result. (Happy = Task Reached)
-#     Version             :     4.0.1
+#     Creation Date       :     [2018-03-06 15:12]
+#     Last Modified       :     [2018-03-09 10:00]
+#     Description         :     Supervisory Intermediate (TDM) control function
+#                               takes care of higher level functionality and 
+#                               feedbacks to the TDM. Becomes the actual 
+#                               connector with psyclone
+#     Version             :     0.1
 #################################################################################
 
-# Timing and other system imports
 from timeit import default_timer as timer
-import os, json
-import time # For debugging reasons
-
-# For logging reasosn
 import logging
-import tdm_logger
+import tdm_logger 
+import numpy as np 
 
-# Project specific imports
-from Objects.TDM_objects import Objects
-from Objects.TDM_objects import ActionStack
-from Objects.TDM_objects import Word_Bag
-from MEx.MEx import MEx
+from TDM_objects.algorithms import TDM_AS
+from TDM_objects.algorithms import TDM_AA
+from TDM_objects.algorithms import TDM_SS
+
+from TDM_objects.objects import Dialog
+from TDM_objects.objects import Word_Bag
+from TDM_objects.Tasks import Task_object
+
+from MEx import MEx
 
 class TDM(object):
     """
-    Task dialog manager object. Stores the current state of interaction and
-    returns values that are required to achieve certain tasks.
+    Supervisory Intermediate. High level control and response of the 
+    TDM overall system. Checks inputs/outputs, ensures taks are in correct
+    order and that timouts, where required, are mainained. 
+    Also an upper level control loop, e.g. for inserting the control 
+    to panel (in a ping-pong push-pull back-forth relationship)
     """
     def __init__(self):
-        """
-        Initialize all relevant information based on internal structure.
-        Load all possible objects and load the MEx dictionary
-        """
-        # TODO add timing functionality to the system
-
-        # Setup a default logging methodology.
+        # Initiate the logging sequence
         tdm_logger.setup_logging()
+        
         self.logger = logging.getLogger(__name__)
-        self.logger.info("Starting TDM")
+        self.logger.info("Starting Supervisory Intermediate")
+        self.last_action = 0 
+        
+        self.output_action = None
+        self.dialog = Dialog()
+        
+        # Dynamic variables
+        self.talk = False
+        self.stop = False
+        self.last_speak = 0
+        self.current_task = None
+        self.active_actions = TDM_AA()
+        self.action_stack = TDM_AS(self.active_actions)
+        self.speak_stack  = TDM_SS()
+        self.word_bag = Word_Bag()
+        self.id_number = 0
 
-        # Create databases
-        self.OBJ = Objects()
-        self.MEx = MEx()
-        self.Word_Bag = Word_Bag()
+        self.speaking_timeout = 0
 
-        # Create empty stack for actions
-        self.Action_stack = ActionStack(self.MEx)
+        # Static variables:
+        self.max_timeout = 45
+        self.Tasks = Task_object()
+        self.MEx = MEx.MEx(self.Tasks)
 
-        # Dynamic variables for runtime
-        self.current_state = "Empty"
-        self.greeted = False
+    def get_speak_stack(self):
+        """
+        For the TDM_psyclonce call, if there is anything on the speak
+        stack return it and pop the stack
+        """
+        #self.logger.debug("Checking speak stack")
+        if not self.speak_stack.isEmpty() and self.speak_timeout():
+            out_speak = self.speak_stack.pop()
+            self.set_speek_timeout(out_speak.max_time)
+            return out_speak
+        return None
+    def set_keywords(self, key, list):
+        if self.current_task != None:
+            self.current_task.keywords = {key, list}
+
+    def id(self):
+        self.id_number+=1
+        return self.id_number-1
+
+
+    def speak_timeout(self):
+        """
+        Timout period between speaking
+        """
+        if self.speaking_timeout == 0:
+            return True
+        if timer() - self.speak_start > self.speaking_timeout:
+            return True
+        return False
+
+    def set_speek_timeout(self, time):
+        self.speak_start = timer()
+        self.speaking_timeout = time
+
+    def check_action_stack(self):
+        """
+        Check if the action stack has anything to offer
+        """
+        if not self.action_stack.isEmpty():
+            # Somehow add that action to the action list inherant 
+            # in this TDM system and monitor the action
+            data = self.action_stack.pop()
+            self.active_actions.add(data)
+            return data
+        return None
+
+    def clean_task_setup(self):
+        """
+        Set the system to a default state, clean action stack, speak stack 
+        and make the current task == None
+        """
         self.current_task = None
 
-        self.talking_delay_start = 0
-        self.talking_delay = 0
-        self.info_time = 0
-
-    def run(self):
-        self.logger.debug("Current status: {}".format(self.current_state))
-        if self.Action_stack.getErrorCount() > 3:
-            self.clean()
-            return {"Fail":True, "Reason":"ToManyErrorCounts"}
-        if self.current_state == "Information":
-            # Check if the information missing from the action is in the 
-            # word bag. If so move to action state. Else return question 
-            # to get information for current action.
-            if self.info_time_elapsed():
-                self.info_time = timer()
-                enough_info, probability = self.Action_stack.info_check(self.Word_Bag)
-            else :
-                # If a minimum time since we last checked for information hasn't
-                # elapsed we can wait
-                return {"Result":"NothingToDo"}
-
-            
-            if enough_info:
-                # If information is in the value set to 
-                # action and start execution
-                self.current_state = "Action"
-                _dict = {}
-                _dict["p"] = probability
-
-                # Compute probability of keywords in sentence
-                value = self.Action_stack.run_action(self.current_task, 
-                                                   probability)
-                if "Internal" in value.keys():
-                    if value["Internal"] == "new_task":
-                        self.logger.debug("Starting up new task: {}".format(value["name"]))
-                        self.add_task(self.OBJ.new_object(
-                            {"Type":"Tasks",
-                             "Name":value["name"]}
-                                                         ))
-                        return {"Result":"NothingToDo"}
-                return value
-            else :
-                # Run the action of aquiring more information
-                return self.Action_stack.get_info(self.current_task)
-
-        elif self.current_state == "Action":
-            # POSSIBLE : Add connection to outside to look for confirmation
-            # that task is complete.
-            self.Action_stack.pop()
-            if self.Action_stack.isEmpty():
-                self.current_state = "Empty"
+    def check_task(self):
+        """
+        Checks that there is an action on the stack. If not add get objective
+        task to the stack
+        """
+        if self.current_task == None:
+            if self.action_stack.history == []:
+                self.logger.debug("Adding Greet to stack")
+                self.set_active_task("Greet")
+                self.action_stack.history.append("greet")
             else:
-                self.logger.debug("Setting current state to information")
-                self.current_state = "Information"
-            return self.run()
-        elif self.current_state == "Empty":
-            self.logger.debug("Trying to reset empty queue")
-            # Special case, the task list is empty, happens at beginning 
-            # when everything is initialized and at reset intervals
-            if not self.greeted:
-                # Create greet action and put state machine in action format
-                self.logger.debug("Adding Greet task to Task stack")
-                self.add_task(self.OBJ.new_object({
-                    "Type":"Tasks",
-                    "Name":"Greet"
-                }))
-                self.greeted = True
-                return self.run()
+                self.logger.debug("Adding GetObjective to stack")
+                self.set_active_task("GetObjective")
 
-            else : 
-                self.logger.debug("Adding Get_Objective to empty Task stack")
-                self.add_task(self.OBJ.new_object({
-                    "Type":"Tasks",
-                "Name":"Get_Objective"
-            }))
-            return self.run()
+
+    def set_active_task(self, task_name):
+        """
+        Set the current task according to task name. Prepare the 
+        action stack and check if information is available. If
+        not create an speak_object and add on stack. If data is
+        available put action_object on action stack
+        """
+        # TODO decide where we should put the waiting period for the
+        # active action list. 
+        new_task = self.Tasks.get(task_name)
+        self.current_task = new_task
+
+
+    def information_query(self):
+        """
+        Check if there is information in the speak buffer to decide 
+        what is missing from the task, if not put question on Speach 
+        Stack
+        """
+        task = self.current_task
+        p = self.MEx.dict_search(task.keywords, self.word_bag)
+        if p.sum() == 0:
+            # Add question to stack
+            self.speak_stack.add(task.primary_question(), self.id())
         else :
-            # If this is running something went wrong
-            raise ValueError("TDM-run(else) line 62 - input of wrong type")
+            self.logger.debug("Current task: {}".format(task.name))
+            self.logger.debug("Current keywords: {}".format(task.keywords))
+            self.logger.debug("Current p: {}".format(p))
+            self.logger.debug("argmax {}".format(np.argmax(p)))
+            self.logger.debug("Keyword: {}".format(task.keylist[np.argmax(p)]))
 
-    def talk_delay(self, speak_sentance):
-        """
-        Don't allow the system to speak a while after talking. This is done so 
-        that two output don't stream sequentially without the system pausing 
-        in between 
-        """
-        word_count = len(speak_sentance.split(" "))
+            task.set_keyword(task.keylist[np.argmax(p)])
+            self.speak_stack.reset()
         
-        delay = word_count * 0.25
-        self.talking_delay_start = timer()
-        self.talking_delay = delay
-    
-    def info_time_elapsed(self):
-        self.logger.debug("Checking for elapsed info time")
-        if self.info_time == 0:
+
+
+
+    def add_to_word_bag(self, sentence):
+        """
+        Try to add the Nunace input to the word bag.
+        """
+        self.word_bag.add(sentence)
+
+    def silent_run(self):
+        """
+        Silent run gets checked each time, this pushes actions to action stack
+        and ensures that enqueued text is ready
+
+        Can return actions to be performed that don't require timed inputs
+
+        from the user
+        """
+        # Check if the variable of dialog on can be set off and the system 
+        # reset
+        if not self.turn_dialog_off() :
+            if self.active_actions.wait():
+
+                # Check the active action stack if there are any actions
+                # that require a wait period
+                None
+            elif self.active_actions.timeouts():
+                # Check if anything in the active action has a timeout
+                # First approach, reset system
+                self.logger.info("Timeout ")
+                self.clean_task_setup()
+                self.active_actions.reset()
+                self.action_stack.reset()
+                self.speak_stack.reset()
+
+            else: 
+                if self.action_stack.isEmpty() and self.speak_stack.isEmpty():
+                    # Special case for greeting
+                    if self.current_task != None and self.current_task.name == "Greet":
+                        self.clean_task_setup()
+                self.check_task()
+
+                # Check if there is a wait for information 
+                if self.speak_stack.isEmpty() and self.current_task.keyword == None:
+                        # Check the current active task for information
+                        self.information_query()
+                elif self.current_task.keyword != None:
+                    self.current_task.eval(self)
+
+
+    def turn_dialog_off(self):
+        """
+        Check when last input was recorded, if to long. Force dialog off
+        """
+        if self.last_action == 0:
+            return False
+
+        if timer() - self.last_action > self.max_timeout:
+            self.action_stack.reset()
             return True
-        else :
-            if timer() - self.info_time > 5:
-                return True
         return False
 
 
-    def can_talk(self):
-        """
-        Boolean task to check if the sytem can actually speak
-        """
-        if self.talking_delay_start == 0:
-            return True
-
-        if timer() - self.talking_delay_start >= self.talking_delay:
-            return True
-        return False
+def delay(time):
+    now = timer()
+    while timer()-now < time:
+        pass
 
 
-    def add_task(self, task):
-        """
-        Add a task to the current run. Take all actions in the task and 
-        add to stack to be evalued consequitively.
-        """
-        # Check if action stack is empty. We can't start a new task 
-        # if something is on the action task
-        self.logger.debug("Adding new task to stack")
-        if not self.Action_stack.isEmpty():
-            self.Action_stack.clean()
+class sent_test(object):
+    def __init__(self):
+        self.start_time = timer()
+        self.sent = []
+        self.delay = []
 
-        self.Action_stack.resetErrorCount()
-        self.current_task = task
-        # Add action to action stack
-        for action in task.actions:
-            self.logger.debug("Adding action :{}".format(action))
-            self.Action_stack.add(self.OBJ.new_object({
-                "Type":"Actions",
-                "Name":action
-            }))
-            # If a new task is created the system automatically 
-            # sets the default input to information
-            self.current_state = "Information"
+    def add_sentece(self, sent, delay):
+        self.sent.append(sent)
+        self.delay.append(delay)
 
-    def clean(self):
-        """
-        Empty both stacks. 
-        """
-        self.current_task = None
-        self.Action_stack.clean()
-        
-        self.add_task(self.OBJ.new_object({
-            "Type":"Tasks",
-            "Name":"Get_Objective"
-        }))
-
-
-    def add_words(self, input):
-        """
-        Top level for adding the input stream into the Word_Bag
-        """
-        self.Word_Bag.add(input)
-                
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
-# # # # # # # Functions for information, decorations  # # # # # # # # # #  
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
-    def create_version(self):
-        """
-        Get information about the current iteration version, 
-        what is active and what needs more work
-        """
-        current_folder = os.getcwd().split('/')[-1]
-        tdm_version_file = "TDM_version.json"
-        if current_folder != "TDM":
-            tdm_version_file = "TDM/"+tdm_version_file
+    def get_sent(self):
+        if self.sent != []:
+            if timer()-self.start_time > self.delay[0]:
+                self.delay.pop(0)
+                return self.sent.pop(0)
+        return None
             
-        with open(tdm_version_file, 'rb') as fid:
-            data = fid.read()
-            data = json.loads(data)
-        self.data = data    
-        self.version = data["Version"]
-
-    def version_notes(self):
-        """
-        Print out the version notes for TDM
-        """
-        print 70*'*'
-        print "\t\tVersion notes"
-        print 70*'*'
-        print "Author \t\t: {}".format(self.data["author"])
-        print "Version no\t: {}".format(self.data["Version"])
-        print "Release date\t: {}".format(self.data["Release"])
-        print "Stable\t\t: {}".format(self.data["Stable"])
-        print "Active modules"
-        print "\tMEx"
-        print "Available objects"
-        for obj in self.data["objects"]:
-            print "\t {}".format(obj)
-        print "Author release notes"
-        print "\t{}".format(self.data["Notes"])
-        print 70*'*'
-        print 70*'*'
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     obj = TDM()
-    test_sentences = [
-        "Move the other robot to location three",
-        "Start up the generator",
-        "Tell me a joke"
-    ]
+    start = timer()
+    sent = sent_test()
+#    sent.add_sentece("Tell me a joke", 2)
+#    sent.add_sentece("Who is there", 5)
+#    sent.add_sentece("who", 9)
+    sent.add_sentece("move to the second location", 3)
+    sent.add_sentece("second point", 8)
+    while True:
 
-    data = obj.run()
-    print "Initial data : {}".format(data)
-    data2 = obj.run()
-    print "Run 2 returns :{}".format(data2)
-    for sent in test_sentences:
-        obj.add_words(sent)
-        for k in range(3):
-            data = obj.run()
-        print "data: {}".format(data)
+        say = sent.get_sent()
+        if say != None:
+            obj.add_to_word_bag(say)
+
+        obj.silent_run()
+
+        delay(.2)
+
+        if not obj.speak_stack.isEmpty():
+            temp = obj.get_speak_stack()
+            if temp != None:
+                print "main Speak_stack : {}".format(temp.msg)
+        #print "Speach timeout {}".format(obj.speaking_timeout)
+        if not obj.action_stack.isEmpty():
+            temp = obj.action_stack.pop()
+            print "main Action Stack : {}".format(temp.msg)
+
+
+        if timer()-start > 18:
+            break
 

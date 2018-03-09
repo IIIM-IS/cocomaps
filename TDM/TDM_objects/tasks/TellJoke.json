@@ -1,0 +1,11 @@
+{
+	"type":"Task",
+	"name":"TellJoke",
+	"keywords":{
+	},
+	"questions":  {
+		"primary":[],"secondary":[],
+		"timeout":["Fine I won't ask you a question"]
+	},
+	"action":"TellJoke"
+}

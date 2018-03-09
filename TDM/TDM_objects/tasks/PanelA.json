@@ -1,0 +1,24 @@
+{
+	"type":"Task",
+	"name":"StartGen",
+	"keywords":	{
+		"Button1":["first", "primary", "top"],
+		"Button2":["second", "middle"]
+	},
+	"questions":	{
+		"primary":[
+			"Which generator would you like me to start",
+			"We can start up the generator. Which one"
+		],
+		"secondary":[
+			"I didn't quite catch that, which generator.",
+			"Say that again. Which generator",
+			"Sorry, I was thinking about electric sheep. Please tell me agian"
+		],
+		"timeout":[
+			"Well, then we won't start up a generator",
+			"This task isn't fun, can we try something else"
+		]
+	},
+	"action":"Select_Button"
+}
