@@ -30,7 +30,13 @@ def PsyCrank(apilink):
             trigger_name = api.getCurrentTriggerName()
             print "TRIGGER INPUT: {}".format(trigger_name)
 
-            if trigger_name == "NewWords":
+            if trigger_name == "DialogOn":
+                _TDM.turn_on()
+
+            elif trigger_name == "DialogOff":
+                _TDM.turn_off()
+
+            elif trigger_name == "NewWords":
                 _TDM.add_to_word_bag(msg.getString("Utterance"))
 
             elif trigger_name == "Speak":
@@ -39,29 +45,48 @@ def PsyCrank(apilink):
                     if data.type == "msg":
                         api.postOutputMessage("Talk", createAudioFromText(data.msg))
 
-            # TODO Correct this with THOR
-            elif trigger_name == "PerformTask":
-                task_id = msg.getString("TaskID")
-                status  = msg.getString("Status")
+            elif trigger_name == "TaskAccepted":
+                #TODO implement in system. 
+                pass
 
+            elif trigger_name == "TaskCompleted":
+                taskID = msg.getInt("ReferenceID")
+                _TDM.active_actions.add_finished_id(taskID)
+                if msg.Type == "Panel":
+                    if _TDM.current_panel_screen != None:
+                        _TDM.current_panel_screen.update(msg.getString("ScreenName"))
+
+
+            elif trigger_name == "TaskTimeout":
+                # TODO, add timoute functionality
+                # NOTE : There is a built in functionality in the TDM
+                pass
+
+            elif trigger_name == "TaskCancelled":
+                # TODO : Add functionality to TDM. Can actually be the 
+                # same method as timeout, but with different name
+                pass
+
+            #          PANEL CONTROL FUNCTION - not implemented
+            # Update the information about the active panel message.
+            elif trigger_name == "UpdatePanel":
+                if _TDM.current_panel_screen != None:
+                    _TDM.current_panel_screen.update(msg)
 
         else:
+
             data = _TDM.check_action_stack()
-            
             if hasattr(data, "type"):
                 if data.type == "move":
                     msg1, msg2 = createMoveObject(data)
                     api.postOutputMessage("Performtask", msg1)
                     api.postOutputMessage("Talk", createAudioFromText(msg2))
-                    _TDM.add_timeout_by_string(msg2)
                 if data.type == "screen_msg":
                     if data.msg == "Reset":
                         pass
                         # Send the reset msg to the 
                     elif data.msg == "Query":
                         pass
-                    
-
 
             if _TDM.turn_dialog_off():
                 # TODO add this to XML file
@@ -74,7 +99,7 @@ def PsyCrank(apilink):
                 if data.type == "move":
                     msg1, msg2 = createMoveObject(data)
                     api.postOutputMessage("Perform", msg1)
-                    api.postOutputMessage("Talk", createAudioFromText(msg2))
+                    api.postOutputMessage("", createAudioFromText(msg2))
 
                 elif data.type == "screen_navigate"
 
@@ -141,19 +166,4 @@ def createMoveObject(move_type):
     msgStr = move_type.msg
 
     return msg, msgStr
-    
-"""
-    if int_msg == "Point1":
-        msg.setString("PointName", "ControlPanel1")
-        msgStr = "Sending controller to point 1"
-
-
-    elif int_msg == "Point2":
-        msg.setString("PointName", "ControlPanel2")
-        msgStr = "Sending controller to point 2"
-"""
-
-
-if __name__ == "__main__":
-    obj = TDM.TDM()
 

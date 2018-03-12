@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 09:37]
-#     Last Modified       :     [2018-03-12 11:08]
+#     Last Modified       :     [2018-03-12 12:01]
 #     Description         :     The Supervisory Intermediate action library.
 #                           
 #     Version             :     0.1
@@ -154,7 +154,7 @@ def action_PanelA(obj):
 
     # Create a storage for the current task at hand
     if task.storage == None:
-        panel_obj = Screen_navigation_object()
+        panel_obj = Screen_navigation_object(obj)
         panel_obj.reset_screen(obj)
         task.store(panel_obj)
         panel_obj.query_screen(obj)
@@ -173,7 +173,7 @@ def action_PanelA(obj):
 
     # If there is a keyword
     if task.keyword != None:
-        panel_obj.set_by_keyword(task.keyword)
+        panel_obj.set_by_keyword(task.keyword, obj)
         logger.debug("Found keyword, now removing keyword for second search")
         obj.word_bag.empty_bag()
         task.keyword = None

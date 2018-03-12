@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-06 15:12]
-#     Last Modified       :     [2018-03-12 11:08]
+#     Last Modified       :     [2018-03-12 12:05]
 #     Description         :     Supervisory Intermediate (TDM) control function
 #                               takes care of higher level functionality and 
 #                               feedbacks to the TDM. Becomes the actual 
@@ -42,8 +42,7 @@ class TDM(object):
         self.logger = logging.getLogger(__name__)
         self.logger.info("Starting Supervisory Intermediate")
         self.last_action = 0 
-        
-        self.output_action = None
+        self.active = False
         self.dialog = Dialog()
         
         # Dynamic variables
@@ -65,7 +64,18 @@ class TDM(object):
         # Static variables:
         self.max_timeout = 45
         self.Tasks = Task_object()
-        self.MEx = MEx.MEx(self.Tasks)
+        self.MEx = MEx.MEx(self.Tasks)  
+    
+    def turn_on(self):
+        self.active = True
+
+    def turn_off(self):
+        self.current_task = None
+        self.action_stack.reset()
+        self.word_bag.empty_bag()
+        self.active_actions.reset()
+        self.speak_stack.reset()
+        self.active = False
 
     def get_speak_stack(self):
         """
@@ -73,11 +83,13 @@ class TDM(object):
         stack return it and pop the stack
         """
         #self.logger.debug("Checking speak stack")
-        if not self.speak_stack.isEmpty() and self.speak_timeout():
-            out_speak = self.speak_stack.pop()
-            self.set_speek_timeout(out_speak.max_time)
-            return out_speak
+        if self.active:
+            if not self.speak_stack.isEmpty() and self.speak_timeout():
+                out_speak = self.speak_stack.pop()
+                self.set_speek_timeout(out_speak.max_time)
+                return out_speak
         return None
+
     def set_keywords(self, key, list):
         if self.current_task != None:
             self.current_task.keywords = {key, list}
@@ -105,7 +117,7 @@ class TDM(object):
         """
         Check if the action stack has anything to offer
         """
-        if not self.action_stack.isEmpty():
+        if self.active and not self.action_stack.isEmpty():
             # Somehow add that action to the action list inherant 
             # in this TDM system and monitor the action
             data = self.action_stack.pop()
@@ -171,7 +183,6 @@ class TDM(object):
         
 
 
-
     def add_to_word_bag(self, sentence):
         """
         Try to add the Nunace input to the word bag.
@@ -190,7 +201,7 @@ class TDM(object):
         # Check if the variable of dialog on can be set off and the system 
         # reset
         self.active_actions.check_finished()
-        if not self.turn_dialog_off() :
+        if self.active and not self.turn_dialog_off():
             if self.active_actions.wait():
 
                 # Check the active action stack if there are any actions
@@ -260,6 +271,7 @@ class sent_test(object):
 
 if __name__ == "__main__":
     obj = TDM()
+    obj.turn_on()
     start = timer()
     sent = sent_test()
 #    sent.add_sentece("Tell me a joke", 2)
@@ -268,7 +280,7 @@ if __name__ == "__main__":
     sent.add_sentece("start up the generator", 2)
     sent.add_sentece("The second None", 5)
     sent.add_sentece("The third button", 10)
-    sent.add_sentece("stop, stop this nonsense", 20)
+    sent.add_sentece("stop stop this nonsense", 20)
     run_obj = True
     while True:
 
@@ -310,6 +322,9 @@ if __name__ == "__main__":
 
 
         if timer()-start > 25:
+            obj.turn_off()
+            while timer()-start < 26:
+                None
             print "Timeout Exit"
             break
 

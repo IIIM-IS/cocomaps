@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-06 17:14]
-#     Last Modified       :     [2018-03-12 11:08]
+#     Last Modified       :     [2018-03-12 13:38]
 #     Description         :     Objects specifically used by the TDM method 
 #     Version             :     0.1
 #################################################################################
@@ -237,13 +237,14 @@ class Screen_navigation_object(Action_Parent):
             self.time_added = -1
             self.data = []
 
-        def add(self, msg):
+        def update(self, msg):
             """
             input the keywords of the input message type into the 
             system
             """
             self.got = True
             self.time_added = timer()
+
 
 
         def get(self):
@@ -270,7 +271,7 @@ class Screen_navigation_object(Action_Parent):
             self.active_panels.pop(0)
 
 
-    def __init__(self):
+    def __init__(self, obj):
         Action_Parent.__init__(self)
 
         self.logger = logging.getLogger("Screen_navigator")
@@ -288,7 +289,7 @@ class Screen_navigation_object(Action_Parent):
         out_obj = Screen_navigation_object.Panel_query(self.active_tasks)
         obj.action_stack.add(out_obj)
 
-    def set_by_keyword(self, keyword):
+    def set_by_keyword(self, keyword, obj):
         """
         Define output of function by search keyword
         """
@@ -304,8 +305,33 @@ class Screen_navigation_object(Action_Parent):
         task_id = obj.id()
         out_obj.set_msg("Query", task_id)
         out_obj.set_hold("True")
-        out_obj.max_time(3)
+        out_obj.set_max_time(3)
         obj.action_stack.add(out_obj)
+
+    def update(self, screen_name):
+        """
+        Define the current screen information based on the screen name
+        keyword
+        """
+        pass
+    # TODO define screens based on input/ouputs
+
+    """
+        if screen_name == "main_screen":
+
+        elif screen_name == "power_up_screen":
+
+        elif screen_name == "cancel_power":
+
+        elif screen_name =="status_screen":
+    """
+
+
+    def search_for_pin(self,obj):
+        """
+        Search for a four letter pin object
+        """
+
 
 
 
