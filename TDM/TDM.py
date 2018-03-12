@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-06 15:12]
-#     Last Modified       :     [2018-03-09 10:00]
+#     Last Modified       :     [2018-03-12 11:08]
 #     Description         :     Supervisory Intermediate (TDM) control function
 #                               takes care of higher level functionality and 
 #                               feedbacks to the TDM. Becomes the actual 
@@ -58,6 +58,9 @@ class TDM(object):
         self.id_number = 0
 
         self.speaking_timeout = 0
+        # A panel interaction specific variable. Is given value when 
+        # system is in interaction with a panel. Otherwise it's none
+        self.current_panel_screen = None
 
         # Static variables:
         self.max_timeout = 45
@@ -186,6 +189,7 @@ class TDM(object):
         """
         # Check if the variable of dialog on can be set off and the system 
         # reset
+        self.active_actions.check_finished()
         if not self.turn_dialog_off() :
             if self.active_actions.wait():
 
@@ -261,8 +265,11 @@ if __name__ == "__main__":
 #    sent.add_sentece("Tell me a joke", 2)
 #    sent.add_sentece("Who is there", 5)
 #    sent.add_sentece("who", 9)
-    sent.add_sentece("move to the second location", 3)
-    sent.add_sentece("second point", 8)
+    sent.add_sentece("start up the generator", 2)
+    sent.add_sentece("The second None", 5)
+    sent.add_sentece("The third button", 10)
+    sent.add_sentece("stop, stop this nonsense", 20)
+    run_obj = True
     while True:
 
         say = sent.get_sent()
@@ -273,6 +280,16 @@ if __name__ == "__main__":
 
         delay(.2)
 
+        if run_obj and timer() - start > 8:
+            print "Adding remove value to stack"
+            run_obj = False
+            obj.active_actions.add_finished_id(
+                obj.active_actions.stack[0].id()
+            )
+            print obj.active_actions.stack_id
+            print obj.active_actions.finished_id
+
+
         if not obj.speak_stack.isEmpty():
             temp = obj.get_speak_stack()
             if temp != None:
@@ -282,7 +299,19 @@ if __name__ == "__main__":
             temp = obj.action_stack.pop()
             print "main Action Stack : {}".format(temp.msg)
 
+        if timer()-start > 10:
+            if not obj.active_actions.isEmpty():
+                print "Forcing from active action stack {}".format(
+                    obj.active_actions.stack[0].msg
+                )
+                obj.active_actions.add_finished_id(
+                    obj.active_actions.stack[0].id()
+                )
 
-        if timer()-start > 18:
+
+        if timer()-start > 25:
+            print "Timeout Exit"
             break
+
+
 

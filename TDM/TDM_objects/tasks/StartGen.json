@@ -2,8 +2,8 @@
 	"type":"Task",
 	"name":"StartGen",
 	"keywords":	{
-		"FirstGen":["first", "primary", "main", "left"],
-		"SecondGen":["second", "auxilary", "right"]
+		"PanelPoint1Data":["first", "primary", "main", "left"],
+		"PanelPoint2Data":["second", "auxilary", "right"]
 	},
 	"questions":	{
 		"primary":[

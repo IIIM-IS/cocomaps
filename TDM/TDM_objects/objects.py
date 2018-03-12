@@ -1,10 +1,10 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 #################################################################################
 #     File Name           :     ../TDM_objects.py
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-06 17:14]
-#     Last Modified       :     [2018-03-09 09:57]
+#     Last Modified       :     [2018-03-12 11:08]
 #     Description         :     Objects specifically used by the TDM method 
 #     Version             :     0.1
 #################################################################################
@@ -61,6 +61,9 @@ class Action_Parent(object):
         self.action_id = -1
         self.timeout = False
         self.type = None
+
+        self.hold_the_line = False
+        self.finished = False
         
 
         # Set max time, overwrite in other functions
@@ -71,6 +74,9 @@ class Action_Parent(object):
 
     def set_id(self, id):
         self.action_id = id
+
+    def id(self):
+        return self.action_id
 
     def set_max_time(self, max_time):
         self.max_time = max_time
@@ -102,6 +108,16 @@ class Action_Parent(object):
             self.timeout = True
             return True
         return False
+    
+    def set_hold(self, tf):
+        # tf = True/False
+        self.hold_the_line = tf
+
+    def get_holds(self):
+        return self.hold_the_line
+
+    def finish(self):
+        self.finished = True
 
 
 class Move_object(Action_Parent):
@@ -115,6 +131,7 @@ class Move_object(Action_Parent):
         self.logger = logging.getLogger("Move_object")
 
         self.logger.debug("Created move object")
+        self.set_hold("True")
         self.set_type("move")
         self.point = None
         self.set_max_time(3)
@@ -172,9 +189,11 @@ class Talk_object(Action_Parent):
         Action_Parent.__init__(self)
         self.logger = logging.getLogger("Talk_object")
         self.logger.debug("Created talk object")
-
         self.set_type("talk")
         self.set_max_time(15)
+        self.set_hold(False)
+
+
 
     def set_string(self, sentence, task_id):
         # TODO : Connect to the TDM output.
@@ -182,16 +201,74 @@ class Talk_object(Action_Parent):
         self.set_msg(sentence)
     
         # Dynamically allocate maximum time of sentence, based on 
-        beta = .25
+        beta = .05
         self.set_max_time(len(sentence)*beta+1)
 
 
-class Screen_navigator(Action_Parent):
+class Screen_navigation_object(Action_Parent):
 
     """
-    Object that is used for screen navigation. This object is special since
-    it doesn't die without errors or user defined input.
+    Object that is used for screen navigation. 
+    This object differs from move and talk in that 
+        1) It doesn't finish automatically, it's stuck as Task PanelA until
+            exited (either by timeout or manual)
+        2) The main object (Screen_navigation_object) isn't actually put on
+            action stack. Instead the object stores the output object, 
+            specifically Panel_query object, in memory and sends that out.
     """
+    class Panel_active(object):
+        def __init__(self):
+            self.stack = []
+
+        def add(self, id):
+            self.stack.append(id)
+
+        def pop(self, id):
+            if self.stack != []:
+                if id == self.stack[0]:
+                    self.stack.pop(0)
+
+    class Window_Values(object):
+        """
+        Stores the values returned buy the panel query
+        """
+        def __init__(self):
+            self.got = False
+            self.time_added = -1
+            self.data = []
+
+        def add(self, msg):
+            """
+            input the keywords of the input message type into the 
+            system
+            """
+            self.got = True
+            self.time_added = timer()
+
+
+        def get(self):
+            self.got = False
+
+            
+    class Panel_query(Action_Parent):
+        def __init__(self, active_panel):
+            # Pointer to active panel values so that the object can
+            # remove itself from the system once it is finished
+            self.active_panels = active_panel
+
+            # Init varaiblese
+            Action_Parent.__init__(self)
+            self.set_hold("False")
+            self.type = "screen_msg"
+
+        def set_msg(self, msg, id):
+            self.msg = msg
+            self.action_id = id
+            self.active_panels.add(id)
+
+        def finish(self):
+            self.active_panels.pop(0)
+
 
     def __init__(self):
         Action_Parent.__init__(self)
@@ -200,7 +277,37 @@ class Screen_navigator(Action_Parent):
         self.logger.debug("Created a screen navigation object")
 
         self.set_type("Panel")
-        self.set_max_time(10)
+        self.set_max_time(0)
+        self.set_hold(False)
+        self.active_tasks = Screen_navigation_object.Panel_active()
+        obj.current_panel_screen = Screen_navigation_object.Window_Values()
+
+
+    def reset_screen(self, obj):
+        action_id = obj.id()
+        out_obj = Screen_navigation_object.Panel_query(self.active_tasks)
+        obj.action_stack.add(out_obj)
+
+    def set_by_keyword(self, keyword):
+        """
+        Define output of function by search keyword
+        """
+        self.logger.debug("Selecting output by keyword : {}".format(keyword))
+
+
+    def query_screen(self, obj):
+        """
+        Get the current screen information
+        """
+        self.logger.debug("Querying the screen object")
+        out_obj = Screen_navigation_object.Panel_query(self.active_tasks)
+        task_id = obj.id()
+        out_obj.set_msg("Query", task_id)
+        out_obj.set_hold("True")
+        out_obj.max_time(3)
+        obj.action_stack.add(out_obj)
+
+
 
 
 
@@ -237,6 +344,7 @@ class Word_Bag(object):
         self.buffer = []
         
     def add(self, sentence):
+
         """
         Scrub and add a sentence
         """

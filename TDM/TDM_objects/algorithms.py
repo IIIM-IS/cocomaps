@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 10:16]
-#     Last Modified       :     [2018-03-09 09:56]
+#     Last Modified       :     [2018-03-12 10:08]
 #     Description         :     Algorithms specifically pertaining to the
 #                               Supervisory Intermediate for the task dialog 
 #                               manager
@@ -56,12 +56,22 @@ class TDM_AA(TDM_base):
     def __init__(self):
         TDM_base.__init__(self,"TDM_AA")
         self.logger.debug("TDM_AA created")
+        
+        self.stack_id = []
+        self.finished_id = []
+        
 
     def add(self, action):
         self.stack.append(action)
+        self.stack_id.append(action.id())
 
     def wait(self):
+        if self.isEmpty():
+            return False
+
         for action in self.stack:
+            if action.get_holds() == False:
+                return False
             if action != None and not action.elapsed():
                 self.logger.info("Action {}, wait for {} sek, remaining {}".format(
                     action.type,
@@ -71,11 +81,35 @@ class TDM_AA(TDM_base):
                 return True
         return False 
     
-    def timeout(self):
+    def timeouts(self):
         for action in self.stack:
             if action.timeout_check():
                 return True
             return False
+
+    def check_finished(self):
+        """
+        Somehow check the input msg stacks if the id value of value on stack is
+        available
+        """
+        self.logger.debug("Checking action stack for finished")
+        if self.finished_id != []:
+            for id in self.finished_id[::-1]:
+                if id in self.stack_id:
+                    idx = self.stack_id.index(id)
+                    self.logger.debug("Task removed: {} : {}".format(
+                        self.stack[idx].type,
+                        self.stack[idx].id()
+                    ))
+                    self.stack_id.pop(idx)
+                    temp = self.stack.pop(idx)
+                    temp.finish()
+                    self.finished_id.pop(idx)
+
+    def add_finished_id(self, id):
+        if id in self.stack_id:
+            self.finished_id.append(id)
+
 
 
 class TDM_SS(TDM_base):

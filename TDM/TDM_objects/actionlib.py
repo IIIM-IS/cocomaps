@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 09:37]
-#     Last Modified       :     [2018-03-09 09:27]
+#     Last Modified       :     [2018-03-12 11:08]
 #     Description         :     The Supervisory Intermediate action library.
 #                           
 #     Version             :     0.1
@@ -13,7 +13,6 @@
 from timeit import default_timer as timer
 import logging
 import numpy as nu
-
 from objects import *
 
 logger = logging.getLogger("actionlib")
@@ -43,6 +42,7 @@ def action_get_objective(obj):
     """
     task = obj.current_task
 
+    print "action_get_objective : task name {}".format(task.keyword)
     if task.keyword == "Joke":
         obj.word_bag.empty_bag()
         action_select_joke(obj)
@@ -51,10 +51,7 @@ def action_get_objective(obj):
         obj.set_active_task("Move")
 
     elif task.keyword == "StartGen":
-        pass
-
-    print "From the actionlib the task keyword is {}".format(task.keyword)
-
+        obj.set_active_task("StartGen")
 
 
 def action_select_joke(obj):
@@ -132,4 +129,62 @@ def action_movement(obj):
     if m_obj != None :
         obj.word_bag.empty_bag()
         obj.action_stack.add(m_obj)
+        task = obj.current_task 
+        if task.parent == None:
+            obj.clean_task_setup()
+            logger.debug('action_movement - Parent == None')
+        if task.parent == "StartGen":
+            logger.debug('action_movement - Parent == StartGen')
+            obj.set_active_task("PanelA")
+            obj.speak_stack.reset()
+
+
+def action_startgen(obj):
+    # Assumtion: We have acknowledeged that we want to start the
+    # generator
+    task = obj.current_task
+    logger.debug("Starting action : action_stack, no {}".format(task.accessed))
+    obj.set_active_task("Move")
+    obj.current_task.set_parent('StartGen')
+
+
+def action_PanelA(obj):
+    logger.debug("Going to function action_PanelA")
+    task = obj.current_task
+
+    # Create a storage for the current task at hand
+    if task.storage == None:
+        panel_obj = Screen_navigation_object()
+        panel_obj.reset_screen(obj)
+        task.store(panel_obj)
+        panel_obj.query_screen(obj)
+
+    else: 
+        panel_obj = task.get_stored()
+        panel_obj.query_screen(obj)
+    
+    # Exit method 1
+    if task.keyword == "QuitPanel":
+        logger.debug("Quitting PanelA")
+        obj.current_panel_screen = None
         obj.clean_task_setup()
+        obj.word_bag.empty_bag()
+
+
+    # If there is a keyword
+    if task.keyword != None:
+        panel_obj.set_by_keyword(task.keyword)
+        logger.debug("Found keyword, now removing keyword for second search")
+        obj.word_bag.empty_bag()
+        task.keyword = None
+
+
+    #TODO Implement a strategy for ensuring the newest window data is in 
+    #       information cache of the Task. If not send out action to 
+    #       gather data and upload. 
+    #       Suggested method : Start with empty field. Then each time we 
+    #       enter the field we flag it and once we finish we clear the field
+
+    
+
+    logger.debug("action_PanelA keyword : {}".format(task.keyword))

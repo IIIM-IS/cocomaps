@@ -34,7 +34,7 @@ def PsyCrank(apilink):
                 _TDM.add_to_word_bag(msg.getString("Utterance"))
 
             elif trigger_name == "Speak":
-                data = _TDM.check_speak_stack()
+                data = _TDM.get_speak_stack()
                 if hasattr(data, "type"):
                     if data.type == "msg":
                         api.postOutputMessage("Talk", createAudioFromText(data.msg))
@@ -54,6 +54,12 @@ def PsyCrank(apilink):
                     api.postOutputMessage("Performtask", msg1)
                     api.postOutputMessage("Talk", createAudioFromText(msg2))
                     _TDM.add_timeout_by_string(msg2)
+                if data.type == "screen_msg":
+                    if data.msg == "Reset":
+                        pass
+                        # Send the reset msg to the 
+                    elif data.msg == "Query":
+                        pass
                     
 
 

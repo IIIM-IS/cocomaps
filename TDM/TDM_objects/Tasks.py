@@ -1,10 +1,10 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 #################################################################################
 #     File Name           :     SI_tasks.py
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 11:11]
-#     Last Modified       :     [2018-03-08 15:47]
+#     Last Modified       :     [2018-03-10 09:21]
 #     Description         :      
 #     Version             :     0.1
 #################################################################################
@@ -83,7 +83,7 @@ class Questions(object):
             self.tim_loc= 0
             random.shuffle(self.n_timeout)
         out_string = self.timeout_[self.n_timeout[self.tim_loc]]
-        self.tim_loc += 1
+        self.tim_loc += 1
         return out_string
 
 
@@ -99,6 +99,7 @@ class Task(object):
                 self.keylist.append(key)
         self.questions = Questions(obj["questions"])
         self.keyword = None 
+        self.storage = None
         
         # Task specific information
         if self.name == "Greet":
@@ -114,8 +115,23 @@ class Task(object):
             self.part1 = joke[0]
             self.part2 = joke[1]
             self.additional_question = joke[2]
+        elif self.name == "StartGen":
+            self.eval = actionlib.action_startgen
+
+        elif self.name == "PanelA":
+            self.eval = actionlib.action_PanelA
 
         self.accessed = 0
+        self.parent = None
+
+    def set_parent(self, parent):
+        self.parent = parent
+
+    def store(self, object):
+        self.storage = object
+
+    def get_stored(self):
+        return self.storage
 
     def access(self):
         self.accessed += 1
@@ -143,6 +159,7 @@ class Task_object(object):
     Create a wrapper around the task objects
     """
     def __init__(self):
+
         self.logger = logging.getLogger("Task_object")
         self.logger.debug("Starting Task object. Creating objects")
         self.Tasks = {}
