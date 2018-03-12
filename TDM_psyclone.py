@@ -22,77 +22,84 @@ def PsyCrank(apilink):
 
     # Initialize TDM to be used for the system
     _TDM = TDM.TDM()
+    test_count = 0
 
     while api.shouldContinue():
         msg = api.waitForNewMessage(100)
 
         if msg:
             trigger_name = api.getCurrentTriggerName()
-            print "TRIGGER INPUT: {}".format(trigger_name)
-
-            if trigger_name == "DialogOn":
+            if trigger_name == "Ready":
                 _TDM.turn_on()
+            if _TDM.is_active():
+                if trigger_name == "DialogOff":
+                    _TDM.turn_off()
 
-            elif trigger_name == "DialogOff":
-                _TDM.turn_off()
+                elif trigger_name == "NewWords":
+                    _TDM.add_to_word_bag(msg.getString("Utterance"))
 
-            elif trigger_name == "NewWords":
-                _TDM.add_to_word_bag(msg.getString("Utterance"))
-
-            elif trigger_name == "Speak":
-                data = _TDM.get_speak_stack()
-                if hasattr(data, "type"):
-                    if data.type == "msg":
+                elif trigger_name == "Speak":
+                    data = _TDM.get_speak_stack()
+                    if data != None:
                         api.postOutputMessage("Talk", createAudioFromText(data.msg))
 
-            elif trigger_name == "TaskAccepted":
-                #TODO implement in system. 
-                pass
+                elif trigger_name == "TaskAccepted":
+                    #TODO implement in system. 
+                    pass
 
-            elif trigger_name == "TaskCompleted":
-                taskID = msg.getInt("ReferenceID")
-                _TDM.active_actions.add_finished_id(taskID)
-                if msg.Type == "Panel":
+                elif trigger_name == "TaskCompleted":
+                    taskID = msg.getInt("ReferenceID")
+                    _TDM.active_actions.add_finished_id(taskID)
+                    if msg.Type == "Panel":
+                        if _TDM.current_panel_screen != None:
+                            _TDM.current_panel_screen.update(msg.getString("ScreenName"))
+
+
+                elif trigger_name == "TaskTimeout":
+                    # TODO, add timoute functionality
+                    # NOTE : There is a built in functionality in the TDM
+                    pass
+
+                elif trigger_name == "TaskCancelled":
+                    # TODO : Add functionality to TDM. Can actually be the 
+                    # same method as timeout, but with different name
+                    pass
+
+                #          PANEL CONTROL FUNCTION - not implemented
+                # Update the information about the active panel message.
+                elif trigger_name == "UpdatePanel":
                     if _TDM.current_panel_screen != None:
-                        _TDM.current_panel_screen.update(msg.getString("ScreenName"))
-
-
-            elif trigger_name == "TaskTimeout":
-                # TODO, add timoute functionality
-                # NOTE : There is a built in functionality in the TDM
-                pass
-
-            elif trigger_name == "TaskCancelled":
-                # TODO : Add functionality to TDM. Can actually be the 
-                # same method as timeout, but with different name
-                pass
-
-            #          PANEL CONTROL FUNCTION - not implemented
-            # Update the information about the active panel message.
-            elif trigger_name == "UpdatePanel":
-                if _TDM.current_panel_screen != None:
-                    _TDM.current_panel_screen.update(msg)
+                        _TDM.current_panel_screen.update(msg)
 
         else:
+            if _TDM.is_active():
+                data = _TDM.check_action_stack()
+                if hasattr(data, "type"):
+                    if data.type == "move":
+                        msg1, msg2 = createMoveObject(data)
+                        api.postOutputMessage("Performtask", msg1)
+                        api.postOutputMessage("Talk", createAudioFromText(msg2))
+                    if data.type == "screen_msg":
+                        if data.msg == "Reset":
+                            pass
+                            # Send the reset msg to the 
+                        elif data.msg == "Query":
+                            pass
 
-            data = _TDM.check_action_stack()
-            if hasattr(data, "type"):
-                if data.type == "move":
-                    msg1, msg2 = createMoveObject(data)
-                    api.postOutputMessage("Performtask", msg1)
-                    api.postOutputMessage("Talk", createAudioFromText(msg2))
-                if data.type == "screen_msg":
-                    if data.msg == "Reset":
-                        pass
-                        # Send the reset msg to the 
-                    elif data.msg == "Query":
-                        pass
-
-            if _TDM.turn_dialog_off():
-                # TODO add this to XML file
-                api.postOutputMessage("DialogOff")
+                if _TDM.turn_dialog_off():
+                    # TODO add this to XML file
+                    # Currently a circular definition
+                    _TDM.turn_off()
+                    api.postOutputMessage("Talk", createAudioFromText(
+                        "Going into search mode"
+                    ))
+                    api.postOutputMessage("DialogOff_1")
 
 
+                _TDM.silent_run()
+            if test_count%10 == 0:
+                print "asked first no {}".format(_TDM.asked_first)
+            test_count += 1
 
             """
             if data != None:
@@ -167,3 +174,7 @@ def createMoveObject(move_type):
 
     return msg, msgStr
 
+
+if __name__ == "__main__":
+    obj = TDM.TDM()
+    print obj.word_bag.printall()

@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 11:11]
-#     Last Modified       :     [2018-03-10 09:21]
+#     Last Modified       :     [2018-03-12 21:30]
 #     Description         :      
 #     Version             :     0.1
 #################################################################################
@@ -100,6 +100,7 @@ class Task(object):
         self.questions = Questions(obj["questions"])
         self.keyword = None 
         self.storage = None
+        self.set = False
         
         # Task specific information
         if self.name == "Greet":
@@ -151,6 +152,9 @@ class Task(object):
         
     def timeout_question(self):
         return self.questions.timeout()
+
+    def finished(self):
+        self.set = True
 
 
 

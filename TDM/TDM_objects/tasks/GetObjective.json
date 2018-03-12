@@ -9,7 +9,10 @@
 	"questions":{
 		"primary":[
 			"What would you like me to do?",
-			"What task would you like me to perform?"
+			"What task would you like me to perform?",
+			"How can I help today?",
+			"What task shall we solve, my friend",
+			"Special price for you. If you give me task"
 		],
 		"secondary":[
 			"I need to know what you want me to do",

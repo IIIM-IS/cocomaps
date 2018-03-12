@@ -2,7 +2,7 @@
 	"type":"Task",
 	"name":"KnockKnock",
 	"keywords":{
-		"Who":["who"]
+		"Who":["who", "who's"]
 	},
 	"questions":  {
 		"primary":["You need to ask who is there"],

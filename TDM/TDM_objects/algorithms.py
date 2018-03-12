@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 10:16]
-#     Last Modified       :     [2018-03-12 10:08]
+#     Last Modified       :     [2018-03-12 14:57]
 #     Description         :     Algorithms specifically pertaining to the
 #                               Supervisory Intermediate for the task dialog 
 #                               manager
@@ -27,7 +27,7 @@ class TDM_base(object):
         return False 
 
     def length(self):
-        return self.len
+        return len(self.stack)
     
     def pop(self):
         if self.stack != []:
@@ -92,7 +92,6 @@ class TDM_AA(TDM_base):
         Somehow check the input msg stacks if the id value of value on stack is
         available
         """
-        self.logger.debug("Checking action stack for finished")
         if self.finished_id != []:
             for id in self.finished_id[::-1]:
                 if id in self.stack_id:
@@ -124,7 +123,6 @@ class TDM_SS(TDM_base):
     def add(self, sentence, task_id):
         talk_obj = Talk_object()
         talk_obj.set_string(sentence, task_id)
-
         self.stack.append(talk_obj)
 
 

@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 09:37]
-#     Last Modified       :     [2018-03-12 12:01]
+#     Last Modified       :     [2018-03-12 21:57]
 #     Description         :     The Supervisory Intermediate action library.
 #                           
 #     Version             :     0.1
@@ -41,33 +41,39 @@ def action_get_objective(obj):
     Start a new task based on the objective found
     """
     task = obj.current_task
+    obj.speak_stack.reset()
+    obj.asked_first_reset()
 
-    print "action_get_objective : task name {}".format(task.keyword)
     if task.keyword == "Joke":
         obj.word_bag.empty_bag()
         action_select_joke(obj)
+        task.finished()
 
     elif task.keyword == "Move":
         obj.set_active_task("Move")
+        task.finished()
 
     elif task.keyword == "StartGen":
         obj.set_active_task("StartGen")
+        task.finished()
 
 
 def action_select_joke(obj):
     #_type = np.random.randint(0,2)
-    _type = 1
+    _type = np.random.randint(0,2)
+    obj.asked_first_reset()
 
     if _type == 0:
+
         """
         One liners
         """
         obj.set_active_task("TellJoke")
-        jokes = ["All these sea monster jokes are just Kraken me up",
-                "I am only friends with 25 letters of the alphabet. I do not know Y",
+        jokes = ["All these sea monster jokes are just, Kraken me up",
+                "I am only friends with 25 letters of the alphabet. I don't  know Y",
                  "Atoms are not to be trusted. They make everything up",
-                "The past, the present and the future walk into a bar. . It wa tense",
-                "Then there was this one. No, sorry I forgot about it"]
+                "The past, the present and the future walk into a bar. . It was tense",
+                "Then there was the one about. . . No, sorry I forgot about it"]
         random.shuffle(jokes)
         obj.speak_stack.add(jokes[0], obj.id())
         obj.clean_task_setup()
@@ -100,6 +106,7 @@ def action_knockknock(obj):
 
     if task.accessed == 0:
         logger.debug("Knock Kock Joke - Part1")
+        obj.speak_stack.reset()
         obj.speak_stack.add(task.part1 , obj.id())
         obj.word_bag.empty_bag()
         task.clear_keyword()
@@ -108,8 +115,10 @@ def action_knockknock(obj):
 
     elif task.accessed == 1:
         logger.debug("Knock Kock Joke - Part2")
+        obj.speak_stack.reset()
         obj.speak_stack.add(task.part2 , obj.id())
         task.access()
+
         obj.clean_task_setup()
 
     else :

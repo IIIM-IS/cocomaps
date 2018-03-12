@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-06 17:14]
-#     Last Modified       :     [2018-03-12 13:38]
+#     Last Modified       :     [2018-03-12 14:18]
 #     Description         :     Objects specifically used by the TDM method 
 #     Version             :     0.1
 #################################################################################
@@ -201,7 +201,7 @@ class Talk_object(Action_Parent):
         self.set_msg(sentence)
     
         # Dynamically allocate maximum time of sentence, based on 
-        beta = .05
+        beta = .23
         self.set_max_time(len(sentence)*beta+1)
 
 
