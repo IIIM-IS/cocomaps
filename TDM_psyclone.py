@@ -10,7 +10,7 @@ About
     the system and what functions are needed, finally what
     action structure is most relevant
 """
-__author__ = "David"
+__author__ = "David Orn Johannesson"
 import cmsdk2
 from TDM import TDM
 
@@ -24,18 +24,17 @@ def PsyCrank(apilink):
     _TDM = TDM.TDM()
 
     while api.shouldContinue():
-        msg = api.waitForNewMessage(200)
+        msg = api.waitForNewMessage(150)
 
         if msg:
             trigger_name = api.getCurrentTriggerName()
-	    print "Triggering tdm : {}".format(_TDM.is_active())
             if trigger_name == "Ready":
                 _TDM.turn_on()
             if _TDM.is_active():
-            	print "TDM is active: {}".format(trigger_name) 
-
                 if trigger_name == "NewWords":
                     _TDM.add_to_word_bag(msg.getString("Utterance"))
+                    # Remove later
+                    _TDM.print_stat()
 
                 elif trigger_name == "Speak":
                     data = _TDM.get_speak_stack()
@@ -45,9 +44,11 @@ def PsyCrank(apilink):
                 elif trigger_name == "TaskAccepted":
                     #TODO implement in system. 
                     pass
-
+                                   
                 elif trigger_name == "TaskCompleted":
                     taskID = msg.getInt("ReferenceID")
+                    print "Triggered task complete, using refid {}".format(taskID)
+                    _TDM.print_stat()
                     _TDM.active_actions.add_finished_id(taskID)
                     if msg.Type == "Panel":
                         if _TDM.current_panel_screen != None:
@@ -76,7 +77,7 @@ def PsyCrank(apilink):
                 if hasattr(data, "type"):
                     if data.type == "move":
                         msg1, msg2 = createMoveObject(data)
-                        msg1.setString("ReferenceID", data.id())
+                        msg1.setInt("ReferenceID", data.id())
                         api.postOutputMessage("Performtask", msg1)
                         api.postOutputMessage("Talk", createAudioFromText(msg2))
                     if data.type == "screen_msg":
@@ -152,7 +153,6 @@ def createAudioFromText(inString):
     
     return msg
 
-
 def createMoveObject(move_type):
     """
     Rip information from the move type object that is passed in. 
@@ -166,6 +166,13 @@ def createMoveObject(move_type):
     msg.setInt("Timeout", 30000)
     msg.setString("PointName", move_type.point)
     """
+    msg = cmsdk2.DataMessage()
+    msg.setString("Name", "TestTask")
+    msg.setString("Role", "Controller")
+    msg.setInt("Timeout", 30000)
+    msg.setInt("TestValue", 101)
+    # Temporary
+
 
     msgStr = move_type.msg
 
