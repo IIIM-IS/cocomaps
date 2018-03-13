@@ -22,20 +22,19 @@ def PsyCrank(apilink):
 
     # Initialize TDM to be used for the system
     _TDM = TDM.TDM()
-    test_count = 0
 
     while api.shouldContinue():
-        msg = api.waitForNewMessage(100)
+        msg = api.waitForNewMessage(200)
 
         if msg:
             trigger_name = api.getCurrentTriggerName()
+	    print "Triggering tdm : {}".format(_TDM.is_active())
             if trigger_name == "Ready":
                 _TDM.turn_on()
             if _TDM.is_active():
-                if trigger_name == "DialogOff":
-                    _TDM.turn_off()
+            	print "TDM is active: {}".format(trigger_name) 
 
-                elif trigger_name == "NewWords":
+                if trigger_name == "NewWords":
                     _TDM.add_to_word_bag(msg.getString("Utterance"))
 
                 elif trigger_name == "Speak":
@@ -77,6 +76,7 @@ def PsyCrank(apilink):
                 if hasattr(data, "type"):
                     if data.type == "move":
                         msg1, msg2 = createMoveObject(data)
+                        msg1.setString("ReferenceID", data.id())
                         api.postOutputMessage("Performtask", msg1)
                         api.postOutputMessage("Talk", createAudioFromText(msg2))
                     if data.type == "screen_msg":
@@ -94,12 +94,7 @@ def PsyCrank(apilink):
                         "Going into search mode"
                     ))
                     api.postOutputMessage("DialogOff_1")
-
-
                 _TDM.silent_run()
-            if test_count%10 == 0:
-                print "asked first no {}".format(_TDM.asked_first)
-            test_count += 1
 
             """
             if data != None:
@@ -164,11 +159,13 @@ def createMoveObject(move_type):
     The object contains the name of the expected point
     """
     # TODO, fix this to represent the actual data message
+    """ Temporarily removed to test system
     msg = cmsdk2.DataMessage()
     msg.setString("Name", "NavigateToNamedPoint")
     msg.setString("Role", "Controller")
     msg.setInt("Timeout", 30000)
     msg.setString("PointName", move_type.point)
+    """
 
     msgStr = move_type.msg
 
