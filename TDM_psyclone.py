@@ -50,10 +50,11 @@ def PsyCrank(apilink):
                     print "Triggered task complete, using refid {}".format(taskID)
                     _TDM.print_stat()
                     _TDM.active_actions.add_finished_id(taskID)
-                    if msg.Type == "Panel":
-                        if _TDM.current_panel_screen != None:
-                            _TDM.current_panel_screen.update(msg.getString("ScreenName"))
-
+                    # Screen navigation, not yet implemented
+		    if msg.getInt("Type") == 1:
+                        # Type 1 == Panel control return
+                        None
+                        
 
                 elif trigger_name == "TaskTimeout":
                     # TODO, add timoute functionality
@@ -78,9 +79,10 @@ def PsyCrank(apilink):
                     if data.type == "move":
                         msg1, msg2 = createMoveObject(data)
                         msg1.setInt("ReferenceID", data.id())
-                        api.postOutputMessage("Performtask", msg1)
+                        api.postOutputMessage("PerformTask", msg1)
                         api.postOutputMessage("Talk", createAudioFromText(msg2))
                     if data.type == "screen_msg":
+                        msg = createSceenMsg()
                         if data.msg == "Reset":
                             pass
                             # Send the reset msg to the 
@@ -168,9 +170,10 @@ def createMoveObject(move_type):
     """
     msg = cmsdk2.DataMessage()
     msg.setString("Name", "TestTask")
-    msg.setString("Role", "Controller")
+    msg.setString("Role", "Communicator")
     msg.setInt("Timeout", 30000)
     msg.setInt("TestValue", 101)
+    msg.setInt("Type", 0)
     # Temporary
 
 
@@ -178,7 +181,14 @@ def createMoveObject(move_type):
 
     return msg, msgStr
 
+def createSceenMsg():
+    msg = cmsdk2.DataMessage()
+    msg.setString("Name", "PanelControl")
+    msg.setString("Role", "Communicator")
+    msg.setInt("Timeout", "5000")
+    msg.setInt("Type", 1)
 
 if __name__ == "__main__":
     obj = TDM.TDM()
     print obj.word_bag.printall()
+
