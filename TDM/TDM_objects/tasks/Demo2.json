@@ -1,0 +1,21 @@
+{
+	"type":"Task",
+	"name":"Demo2",
+	"keywords":	{
+		"Yes":["yes", "affirm", "confirm"],
+		"No":["no", "not", "unable"]
+	},
+	"questions":	{
+		"primary":[
+			"We need to reduce the factory power consumption. Can you help with that",
+			"There seems to be an issue with the factory power consumption. Can you help with that"
+		],
+		"secondary":[
+			""
+		],
+		"timeout":[
+			"If you won't help I will find someone who will."
+		]
+	},
+	"action":"Move"
+}

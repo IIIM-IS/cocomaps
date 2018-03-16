@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-06 15:12]
-#     Last Modified       :     [2018-03-13 14:05]
+#     Last Modified       :     [2018-03-12 21:56]
 #     Description         :     Supervisory Intermediate (TDM) control function
 #                               takes care of higher level functionality and 
 #                               feedbacks to the TDM. Becomes the actual 
@@ -271,11 +271,6 @@ class TDM(object):
             self.action_stack.length(),
             self.active_actions.length()
         )
-        if not self.active_actions.isEmpty():
-            temp = ""
-            for val in self.active_actions.stack:
-                temp += "{} ".format(val.id())
-            print "Active actions stack: {}".format(temp)
 
 
 def delay(time):

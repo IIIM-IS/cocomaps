@@ -1,0 +1,20 @@
+{
+	"type":"Task",
+	"name":"screen_power_up",
+	"keywords":	{
+		"QuitPanel":["exit", "stop", "finished"]
+	},
+	"questions":	{
+		"primary":[
+			"Which button would you like to press",
+			"A few of my search keywords are, first, one, top, second, status. To name a few"
+		],
+		"secondary":[
+			"Say that again. Which button"
+		],
+		"timeout":[
+			"If the main screen does not work for you, then nothing does"
+		]
+	},
+	"action":"Select_Button"
+}

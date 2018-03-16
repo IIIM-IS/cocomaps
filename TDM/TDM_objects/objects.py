@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-06 17:14]
-#     Last Modified       :     [2018-03-13 14:16]
+#     Last Modified       :     [2018-03-12 14:18]
 #     Description         :     Objects specifically used by the TDM method 
 #     Version             :     0.1
 #################################################################################
@@ -134,7 +134,7 @@ class Move_object(Action_Parent):
         self.set_hold("True")
         self.set_type("move")
         self.point = None
-        self.set_max_time(30)
+        self.set_max_time(3)
 
         """
         msg value should be definied by the location point that is selected

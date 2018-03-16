@@ -1,0 +1,19 @@
+{
+	"type":"Task",
+	"name":"Confirm",
+	"keywords":	{
+		"Yes":["yes", "affirm", "confirm"],
+		"No":["no", "not", "unable"]
+	},
+	"questions":	{
+		"primary":[
+		],
+		"secondary":[
+			""
+		],
+		"timeout":[
+			""
+		]
+	},
+	"action":"Confirm/Deny"
+}

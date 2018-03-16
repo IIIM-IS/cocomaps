@@ -1,0 +1,21 @@
+{
+	"type":"Task",
+	"name":"WhichGen",
+	"keywords":	{
+		"Second":["second", "two", "2"],
+		"Third":["third", "three", "3"]
+	},
+	"questions":	{
+		"primary":[
+			"Which generator should we turn on",
+			"Sorry, I cant decide. Tell me which to turn on"
+		],
+		"secondary":[
+			""
+		],
+		"timeout":[
+			"If you won't help I will find someone who will."
+		]
+	},
+	"action":"Move"
+}
