@@ -2,18 +2,26 @@
 	"type":"Task",
 	"name":"screen_power_up",
 	"keywords":	{
-		"QuitPanel":["exit", "stop", "finished"]
+		"Button1":["up", "start", "top", "begin", "confirm"],
+		"Button2":["second", "lower", "cancel"],
+		"NoButton":["third", "level"],
+		"Home":["home", "homescreen", "screen"],
+		"Back":["back", "previous", "former"],
+		"QuitPanel":["stop", "finished", "finish"],
+		"Abort":["abort", "exit"]
 	},
 	"questions":	{
 		"primary":[
-			"Which button would you like to press",
-			"A few of my search keywords are, first, one, top, second, status. To name a few"
-		],
+			"Could you confirm power up or do you want to cancel",
+			"Start or stop the generator",
+			"Would you like to power up or no",
+			"Confirm or cancel"
+	],
 		"secondary":[
 			"Say that again. Which button"
 		],
 		"timeout":[
-			"If the main screen does not work for you, then nothing does"
+			"If you can't make up your mind, we won't navigate the panel"
 		]
 	},
 	"action":"Select_Button"

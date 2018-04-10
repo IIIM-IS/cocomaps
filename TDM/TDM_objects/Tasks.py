@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 11:11]
-#     Last Modified       :     [2018-03-12 21:30]
+#     Last Modified       :     [2018-03-26 19:19]
 #     Description         :      
 #     Version             :     0.1
 #################################################################################
@@ -91,7 +91,7 @@ class Task(object):
     def __init__(self, obj):
         self.logger = logging.getLogger("TaskCreator")
         self.name = obj["name"]
-        self.logger.debug("Adding task {}".format(self.name))
+        self.logger.debug("#TDM: Adding task {}".format(self.name))
         self.keywords = obj["keywords"]
         self.keylist = []
         if self.keywords != None:
@@ -102,7 +102,7 @@ class Task(object):
         self.storage = None
         self.set = False
         
-        # Task specific information
+        # Point tasks to their relative action function location.
         if self.name == "Greet":
             self.keyword = "Nothing"
             self.eval = actionlib.action_greet
@@ -118,9 +118,41 @@ class Task(object):
             self.additional_question = joke[2]
         elif self.name == "StartGen":
             self.eval = actionlib.action_startgen
+        elif self.name == "EmptyState":
+            self.eval = actionlib.passive 
+
 
         elif self.name == "PanelA":
+            self.keyword = "Nothing"
             self.eval = actionlib.action_PanelA
+
+        # Screens
+        elif self.name == "screen_main":
+            self.eval = actionlib.action_panel_navigate
+        elif self.name == "screen_power_up":
+            self.eval = actionlib.action_panel_navigate
+        elif self.name == "screen_power_down":
+            self.eval = actionlib.action_panel_navigate
+        elif self.name == "screen_status":
+            self.eval = actionlib.action_panel_navigate
+        elif self.name == "screen_pin":
+            self.keyword = "Nothing"
+            self.eval = actionlib.action_panel_pin
+
+
+        # Empty state, used to quite the machine down and say anything
+
+
+        # DEMO SPECIFIC METHODS
+        elif self.name == "Demo2":
+            self.eval = actionlib.action_demo2
+        elif self.name == "Start_gen_demo2":
+            self.eval = actionlib.action_startgen_demo2
+        elif self.name == "Demo2_question":
+            self.eval = actionlib.action_demo2_question
+        elif self.name == "PanelB":
+            self.eval = actionlib.action_PanelB
+
 
         self.accessed = 0
         self.parent = None
@@ -165,7 +197,7 @@ class Task_object(object):
     def __init__(self):
 
         self.logger = logging.getLogger("Task_object")
-        self.logger.debug("Starting Task object. Creating objects")
+        self.logger.debug("#TDM: Starting Task object. Creating objects")
         self.Tasks = {}
 
         curr = str(os.path.abspath(__file__))

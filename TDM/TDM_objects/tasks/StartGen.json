@@ -2,13 +2,12 @@
 	"type":"Task",
 	"name":"StartGen",
 	"keywords":	{
-		"PanelPoint1Data":["first", "primary", "main", "left"],
-		"PanelPoint2Data":["second", "auxilary", "right"]
+	    "PanelPoint1Data":["first", "one", "main", "left"],
+	    "PanelPoint2Data":["second", "two", "to", "right"]
 	},
 	"questions":	{
 		"primary":[
-			"Which generator would you like me to start",
-			"We can start up the generator. Which one"
+			"Which panel would you like me to use"
 		],
 		"secondary":[
 			"I didn't quite catch that, which generator.",

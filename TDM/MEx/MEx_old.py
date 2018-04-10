@@ -27,7 +27,7 @@ class MEx(Thread):
         # Start a logging object
         self.logger = logging.getLogger(__name__)
         self.logger.info("MEx starting up")
-        self.logger.debug("MEx started up")
+        self.logger.debug("#TDM: MEx started up")
         
         temp = os.getcwd()
         # CAREFUL THIS CAN CHANGE DEPENDING ON SYSTEM SETUP
@@ -52,7 +52,7 @@ class MEx(Thread):
 
 
         self.logger.info("MEx initialized without errors")
-        self.logger.debug("MEx initialized without errors")
+        self.logger.debug("#TDM: MEx initialized without errors")
 
     def create_objects(self):
         """
@@ -63,21 +63,21 @@ class MEx(Thread):
             location = self.MasterLocation+"Types/"+_type
             sys.path.append(location)
             curr_decoder = get_object_decoder(_type)
-            self.logger.debug("Adding _type {}".format(_type))
+            self.logger.debug("#TDM: Adding _type {}".format(_type))
             for json_file in os.listdir(location):
                 if os.path.splitext(json_file)[1]==".json":
                     temp_obj = None
-                    self.logger.debug("Decoding file: {}".format(json_file))
+                    self.logger.debug("#TDM: Decoding file: {}".format(json_file))
                     with open(location+"/"+json_file, 'rb') as fid:
                         text = fid.read()
-                        self.logger.debug("{}".format(text))
+                        self.logger.debug("#TDM: {}".format(text))
                         if text:
                             temp_json = json.loads(text)
                             temp_obj  = curr_decoder(temp_json)
                             
                     if temp_obj:
-                        self.logger.debug("{} \n {}".format(temp_obj, type(temp_obj)))
-                        self.logger.debug("Adding type:{} with name: {}".format(
+                        self.logger.debug("#TDM: {} \n {}".format(temp_obj, type(temp_obj)))
+                        self.logger.debug("#TDM: Adding type:{} with name: {}".format(
                                 _type, temp_obj.name
                         ))
                         self.Types[_type][temp_obj.name] = temp_obj
@@ -88,7 +88,7 @@ class MEx(Thread):
         """
         p = 0
         for word in W:
-            self.logger.debug("Word: {}".format(word))
+            self.logger.debug("#TDM: Word: {}".format(word))
             if word in self.Types["Tasks"]["abort"].dictionary:
                 p += p + \
                     float(self.Types["Tasks"]["abort"].dictionary[word])/100
@@ -102,11 +102,11 @@ class MEx(Thread):
         referencing search_kyes
         """
         # TODO : Move from single input vector W to buffer
-        self.logger.debug("Processing words: '{}' ; with _type:{} ; search_keys:{}".format(
+        self.logger.debug("#TDM: Processing words: '{}' ; with _type:{} ; search_keys:{}".format(
                                                                 W, _type, search_keys))
         p = np.zeros(len(search_keys))
         for word in W:
-            self.logger.debug("Word: {}".format(word))
+            self.logger.debug("#TDM: Word: {}".format(word))
             for idx, key in enumerate(search_keys):
                 if word in self.Types[_type][key].dictionary:
                    p[idx] += p[idx] + \
@@ -139,6 +139,6 @@ if __name__ == "__main__":
         obj.logger.debug(sent)
         p, abort=obj.dict_search("Tasks",keywords, sent.lower().split())
         if abort:
-            print obj.logger.debug("Aborted")
+            print obj.logger.debug("#TDM: Aborted")
 
         print keywords[np.argmax(p)]

@@ -1,0 +1,29 @@
+
+TDM_psyclone 
+	- Add functionality to read starting stopping the word bag by
+	  reading the variable "Robot.Speaking.Started" and
+	  "Robot.Speaking.Stopped"
+
+TDM 	
+	- Add local ID
+	- Add function for stopping the word bag
+	- Add function for starting the word bag
+	
+	- Add global variable SESSION_IN_PROGRESS, flip after a while.
+		* Add method information downwards. If obj has set
+		  then use secondary sentences
+
+
+
+
+actionlib
+	- Finish pin circular loop
+
+
+
+
+
+
+
+
+

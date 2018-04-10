@@ -4,8 +4,8 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-06 17:14]
-#     Last Modified       :     [2018-03-12 14:18]
-#     Description         :     Objects specifically used by the TDM method 
+#     Last Modified       :     [2018-03-28 11:59]
+#     Description         :     Objects specifically used by the TDM method
 #     Version             :     0.1
 #################################################################################
 
@@ -25,17 +25,17 @@ class Dialog(object):
 
     def __init__(self):
         self.logger = logging.getLogger("Dialog")
-        self.logger.debug("Creating dialog object")
+        self.logger.debug("#TDM: Creating dialog object")
         self.start_time = None
         self.in_dialog = False
         self.active = False
 
     def on(self):
-        self.logger.debug("Setting dialog object on")
+        self.logger.debug("#TDM: Setting dialog object on")
         self.in_dialog = True
 
     def off(self):
-        self.logger.debug("Setting dialog object off")
+        self.logger.debug("#TDM: Setting dialog object off")
         self.in_dialog = False
 
     def status(self):
@@ -46,9 +46,9 @@ class Dialog(object):
             return 0
         else :
             return self.start_time - self.start_time
-# # # # # # # # # # # # # # # # # # # # # # # # # # #   
-# # # # # # # ACTION OBJECTS  # # # # # # # # # # # #   
-# # # # # # # # # # # # # # # # # # # # # # # # # # #   
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # ACTION OBJECTS  # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 class Action_Parent(object):
     """
@@ -64,13 +64,13 @@ class Action_Parent(object):
 
         self.hold_the_line = False
         self.finished = False
-        
+
 
         # Set max time, overwrite in other functions
         self.max_time = 10
 
     def set_type(self, _type):
-        self.type = _type 
+        self.type = _type
 
     def set_id(self, id):
         self.action_id = id
@@ -95,7 +95,7 @@ class Action_Parent(object):
 
     def timeout_check(self):
         return self.timeout
-    
+
     def timer(self):
         if self.start_time == None:
             return 0
@@ -108,7 +108,7 @@ class Action_Parent(object):
             self.timeout = True
             return True
         return False
-    
+
     def set_hold(self, tf):
         # tf = True/False
         self.hold_the_line = tf
@@ -129,12 +129,11 @@ class Move_object(Action_Parent):
     def __init__(self):
         Action_Parent.__init__(self)
         self.logger = logging.getLogger("Move_object")
-
-        self.logger.debug("Created move object")
+        self.logger.debug("#TDM: Created move object")
         self.set_hold("True")
         self.set_type("move")
         self.point = None
-        self.set_max_time(3)
+        self.set_max_time(35)
 
         """
         msg value should be definied by the location point that is selected
@@ -148,7 +147,7 @@ class Move_object(Action_Parent):
         """
         Set the values by a keyword definition
         """
-        self.logger.debug("Input to Move_Object: {}".format(keyword))
+        self.logger.debug("#TDM: Input to Move_Object: {}".format(keyword))
         self.set_id(task_id)
 
         if keyword== "Point1":
@@ -181,160 +180,184 @@ class Move_object(Action_Parent):
             "The other robot, I will send it to that location"
         ]
         return sentences[ np.random.randint(0 ,len(sentences)) ]
-    
+
 
 class Talk_object(Action_Parent):
 
     def __init__(self):
         Action_Parent.__init__(self)
         self.logger = logging.getLogger("Talk_object")
-        self.logger.debug("Created talk object")
+        self.logger.debug("#TDM: Created talk object")
         self.set_type("talk")
         self.set_max_time(15)
         self.set_hold(False)
+        self.level = 0
 
-
-
-    def set_string(self, sentence, task_id):
+    def set_string(self, sentence, speach_id, level):
         # TODO : Connect to the TDM output.
-        self.logger.debug("Adding output to talk object: {}".format(sentence))
+        self.logger.debug("#TDM: Adding output to talk object: {}".format(sentence))
         self.set_msg(sentence)
-    
-        # Dynamically allocate maximum time of sentence, based on 
-        beta = .23
-        self.set_max_time(len(sentence)*beta+1)
+        self.set_id(speach_id)
+        self.level = level
+        # Dynamically allocate maximum time of sentence, based on
+        beta = 0
+        # Depricated, moved into TDM_psyclone.TDM_speak()
+        self.set_max_time(0)
 
+
+class Panel_query(Action_Parent):
+    def __init__(self) :
+        # Pointer to active panel values so that the object can
+        # remove itself from the system once it is finished
+        Action_Parent.__init__(self)
+        self.set_hold("False")
+        self.type = "screen_msg"
+        self.push_button = None
+
+    def set_button_to_push(self, name):
+        self.push_button = name
+
+
+    def get_button_to_push(self):
+        return self.push_button
+
+
+    def set_msg(self, msg, id):
+        self.msg = msg
+        self.set_id(id)
 
 class Screen_navigation_object(Action_Parent):
 
     """
-    Object that is used for screen navigation. 
-    This object differs from move and talk in that 
+    Object that is used for screen navigation.
+    This object differs from move and talk in that
         1) It doesn't finish automatically, it's stuck as Task PanelA until
             exited (either by timeout or manual)
         2) The main object (Screen_navigation_object) isn't actually put on
-            action stack. Instead the object stores the output object, 
+
+            action stack. Instead the object stores the output object,
             specifically Panel_query object, in memory and sends that out.
     """
-    class Panel_active(object):
+    class Panel_active(Action_Parent):
         def __init__(self):
+            Action_Parent.__init__(self)
             self.stack = []
+            self.type = "Panel_active"
 
         def add(self, id):
             self.stack.append(id)
+            self.set_id(id)
 
         def pop(self, id):
             if self.stack != []:
                 if id == self.stack[0]:
                     self.stack.pop(0)
 
-    class Window_Values(object):
-        """
-        Stores the values returned buy the panel query
-        """
-        def __init__(self):
-            self.got = False
-            self.time_added = -1
-            self.data = []
 
-        def update(self, msg):
-            """
-            input the keywords of the input message type into the 
-            system
-            """
-            self.got = True
-            self.time_added = timer()
-
-
-
-        def get(self):
-            self.got = False
-
-            
-    class Panel_query(Action_Parent):
-        def __init__(self, active_panel):
-            # Pointer to active panel values so that the object can
-            # remove itself from the system once it is finished
-            self.active_panels = active_panel
-
-            # Init varaiblese
-            Action_Parent.__init__(self)
-            self.set_hold("False")
-            self.type = "screen_msg"
-
-        def set_msg(self, msg, id):
-            self.msg = msg
-            self.action_id = id
-            self.active_panels.add(id)
-
-        def finish(self):
-            self.active_panels.pop(0)
-
-
-    def __init__(self, obj):
+    def __init__(self):
         Action_Parent.__init__(self)
 
         self.logger = logging.getLogger("Screen_navigator")
-        self.logger.debug("Created a screen navigation object")
+        self.logger.debug("#TDM: Created a screen navigation object")
 
         self.set_type("Panel")
-        self.set_max_time(0)
+        self.set_max_time(5)
+
         self.set_hold(False)
-        self.active_tasks = Screen_navigation_object.Panel_active()
-        obj.current_panel_screen = Screen_navigation_object.Window_Values()
+        self.screen_name = None
+        self.last_query_time = 0
+
+    def get_last_query(self):
+        return self.last_query_time
+
+    def set_last_query(self, time):
+        self.last_query_time = time
+
+    def push_button(self, name, obj):
+        self.logger.debug("#TDM: ScreenNav obj = Pushing button: {}".format(name))
+        action_id = obj.id()
+        panel_query = Panel_query()
+        panel_query.set_max_time(5)
+        panel_query.set_msg("PushButton", action_id)
+        panel_query.set_button_to_push(name)
+        obj.action_stack.add(panel_query)
 
 
     def reset_screen(self, obj):
+        self.logger.debug("#TDM: ScreenNav obj = Resetting screen")
         action_id = obj.id()
-        out_obj = Screen_navigation_object.Panel_query(self.active_tasks)
-        obj.action_stack.add(out_obj)
-
-    def set_by_keyword(self, keyword, obj):
-        """
-        Define output of function by search keyword
-        """
-        self.logger.debug("Selecting output by keyword : {}".format(keyword))
+        panel_query = Panel_query()
+        panel_query.set_msg("Reset", action_id)
+        panel_query.set_max_time(5)
+        obj.action_stack.add(panel_query)
 
 
     def query_screen(self, obj):
         """
-        Get the current screen information
+        Get the current screen informato
         """
-        self.logger.debug("Querying the screen object")
-        out_obj = Screen_navigation_object.Panel_query(self.active_tasks)
-        task_id = obj.id()
-        out_obj.set_msg("Query", task_id)
-        out_obj.set_hold("True")
-        out_obj.set_max_time(3)
-        obj.action_stack.add(out_obj)
+        if timer() - self.get_last_query() > 1.5:
+            self.set_last_query(timer())
+            self.logger.debug("#TDM: ScreenNav obj = Querying screen")
+            panel_query= Panel_query()
+            action_id = obj.id()
+            panel_query.set_msg("Query", action_id)
+            panel_query.set_hold("True")
+            panel_query.set_max_time(5)
+            obj.action_stack.add(panel_query)
+
+    def back_button(self, obj):
+        action_id = obj.id()
+        panel_query = Panel_query()
+        panel_query.set_msg("BackButton", action_id)
+        obj.action_stack.add(panel_query)
+
 
     def update(self, screen_name):
         """
         Define the current screen information based on the screen name
         keyword
         """
-        pass
-    # TODO define screens based on input/ouputs
+        self.screen_name = screen_name
 
-    """
-        if screen_name == "main_screen":
+class Pin_Query(Action_Parent):
+    def __init__(self):
+        Action_Parent.__init__(self)
+        self.logger = logging.getLogger("PINLOG")
+        self.set_type("PinQuery")
+        self.in_queue = False
+        self.set_hold("True")
+        self.set_max_time(5)
+        self.in_queue = False
 
-        elif screen_name == "power_up_screen":
+    def add(self, value, obj):
+        # send numeric value to panel, monitor if it returns passed
+        # or failed
+        panel_query = Panel_query()
+        action_id = obj.id()
+        panel_query.set_msg("Pin", action_id)
+        panel_query.set_hold("True")
+        panel_query.set_max_time(5)
+        panel_query.set_button_to_push(value)
+        obj.action_stack.add(panel_query)
+        self.going_to_queue()
 
-        elif screen_name == "cancel_power":
+    def return_fail(self):
+        self.passed = False
 
-        elif screen_name =="status_screen":
-    """
+    def return_passed(self):
+        self.logger.debug("#TDM Set passed on pin to true")
+        self.passed = True
 
+    def queueing(self):
+        self.logger.debug("#TDM Set passed on pin to false")
+        return self.in_queue
 
-    def search_for_pin(self,obj):
-        """
-        Search for a four letter pin object
-        """
+    def going_to_queue(self):
+        self.in_queue = True
 
-
-
-
+    def out_of_queue(self):
+        self.in_queue = False
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -357,7 +380,7 @@ class Word_Bag(object):
             if timer() - self.added > 15:
                 return True
             return False
-        
+
         def get(self):
             return self.sentence
 
@@ -368,7 +391,7 @@ class Word_Bag(object):
         self.new_words = False
         self.len = 0
         self.buffer = []
-        
+
     def add(self, sentence):
 
         """
@@ -377,7 +400,7 @@ class Word_Bag(object):
         if sentence != None and sentence != "":
             sentence_object = Word_Bag.Input_Sentence(sentence.lower().split(" "))
             self.buffer.insert(0, sentence_object)
-            self.logger.debug("Adding sentence: {}".format(sentence_object.get()))
+            self.logger.debug("#TDM: Adding sentence: {}".format(sentence_object.get()))
             self.len += 1
             self.new_words = True
             self.clean()
@@ -387,8 +410,8 @@ class Word_Bag(object):
         if self.buffer != [] and no <= len(self.buffer):
             self.new_words = False
             return self.buffer[no].get()
-        return "" 
-    
+        return ""
+
     def clean(self):
         for idx, obj in enumerate(self.buffer):
             if obj.elapsed():

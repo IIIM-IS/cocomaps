@@ -1,0 +1,191 @@
+>* Meeting Wed Apr  4 11:28:24 GMT 2018 with Thor
+** Results
+   The meeting resulted in a modularizing and testing specific parts of the system. We can use various data
+from the demo dataset but we require specific runs to get specific values.
+
+** DONE Finish running demo 3 - 3 times.
+   CLOSED: [2018-04-05 Thu 13:09]
+Run demo 3 three times with the current setup information to retrieve from the system
+*** TDM
+*** Task negotiator
+*** Turn Taking
+*** Dialog understanding
+
+*** Who is speaking
+We have defined when we change the speaker so we can look at the events and see who the system thinks is
+speaking (see if it changes)
+
+** ERROR Specific tests
+*** Emotion
+*** Legs
+
+
+Definition of other information
+* Speed
+Time difference between event start and timestamp of "success" message
+* Effort
+N of accumulated CPU secs over speed
+* Success rate
+Correct "success" msg/tot success msgs
+* Error rate
+Incorrect "success" msgs/ tot success msg | = 1-success rate
+* Wasted effort
+%CPU with incorrect conclusions (false positives) = ratio of correct to incorrect
+
+
+|                              | Speed | Effort | Success rate | Error Rate | Wasted Effort |
+|------------------------------+-------+--------+--------------+------------+---------------|
+| Event                        |       |        |              |            |               |
+| * Human Detected             |       |        |              |            |               |
+| * Person identified          |       |        |              |            |               |
+| * Person identified : Collab |       |        |              |            |               |
+| * Human Leaves               |       |        |              |            |               |
+| * Search : Collab            |       |        |              |            |               |
+| * Human Leaves : Collab      |       |        |              |            |               |
+| * Info Extraction : Collab   |       |        |              |            |               |
+| * Role Negotiation           |       |        |              |            |               |
+| * Leg detection              |       |        |              |            |               |
+|------------------------------+-------+--------+--------------+------------+---------------|
+
+* Human Detected
+Interval between timestamp of “human detected” posting minus the timestamp marking when the human
+ enters the area where the robots can detect humans
+** ERROR Requires a ground truth
+
+* Person IDentified
+Interval between timestamp of “human identified” msg minus the timestamp of the “human detected” msg
+** Good - This might actually be available
+
+* Person Identified : Collab
+Interval between timestamp when the person’s identity is stored in the CCMCatalog minus the timestamp of
+“human detected” msg
+
+* Human Leaves
+Measured from the time the human leaves the scene (ground truth) until either robot posts msg "human";
+
+* Search : Collab
+Measured from the time a robot decides it is time for it to move until the robot has successfully
+negotiated where to go via the CCMCatalog
+
+* Human Leaves : Collab
+Interval between when human leaves the scene (ground truth) until the event is logged in the shared data
+structure (CCMCatalog)
+
+* Info Extraction : Collab
+
+* Role Negotiation
+From TDM inception to CCMMaster Task ID accepted, in Demo3
+* Leg detection
+
+
+
+  --
+  Thu Apr  5 09:22:26 GMT 2018
+Plan of attack - David
+* DONE Fix .xml files, ensure that recordings are available in both demos
+
+  CLOSED: [2018-04-05 Thu 11:28]
+Apparently the xml file used during recording wasn't set up correctly. This results in us having to redo
+a run for demo 2.
+  -- NOTE, this could have been prevented by using a solid method of implementation for the .xml files.
+     e.g. writing a script and maintaining a db of the values to be used. This write on the fly method
+     has proven to be more than a little inefficient and unprofessional.
+
+* ERROR Redo demo 2 for data purposes -> Changed method not do this
+** CHECK [Thu Apr  5 10:30:46 GMT 2018] - Perhaps we can run a specific module.
+   As we require data to finish the KPI tables for the reports.
+   - Pierre finally got through to Thor on this subject
+
+* DONE Redesign TDM to reduce latency in response
+  CLOSED: [2018-04-09 Mon 14:27]
+Kristinn pointed out that we should be able to get a faster response time. It's true. We have an issue with
+turning a speek flag on/off and ensuring that once an output sentence is ready it gets sent to an output buffer.
+There might be a simple solution of forcing the flag once the YTTM is ready. I thought that is what I did,
+however it is turning out not to be the case. I will look into that.
+
+* TODO Test system with new method
+Once I have re-configured the TDM_psyclone.py function I will test it to ensure that the system works.
+Hopefully it will work as requested
+
+* TODO Re-record demo 3 [Stored]
+Since Kris requested a new demo, and it looks like [yet to be confirmed] the .xml file wasn't set up
+to record all the data we need to do another video recording run of demo 3.
+ /Thu Apr  5 13:46:30 GMT 2018/
+** QUESTION :
+What is the actual worth of our current dataset in dropbox. I.e. should we scrap all of them
+since we only have a few minor information points anyway. [Assuming that the xml file wasn't set up
+to record everything]
+*** Answer :
+The datasets, at least the .csv files are worthless. We might be able to retreive minor data
+but probably not worth the work.
+* DONE Run data extraction for the KPI table
+  CLOSED: [2018-04-09 Mon 14:27]
+| KPI               | ID | TrialRun |   |   |   |
+|-------------------+----+----------+---+---+---|
+| Human Detected    | 1) | A        |   |   |   |
+| Person Identified | 2) | A        |   |   |   |
+| Human Leaves      | 3) | A        |   |   |   |
++| Role Negotiation  | 4) | A        |   |   |   |+
+| Emotianal Reading | 7) | B        |   |   |   |
+| Task Negotiation  | 5) | C        |   |   |   |
+| Turn Taking       | 6) | C        |   |   |   |
+|                   |    |          |   |   |   |
++| Dialog Understanding   |  8) | D        |+
+|------------------------+-----+----------|
+| Collaborative          |     |          |
+|------------------------+-----+----------|
+| Person Identified      |  9) | A        |
+| Human Leaves           | 10) | A        |
+| Information Extraction | 11) | C        |
+
+Trial Runs :
+** A)
+Both robots are active but static. The static is perfomred by
+<parameter name="simulatemoving" type="String" value="%SimulateSystem%" /> with %SimulateSystem% in
+system.inc and system2.inc being set to Yes.
+Robot Slave has its camera covered. We mark out the TDM module and run the system using DEMO3 specs.
+
+*** METHOD
+David sits at computer, Pierre walks in front of camera. David presses human enters accordingly. David presses
+human enters again when Pierre exits screen [Human leaves only appears on the screen after person has been
+identified. So if there is no identification we wouldn't be able to mark human leaves].
+Pierre enters x 10
+
+Repeat for David x 10
+*** Human Detected
+    Human detection is measured by <Human enters>(marked by us) until <FaceFound>
+*** Person Identified
+    <Human enters> - <HumanAppeardSelf>
+*** Role Negotiation
+    <RoleAssigned> - <NowPrimaryRole> or <NowSecondaryRole> (Depending on which robot gets assigned)
+*** Collaborative Person Identification
+    <Human enters> - <HumanAppeardSelf>
+*** Collaborative Human Leaves
+    <Human enters (second press)> - <HumanLeaves>
+
+** B)
+*** Method
+The system needs to recognize so that the function actually work.
+
+**** Rec 1 - Sad
+Pierre steps in front of the camera stays sad for 10 seconds.
+David steps in front of the camera stays sad for 10 seconds.
+
+**** Rec 2 - Smiley/Happy
+Pierre steps in front of the camera stays happy for 10 seconds.
+David steps in front of the camera stays happy for 10 seconds.
+
+** C)
+Record a simple panel navigation discussion. Communicator is static controller is in motion. All modules,
+including TDM are active. Need to ensure that the system can still perform actions.
+
+*** Method
+Ask the panel to push button. Give wrong pin  repeat process x 10 times.
+*** Task Negotiation
+From <RoleAssigned> to either <NowDefaultRole> || <NowPrimaryRole> || <NowSecondaryRole>
+*** Collaborative Information Extraction
+From #TDM : Created *Object* to [CCMMaster] Task ID *No* accepted
+
+** D)
+Count times, in current demo videos, that instructions lead to actions.
+*** Dialog Understanding

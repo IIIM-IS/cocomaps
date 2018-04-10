@@ -1,0 +1,19 @@
+{
+	"type":"Task",
+	"name":"PanelB",
+	"keywords":	{
+		"B1":["first", "one", "1"],
+		"B2":["second", "two", "2"],
+		"B3":["third", "three", "3"]
+		 },
+	"questions":	{
+		"primary":[
+			"Ok. Which generator should I shut down"
+		],
+		"secondary":[
+		],
+		"timeout":[
+		]
+	},
+	"action":"Go_Into_Panel_Mode"
+}

@@ -1,0 +1,20 @@
+{
+	"type":"Task",
+	"name":"screen_status",
+	"keywords":	{
+		"NoButton":["other", "second", "power"],
+		"Home":["home", "homescreen", "screen"],
+		"Back":["back", "previous", "former"],
+		"Abort":["abort", "exit","finished", "stop"]
+	},
+	"questions":	{
+		"primary":[
+		],
+		"secondary":[
+		],
+		"timeout":[
+			"For some reson I couldn't read the status screen. Aborting task"
+		]
+	},
+	"action":"Select_Button"
+}

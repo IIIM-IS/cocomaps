@@ -2,17 +2,17 @@
 	"type":"Task",
 	"name":"GetObjective",
 	"keywords":{
-		"Move":["move", "go", "run", "send"],
+		"Move":["move", "run", "send"],
 		"Joke":["joke", "tell", "funny"],
-		"StartGen":["start", "generator", "power"]
+		"StartGen":["start", "generator", "power"],
+		"Screen":["screen"]
 	},
 	"questions":{
 		"primary":[
 			"What would you like me to do?",
 			"What task would you like me to perform?",
 			"How can I help today?",
-			"What task shall we solve, my friend",
-			"Special price for you. If you give me task"
+			"What task shall we solve, my friend"
 		],
 		"secondary":[
 			"I need to know what you want me to do",

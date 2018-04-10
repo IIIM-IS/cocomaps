@@ -1,0 +1,15 @@
+{
+	"type":"Task",
+	"name":"EmptyState",
+	"keywords":	{
+	},
+	"questions":	{
+		"primary":[
+		],
+		"secondary":[
+		],
+		"timeout":[
+		]
+	},
+	"action":"Go_Into_Panel_Mode"
+}

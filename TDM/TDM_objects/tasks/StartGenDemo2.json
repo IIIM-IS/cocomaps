@@ -1,0 +1,23 @@
+{
+	"type":"Task",
+	"name":"Start_gen_demo2",
+	"keywords":	{
+		"PanelPoint1Data":["first", "primary", "main", "left", "red"],
+		"PanelPoint2Data":["second", "auxilary", "right"]
+	},
+	"questions":	{
+		"primary":[
+			"Which panel should I use"
+		],
+		"secondary":[
+			"I didn't quite catch that, which generator.",
+			"Say that again. Which generator",
+			"Sorry, I was thinking about electric sheep. Please tell me agian"
+		],
+		"timeout":[
+			"Well, then we won't start up a generator",
+			"This task isn't fun, can we try something else"
+		]
+	},
+	"action":"Move_Start_Panel"
+}

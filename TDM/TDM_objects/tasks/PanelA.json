@@ -2,25 +2,14 @@
 	"type":"Task",
 	"name":"PanelA",
 	"keywords":	{
-		"Button1":["first", "primary", "top"],
-		"Button2":["second", "middle"],
-		"Button3":["third"],
-		"QuitPanel":["exit", "stop", "finished"]
 	},
 	"questions":	{
 		"primary":[
-			"Which button to select",
-			"What should we press"
 		],
 		"secondary":[
-			"Sorry, which button?",
-			"Say that again. Which button",
-			"Sorry, my circuits must be fired. What button?"
 		],
 		"timeout":[
-			"Well, then let's not press any button",
-			"I give up. If you won't say anything, I won't do anything"
 		]
 	},
-	"action":"Select_Button"
+	"action":"Go_Into_Panel_Mode"
 }

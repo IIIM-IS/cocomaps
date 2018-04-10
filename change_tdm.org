@@ -1,0 +1,80 @@
+<2018-04-09 Mon>
+* Objective : Change TDM
+
+** Description
+The current method uses no speak specific methodology. Build a new method that pushes
+to a function, does not repeat and speaks directly after getting chance. 
+
+*** Before :
+
+**** Setting Flag and Speaking
+The method for setting a flag is
+
+#+begin_src python
+# Flags set if the input type is speak
+if trigger_name == "Speak":
+    I_CAN_SPEAK = True
+elif trigger_name == "NoSpeak":
+    I_CAN_SPEAK = False
+
+  Add a better logic have a flag that is turned on off
+if I_CAN_SPEAK:
+    data = _TDM.get_speak_stack()
+    if data != None:
+        api.postOutputMessage("Talk", createAudioFromText(data.msg))
+        I_CAN_SPEAK = False
+#+end_src
+
+- Note : The speaking comes directly after the flag is checked.
+
+*** After
+
+#+BEGIN_SRC python
+if I_CAN_SPEAK:
+    data = _TDM.get_speak_stack()
+    if data is not None:
+        I_CAN_SPEAK, out_speak_buffer, last_speak_time = TDM_speak(
+                                        api,
+                                        data.msg,
+                                        I_CAN_SPEAK,
+                                        out_speak_buffer,
+                                        last_speak_time)
+#+END_SRC
+Including new variables
+
+out_speak_buffer : Contains last used variable
+last_speak_time : Timer for when last spoken
+
+The function for evaluating the output and deciding what to say.
+#+BEGIN_SRC python
+def TDM_speak(api, msg, I_CAN_SPEAK, out_speak_buffer, last_speak_time):
+    # SET beta here
+    if timer() - last_speak_time > 3:  # beta
+        if out_speak_buffer is not None:
+            if msg == out_speak_buffer:
+                msg = "Could you please repeat that"
+        out_speak_buffer = msg
+        api.postOutputMessage(q"Talk", createAudioFromText(msg))
+        last_speak_time = timer()
+        I_CAN_SPEAK = False
+        return I_CAN_SPEAK, out_speak_buffer, last_speak_time
+    return I_CAN_SPEAK, out_speak_buffer, last_speak_time
+#+END_SRC
+
+
+* TODO Finsh checklist <2018-04-09 Mon>
+- [X] Put speaking into silent run
+- [X] Create speaking function
+  - [X] Stores previous sentece, does not repeat directly.
+  - [X] Changes output if it repeats
+  - [X] Controls time delay
+
+
+* TODO Testing [2018-04-09 Mon 14:31]
+  - [ ] Check that method works
+  - [ ] Debug
+  - [ ] Dry Run
+  - [ ] Record
+* Recording Demo 3.
+
+

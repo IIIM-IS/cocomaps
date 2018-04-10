@@ -2,7 +2,7 @@
 	"type":"Task",
 	"name":"Demo2",
 	"keywords":	{
-		"Yes":["yes", "affirm", "confirm"],
+		"Yes":["yes", "affirm", "confirm", "can", "sure","help"],
 		"No":["no", "not", "unable"]
 	},
 	"questions":	{

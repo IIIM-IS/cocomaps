@@ -1,0 +1,20 @@
+{
+	"type":"Task",
+	"name":"Demo2_question",
+	"keywords":	{
+		"No":["no", "not", "unable"]
+	},
+	"questions":	{
+		"primary":[
+			"We could turn off generator 1. Is that okay",
+			"Would you accept turning off generator 1?"
+		],
+		"secondary":[
+			"Would you like me to turn off generator 1"
+		],
+		"timeout":[
+			"If you won't help I will find someone who will."
+		]
+	},
+	"action":"Move"
+}

@@ -1,0 +1,28 @@
+{
+	"type":"Task",
+	"name":"screen_main",
+	"keywords":	{
+	    "Button1":["power", "on", "start"],
+	    "Button2":["turn", "off" ],
+	    "Button3":["see", "status"],
+	    "NoButton":["fourth", "other", "some", "back"],
+	    "Home":["home", "homescreen", "screen"],
+	    "Back":["back", "previous", "former"],
+	    "QuitPanel":["finished", "finish", "stop"],
+	    "Abort":["abort", "exit"]
+	},
+	"questions":	{
+		"primary":[
+			"Select option. Power on, turn off or see status"
+		],
+		"secondary":[
+			"So we are here again",
+			"What would you like to select this time",
+			"Which task should we perform now"
+		],
+		"timeout":[
+			"If the main screen does not work for you, then nothing does"
+		]
+	},
+	"action":"Select_Button"
+}

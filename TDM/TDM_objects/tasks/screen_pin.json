@@ -1,0 +1,17 @@
+{
+	"type":"Task",
+	"name":"screen_pin",
+	"keywords":	{
+		},
+	"questions":	{
+		"primary":[
+			"What pin should we try",
+			"Lets try a pin number"
+		],
+	         "secondary":[],
+		"timeout":[
+			"If the main screen does not work for you, then nothing does"
+		]
+	},
+	"action":"Send_Pin"
+}

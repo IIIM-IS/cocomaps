@@ -4,7 +4,7 @@
 #     Created By          :     david
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2017-11-14 17:58]
-#     Last Modified       :     [2018-03-07 18:22]
+#     Last Modified       :     [2018-03-27 09:39]
 #     Description         :     (M)eaning (Ex)tractor for the cocomaps project
 #                               between IIIM and CMLabs. 
 #                               Creates a dictionary using keyword search.
@@ -33,6 +33,11 @@ class MEx(object):
                 words = []
                 for word in tasks.Tasks[key].keywords[_type]: 
                     words.append(word)
+                if _type in self.dict.keys(): 
+                    for instance in self.dict[_type]:
+                        if instance not in words and instance != "":
+                            words.append(instance)
+
                 self.dict[_type] = words
 
         self.print_available()
@@ -49,7 +54,7 @@ class MEx(object):
                 * DEBUG
                 Words = "Array of words split from sentense that user inputs"
         """
-        self.logger.debug("Searcing sentence {}. With keywords {}".format(
+        self.logger.debug("#TDM: Searcing sentence {}. With keywords {}".format(
                             word_bag.get(),
                             keywords
         ))
@@ -60,16 +65,30 @@ class MEx(object):
         for i in range(word_bag.len):
             alpha = 1.0/(1.0 - np.exp(-(i+1)))
             for word in word_bag.get(no=i):
-                self.logger.debug("{}/{} : {}".format(i, alpha, word))
+                self.logger.debug("#TDM: {}/{} : {}".format(i, alpha, word))
                 for idx, key in enumerate(keywords):
                     # Assumptions, keywords must have dictionary definitions
                     # or this breaks
                     if self.is_in_dict(word, self.dict[key]):
-                        self.logger.debug("word: {}".format(word))
+                        self.logger.debug("#TDM: word: {}".format(word))
                         p[idx] += 1*alpha
 
-        self.logger.debug("Results are {}".format(p))
+        self.logger.debug("#TDM: Results are {}".format(p))
         return p
+
+    def pin_search(self, word_bag):
+        """
+        Search for number values in the word bag. Specifically a 4 
+        number value that comes in in sequence.
+        """
+
+        pin_length = 4
+
+        for i in range(word_bag.len): # i = sentence id
+            for word in word_bag.get(no=i):
+                if len(word) == pin_length and word.isdigit():
+                            return True, word
+        return False, []
 
     def is_in_dict(self, word, keys):
         for key in keys:

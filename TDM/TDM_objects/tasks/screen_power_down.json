@@ -1,0 +1,29 @@
+{
+	"type":"Task",
+	"name":"screen_power_down",
+	"keywords":	{
+		"Button1":["first", "confirm", "top", "down"],
+		"Button2":["second", "lower", "cancel"],
+		"NoButton":["third", "other", "some", "up"],
+		"Home":["home", "homescreen", "screen"],
+		"Back":["back", "previous", "former"],
+		"QuitPanel":["stop", "finished"],
+		"Abort":["abort", "exit"]
+	},
+	"questions":	{
+		"primary":[
+			"Are you sure we should turn off the power",
+			"I need you to confirm or cancel powering down",
+			"Can you confirm your selection. Would you like to power down"
+		],
+		"secondary":[
+			"What would you like to select this time",
+			"You know the drill, what should we select?",
+			"Which button should we select"
+		],
+		"timeout":[
+			"If the main screen does not work for you, then nothing does"
+		]
+	},
+	"action":"Select_Button"
+}

@@ -5,6 +5,9 @@ CoCoDist_Tests/*
 CoCoDist_Tests
 TMP
 TMP/*
+Libs
+Demo3_recs/
+Demo3_recs/*
 # Symbolic link
 sync_TDM
 
@@ -18,7 +21,53 @@ sync_TDM
 *.swp
 *.info
 
+
 # Libraries, general and specific
 *.so
 
+# EMACS
 
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Org-mode
+.org-id-locations
+*_archive
+
+# flymake-mode
+*_flymake.*
+
+# eshell files
+/eshell/history
+/eshell/lastdir
+
+# elpa packages
+/elpa/
+
+# reftex files
+*.rel
+
+# AUCTeX auto folder
+/auto/
+
+# cask packages
+.cask/
+dist/
+
+# Flycheck
+flycheck_*.el
+
+# server auth directory
+/server/
+
+# projectiles files
+.projectile
+
+# directory configuration
+.dir-locals.el
