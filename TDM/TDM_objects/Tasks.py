@@ -5,7 +5,7 @@
 #     Email               :     david@iiim.is
 #     Creation Date       :     [2018-03-07 11:11]
 #     Last Modified       :     [2018-03-26 19:19]
-#     Description         :      
+#     Description         :
 #     Version             :     0.1
 #################################################################################
 
@@ -16,15 +16,16 @@ import actionlib
 
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # #   
-# # # # # # # TASK  OBJECTS  # # # # # # # # # # # #   
-# # # # # # # # # # # # # # # # # # # # # # # # # # #   
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # TASK  OBJECTS  # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 class Questions(object):
     """
-    A specific iterator for the questions 
+    A specific iterator for the questions
     """
     def __init__(self, struct):
+        random.seed()
         self.primary_ = struct["primary"]
         self.secondary_ = struct["secondary"]
         self.timeout_ = struct["timeout"]
@@ -63,7 +64,7 @@ class Questions(object):
             random.shuffle(self.n_primary)
         out_string = self.primary_[self.n_primary[self.prim_loc]]
         self.prim_loc += 1
-        return out_string 
+        return out_string
 
 
     def secondary(self):
@@ -98,10 +99,10 @@ class Task(object):
             for key in self.keywords.keys():
                 self.keylist.append(key)
         self.questions = Questions(obj["questions"])
-        self.keyword = None 
+        self.keyword = None
         self.storage = None
         self.set = False
-        
+
         # Point tasks to their relative action function location.
         if self.name == "Greet":
             self.keyword = "Nothing"
@@ -119,7 +120,7 @@ class Task(object):
         elif self.name == "StartGen":
             self.eval = actionlib.action_startgen
         elif self.name == "EmptyState":
-            self.eval = actionlib.passive 
+            self.eval = actionlib.passive
 
 
         elif self.name == "PanelA":
@@ -181,7 +182,7 @@ class Task(object):
 
     def secondary_question(self):
         return self.questions.secondary()
-        
+
     def timeout_question(self):
         return self.questions.timeout()
 
@@ -201,8 +202,8 @@ class Task_object(object):
         self.Tasks = {}
 
         curr = str(os.path.abspath(__file__))
-        loc = [pos for pos, char in enumerate(curr) if char=='/']           
-        curr = curr[:loc[-1]+1]   
+        loc = [pos for pos, char in enumerate(curr) if char=='/']
+        curr = curr[:loc[-1]+1]
         file_loc = curr + "tasks/"
         for file in os.listdir(file_loc):
             if os.path.splitext(file)[1] == ".json":

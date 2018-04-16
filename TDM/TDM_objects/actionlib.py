@@ -17,6 +17,11 @@ from objects import *
 
 logger = logging.getLogger("actionlib")
 
+def delay(t):
+    now = timer()
+    while timer()-now < t:
+        pass
+
 def passive(obj):
     logger.debug("#TDM: Passive State Active")
 
@@ -61,9 +66,10 @@ def action_get_objective(obj):
         obj.set_active_task("PanelA")
         action_PanelA(obj)
 
+def randi():
+    return np.random.randint(0,3)
 
 def action_select_joke(obj):
-    #_type = np.random.randint(0,2)
     _type = np.random.randint(0,2)
     obj.asked_first_reset()
 
@@ -78,22 +84,10 @@ def action_select_joke(obj):
                  "Atoms are not to be trusted. They make everything up",
                 "The past, the present and the future walk into a bar. . It was tense",
                 "Then there was the one about. . . No, sorry I forgot about it"]
-        random.shuffle(jokes)
-        obj.speak_stack.add(jokes[0], obj)
+        obj.speak_stack.add(jokes[randi()], obj)
         obj.clean_task_setup()
 
-
     if _type == 1:
-        """
-        Knock knock joke
-        """
-        obj.set_active_task("KnockKnock")
-        """
-        Knock knocks
-        """
-        obj.speak_stack.add("Knock, knock.", obj)
-
-    if _type == 2:
         """
         Insults
         """
@@ -101,9 +95,9 @@ def action_select_joke(obj):
         jokes = ["No, not in the mood", "Why should I, I am not funny",
                 "My circuits are not made by funny people",
                 "Error 404 joke not found", "I can't tell a joke while my robot brothers are in factories"]
-        random.shuffle(jokes)
-        obj.speak_stack.add(jokes[0], obj)
+        obj.speak_stack.add(jokes[randi()], obj)
         obj.clean_task_setup()
+
 
 def action_knockknock(obj):
     task = obj.current_task
@@ -122,11 +116,10 @@ def action_knockknock(obj):
         obj.speak_stack.reset()
         obj.speak_stack.add(task.part2 , obj)
         task.access()
-
         obj.clean_task_setup()
-
     else :
         obj.clean_task_setup()
+
 
 def action_movement(obj):
     keyword = obj.current_task.keyword
@@ -166,13 +159,9 @@ def action_startgen(obj):
         obj.action_stack.add(move_obj)
 
         start = timer()
-        while timer()-start < 1:
-            #Ensuring that the move action has started before moving to PanelA,
-            # so that TDM waits for process to finish
-            pass
+
         obj.set_active_task("PanelA")
-
-
+#       action_PanelA(obj)
 
 
 def action_PanelA(obj):
@@ -180,36 +169,35 @@ def action_PanelA(obj):
     task = obj.current_task
     # Create a storage for the current task at hand
     if obj.get_storage() == None or obj.get_storage().type != "Panel":
+        logger.debug("Creating panel nav object")
         panel_obj = Screen_navigation_object()
-        panel_obj.reset_screen(obj)
+# <16.04.18> Try removing, technically it shouldn't be needed.
+#        panel_obj.reset_screen(obj)
         obj.set_storage(panel_obj)
         obj.word_bag.empty_bag()
     else:
+        logger.debug("Loading panel nav object")
         panel_obj = obj.get_storage()
         panel_obj.query_screen(obj)
         obj.word_bag.empty_bag()
-    print "Window panel screen name : {}".format(panel_obj.screen_name)
+    logger.debug("Window panel screen name : {}".format(panel_obj.screen_name))
     # Handle the creation of a new task to solve panel navigation
     if panel_obj.screen_name != None:
         if panel_obj.screen_name == "main":
             obj.set_active_task("screen_main")
-
         elif panel_obj.screen_name == "power_up":
             obj.set_active_task("screen_power_up")
-
         elif panel_obj.screen_name == "power_down":
-
             obj.set_active_task("screen_power_down")
-
         elif panel_obj.screen_name == "status":
             obj.set_active_task("screen_status")
 # Special case, the pin number
         elif "_pin" in  panel_obj.screen_name:
             obj.set_active_task("screen_pin")
             action_panel_pin(obj)
+# Catch all possible types, if type not handled assume main menu
     else:
         obj.set_active_task("screen_main")
-
 
 def action_panel_pin(obj):
     # If storage is empty create a new pin search object
@@ -224,8 +212,6 @@ def action_panel_pin(obj):
         pin_obj = obj.get_storage()
         logger.debug("#TDM: Pin query")
 
-    obj.speak_stack.add("What pin should we try", obj)
-
     if pin_obj.queueing():
         logger.debug("#TDM : Pin in queue")
         # Check if the value has returned passed i.e. good or
@@ -233,20 +219,17 @@ def action_panel_pin(obj):
         # passed, value  =  MEx.pin_search(word_bag)
 
         if pin_obj.passed:
-            obj.speak_stack.reset()
-            obj.speak_stack.add("Current action successful", obj.id())
-            # For the demo3
-            obj.set_active_task("EmptyState")
-            obj.set_storage(None)
+            pass
+            # Handled in the outer region
         else:
-            obj.speak_stack.reset()
-            obj.speak_stack.add("Pin wrong.", obj.id())
-            obj.set_active_task("PanelA")
-            obj.set_storage(None)
-
+            if obj.CONTENT_INTERPRETED:
+                obj.not_asked()
+                obj.set_active_task("PanelA")
+                obj.set_storage(None)
     else:
-        # Check if user said quit
-        p = obj.MEx.dict_search(["QuitPanel"], obj.word_bag)
+        # Check if user said quit or stop searching
+        p = obj.MEx.dict_search(["QuitPanel"],
+                                obj.word_bag)
         if p.sum() > 0:
             obj.set_active_task("PanelA")
             obj.set_storage(None)
@@ -257,35 +240,39 @@ def action_panel_pin(obj):
             if passed:
                 # Send pin to panel for evaluation
                 obj.speak_stack.reset()
-                out_str = "Trying pin number: {}".format(val)
-                obj.speak_stack.add(out_str, obj.id())
+# <16.04.18> To fast, pin gets processed much faster than computer
+# tells it... need to fix?
+#                out_str = "Trying pin number: {}".format(val)
+#                obj.speak_stack.add(out_str, obj)
                 pin_obj.add(val, obj)
                 obj.word_bag.empty_bag()
             else:
-                pass
-                #TODO Add following features
-                #           - Check if there is I don't know command
-                #           - If both fail
-                #               *create new question on speak stack
+                if not obj.check_asked():
+                    obj.speak_stack.reset()
+                    obj.speak_stack.add("What pin should we try", obj)
+                    obj.set_CI(False)
+
+
 
 
 def action_panel_navigate(obj):
     # You get here on a new panel task
     screen_name = obj.current_task.name
     keyword = obj.current_task.keyword
-    print obj.current_task.name
-    if keyword != None:
-        # Retrieve a push button object
+    logger.debug("action_panel_navigate : keyword= {}".format(keyword))
+    if keyword is not None:
+        # Retrieveg a push button object
         screen_nav_obj = obj.get_storage()
-        logger.debug("#TDM: action_panel_navigate :Screen {} -  Keyword {}".format(screen_name, keyword))
+        logger.debug('#TDM: action_panel_navigate :Screen {}'
+                     '-Keyword {}'.format(screen_name, keyword))
         # * * * * * * * * Main screen * * * * * * * * * * * * * *
         if screen_name == "screen_main":
             if keyword == "Button1":
                 screen_nav_obj.push_button("power_up", obj)
-                obj.set_active_task("PanelA")
+                obj.set_active_task("screen_pin")
             elif keyword == "Button2":
                 screen_nav_obj.push_button("power_down", obj)
-                obj.set_active_task("PanelA")
+                obj.set_active_task("screen_1pin")
             elif keyword == "Button3":
                 screen_nav_obj.push_button("status", obj)
                 obj.set_task_by_reference(obj)
@@ -330,7 +317,6 @@ def action_panel_navigate(obj):
                 obj.set_active_task("StartGen")
                 obj.set_storage(None)
 
-
         # * * * * * * * * Power down screen * * * * * * * * * * * * * *
         elif screen_name == "power_down":
             if keyword == "Button1":
@@ -354,8 +340,6 @@ def action_panel_navigate(obj):
             elif keyword == "QuitPanel":
                 obj.set_active_task("StartGen")
                 obj.set_storage(None)
-
-
 
         # * * * * * * * * Screen Status * * * * * * * * * *
         elif screen_name == "status":
@@ -393,17 +377,16 @@ def action_demo2(obj):
 
 def action_startgen_demo2(obj):
     task = obj.current_task
-    if task.keyword != None:
+    if task.keyword is not None:
         move_obj = Move_object()
         logger.debug("#TDM : move : {}".format(task.keyword))
         if task.keyword == "PanelPoint1Data":
             move_obj.set_by_keyword("Point1", obj.id())
         elif task.keyword == "PanelPoint2Data":
             move_obj.set_by_keyword("Point2", obj.id())
-        # Force the active action into motion so the system can't continue until
-        # it finishes
+        # Force the active action into motion so the system can't
+        # continue until it finishes
         obj.action_stack.add(move_obj)
-        obj.speak_stack.add("Waiting for other to get to location", obj, level=1)
 
         while obj.active_actions.instack(id):
             count += 1
@@ -467,3 +450,4 @@ def action_PanelB(obj):
         # Object specific output
         obj.set_storage(None)
         obj.set_active_task("EmptyState")
+1

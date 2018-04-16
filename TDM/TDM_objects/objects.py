@@ -163,9 +163,7 @@ class Move_object(Action_Parent):
         Return a random sentance describing the action at hand
         """
         sentences = [
-            "Will try to send controller to that location",
-            "Will move controller to point 1",
-            "Will move controller to there"
+            ""
         ]
         return sentences[ np.random.randint(0,len(sentences)) ]
 
@@ -174,10 +172,9 @@ class Move_object(Action_Parent):
         Return a random sentance describing the action at hand
 
         """
+        # Depricated
         sentences = [
-            "Will try to send controller there ",
-            "Will move controller to the second location",
-            "The other robot, I will send it to that location"
+            ""
         ]
         return sentences[ np.random.randint(0 ,len(sentences)) ]
 
@@ -329,6 +326,7 @@ class Pin_Query(Action_Parent):
         self.set_hold("True")
         self.set_max_time(5)
         self.in_queue = False
+        self.passed = False
 
     def add(self, value, obj):
         # send numeric value to panel, monitor if it returns passed
@@ -343,14 +341,17 @@ class Pin_Query(Action_Parent):
         self.going_to_queue()
 
     def return_fail(self):
+        self.out_of_queue()
+        self.logger.debug("#TDM Set passed on pin to false")
         self.passed = False
 
     def return_passed(self):
+        self.out_of_queue()
         self.logger.debug("#TDM Set passed on pin to true")
         self.passed = True
 
     def queueing(self):
-        self.logger.debug("#TDM Set passed on pin to false")
+        self.logger.debug("#TDM Queuing the Pin value")
         return self.in_queue
 
     def going_to_queue(self):
@@ -358,7 +359,6 @@ class Pin_Query(Action_Parent):
 
     def out_of_queue(self):
         self.in_queue = False
-
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # OTHER OBJECTS # # # # # # # # # # # # #
@@ -373,6 +373,7 @@ class Word_Bag(object):
         def __init__(self, sentence):
             self.sentence = sentence
             self.added = timer()
+            self.INTERPRETED = False
 
         def elapsed(self):
             # NOTE : Here we set the lifetime of a sentence in
@@ -397,7 +398,7 @@ class Word_Bag(object):
         """
         Scrub and add a sentence
         """
-        if sentence != None and sentence != "":
+        if sentence != None and sentence != "" and len(sentence) != 0:
             sentence_object = Word_Bag.Input_Sentence(sentence.lower().split(" "))
             self.buffer.insert(0, sentence_object)
             self.logger.debug("#TDM: Adding sentence: {}".format(sentence_object.get()))

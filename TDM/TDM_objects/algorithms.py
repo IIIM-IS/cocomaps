@@ -64,20 +64,23 @@ class TDM_AA(TDM_base):
         self.stack_id.append(action.id())
 
 
-
     def wait(self):
+        # <12.04.18> If there is an active hold action on the
+        # active actions stack, wait until it is popped
         if self.isEmpty():
             return False
         for action in self.stack:
-            if action.get_holds() == False:
-                return False
-            if action != None and not action.elapsed():
-                self.logger.info("Action {}, wait for {} sek, remaining {}".format(
-                    action.type,
-                    action.max_time,
-                    action.remaining()
-                ))
+            if action.get_holds() is True:
+                self.logger.debug("TDM_AA: wait(True)")
                 return True
+                #if action is not None and not action.elapsed():
+                # <12.04.18> Comment out, not necessary
+                #self.logger.info("Action {}, wait for {} sek, remaining {}".format(
+                #    action.type,
+                #    action.max_time,
+                #    action.remaining()
+                #))
+                #    return True
         return False
 
     def timeouts(self):
@@ -85,7 +88,15 @@ class TDM_AA(TDM_base):
             if action.timeout_check():
                 return True
             return False
+    def print_stack(self):
+        out_str = ""
+        if self.stack != []:
+            for val in self.stack:
+                out_str += "{} {} {} \n".format(val.type, val.id(), val.msg)
 
+        if out_str != "":
+            return out_str
+        return "Active actions are empty"
 
     def add_finished_id(self, id):
         # Remove action from active action stack once id is returned from psyclone
@@ -101,17 +112,18 @@ class TDM_AA(TDM_base):
                                                                               action.msg,
                                                                          len(self.stack)))
 
-
-    def print_stack(self):
-        out_str = ""
-        if self.stack != []:
-            for val in self.stack:
-                out_str += "{} {} {} \n".format(val.type, val.id(), val.msg)
-
-        if out_str != "":
-            return out_str
-        return "Active actions are empty"
-
+"""
+    def add_finished_id(self, id):
+        We must, temporarily simply pop the value that is on the stack.
+        We are having some issues with storing the value IDs
+        self.logger.debug('#TDM: Would Remove from AA {};'
+                          'still on stack {}'.format(id, self.stack))
+        if self.stack is not []:
+            if self.stack is None:
+                pass
+            else:
+                self.stack.pop(0)
+"""
 
 class TDM_SS(TDM_base):
     """
@@ -126,6 +138,7 @@ class TDM_SS(TDM_base):
 
     def add(self, sentence, obj, level=0, id=-1):
         put_on = True
+        obj.not_asked()
         if not self.isEmpty():
             for obb in self.stack:
                 if obb.msg == sentence:
@@ -145,7 +158,7 @@ class TDM_SS(TDM_base):
         if not self.isEmpty():
             if level == 0:
                 return self.stack.pop(0)
-            else :
+            else:
                 for idx,val in enumerate(self.stack):
                     if val.level == level:
                         temp = self.stack.pop(idx)

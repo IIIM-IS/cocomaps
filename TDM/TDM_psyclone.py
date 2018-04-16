@@ -16,29 +16,39 @@ import cmsdk2
 from TDM import TDM
 import logging
 from timeit import default_timer as timer
+from datetime import datetime
 
+def delay(t):
+    now = timer()
+    while timer() - now < t:
+        pass
 
 def PsyCrank(apilink):
     api = cmsdk2.PsyAPI.fromPython(apilink)
-    name = api.getModuleName()
+#    name = api.getModuleName()
 
     # Initialize TDM to be used for the system
     _TDM = TDM.TDM()
     logger = logging.getLogger("TDM_psyclone")
     # Definition of used variables
-    I_CAN_SPEAK = True
+    I_ACCEPT_TURN = True
     I_TALK_TO_PERSON = True
     check_who_is_speaking = True
     out_speak_buffer = None
-    last_speak_time = 0
+    last_speak_time = timer()
+# <12.04.18> Removed last_flip and inserted timout for sentence.
+#   last_flip = timer()
+
+
     while api.shouldContinue():
-        msg = api.waitForNewMessage(150)
+        msg = api.waitForNewMessage(250)
+        if _TDM.current_task is not None:
+            logger.debug("Current task : {}".format(_TDM.current_task.name))
 
         if msg:
             trigger_name = api.getCurrentTriggerName()
             logger.debug("#TDM: Trigger name : {}".format(
                 trigger_name))
-
             if trigger_name == "OtherIsSpeaking" and check_who_is_speaking:
                 I_TALK_TO_PERSON = False
                 check_who_is_speaking = False
@@ -62,11 +72,11 @@ def PsyCrank(apilink):
                 check_speech_stack = _TDM.speak_stack.print_stack()
                 api.setPrivateData("SpeachStack",
                                    check_speech_stack,
-                                   len(check_speech_stack),
+                                    len(check_speech_stack),
                                    "text/text")
 
                 if _TDM.current_task is not None:
-                    out_str =str(_TDM.current_task.name)
+                    out_str = str(_TDM.current_task.name)
                     api.setPrivateData("TDM_current_task",
                                        out_str,
                                        len(out_str),
@@ -79,6 +89,7 @@ def PsyCrank(apilink):
                                        "text/text")
 
                 if trigger_name == "NewWords":
+                    _TDM.set_CI(False)
                     api_trigger("NewWords", api)
                     if _TDM.word_bag_enabled:
                         _TDM.add_to_word_bag(msg.getString("Utterance"))
@@ -92,23 +103,53 @@ def PsyCrank(apilink):
 
                 # Flags set if the input type is speak
                 if trigger_name == "Speak":
-                    I_CAN_SPEAK = True
+                    I_ACCEPT_TURN = True
+            #        last_flip = timer()
                 elif trigger_name == "NoSpeak":
-                    I_CAN_SPEAK = False
+                    I_ACCEPT_TURN = False
+             #       if timer()-last_flip > .8:
+                # <11 Ap 18> Adding reset of global variables
+                # when YTTM gives turn
+                elif trigger_name == "IGiveTurn":
+                    _TDM.set_CI(False)
+                    _TDM.set_CU(False)
 
                 # Need to have actions on a special branch
+                passed = False
                 if trigger_name == "TaskAccepted":
                     api_trigger("TaskAccepted", api)
                     # TODO implement in system.
                     pass
+                # Check if there is a change in status, if so
+                # further eval can be done
                 elif trigger_name == "TaskCompleted":
                     taskID = msg.getInt("ReferenceID")
-                    logger.debug( "#TDM: Task completed, task id {} type: {}".format(
-                        taskID,
-                        msg.getInt("Type")))
+                    logger.debug('#TDM: Task completed, task id '
+                                 '{} type: {}'.format(
+                                                    taskID,
+                                                    msg.getInt("Type")))
+                    _TDM.active_actions.add_finished_id(taskID)
+                    passed = True
+
+                elif trigger_name == "TaskFailed":
+                    taskID = msg.getInt("ReferenceID")
+                    logger.debug('#TDM: Task Failed, task id '
+                                 '{} type: {}'.format(
+                                                    taskID,
+                                                    msg.getInt("Type")))
+                    _TDM.active_actions.add_finished_id(taskID)
+                elif trigger_name == "TaskTimeout":
+                    taskID = msg.getInt("ReferenceID")
+                    logger.debug('#TDM: Task Timeout, task id '
+                                 '{} type: {}'.format(
+                                                    taskID,
+                                                    msg.getInt("Type")))
 
                     api_trigger("TaskCompleted", api)
                     _TDM.active_actions.add_finished_id(taskID)
+                    passed = True
+
+                if passed:
                     if msg.getInt("Type") == 2:
                         # Type 1 == Panel control return
                         screen_name = msg.getString("ScreenName")
@@ -116,9 +157,9 @@ def PsyCrank(apilink):
                             screen_name))
 
                         if (_TDM.current_task.name in ["PanelA", "PanelB"]
-                            and screen_name is not None):
+                           and screen_name is not None):
                             # At top level the panel object is stored in the
-                            # storage part of the task, PanleAA
+                            # storage part of the task, PanleA
                             current_panel_obj = _TDM.get_storage()
                             current_panel_obj.update(screen_name)
                         elif _TDM.get_storage() and screen_name is not None:
@@ -139,15 +180,36 @@ def PsyCrank(apilink):
                                                "text/text")
                     # Check if the return value was pin code, if pincode check
                     # if the value failed or succeeded
-                    elif msg.getInt("Type") == 101:
+                    if msg.getInt("Type") == 101:
+                        logger.debug("PIN NUMBER EVAL")
                         status = msg.getString("Status")
                         logger.debug("#TDM : status: {}".format(status))
                         if status == "Failed":
                             _TDM.return_fail()
+                            api.postOutputMessage("Talk",
+                                                  createAudioFromText(
+                                                      "Pin wrong"
+                                                      ))
+                            delay(2)
+                            _TDM.set_active_task("PanelA")
                         elif status == "Success":
                             _TDM.return_pass()
+                            api.postOutputMessage("Talk",
+                                                  createAudioFromText(
+                                                      "Pin correct"
+                                                      ))
+                            delay(2)
+                            api.postOutputMessage("Talk",
+                                                  createAudioFromText(
+                                                    "Current action successful"
+                                                  ))
+                            _TDM.set_active_task("EmptyState")
+
                         elif trigger_name == "TaskTimeout":
                             _TDM.return_fail()
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # Each run, if active, even if no msg is found run silent
         if _TDM.is_active():
             _TDM.silent_run()
@@ -172,7 +234,7 @@ def PsyCrank(apilink):
                 data = None
                 _TDM.reset()
                 check_who_is_speaking = True
-                I_CAN_SPEAK = False
+                I_ACCEPT_TURN = False
                 api.postOutputMessage("Talk",
                                       createAudioFromText(
                                           "Going into search mode"
@@ -252,44 +314,120 @@ def PsyCrank(apilink):
                         msg.setString("OptionName", data.get_button_to_push())
                     # Send the msg created
                     msg.setInt("ReferenceID", data.id())
-                    logger.debug("#TDM:PSYCLONE: REF id: {}, {}".format(
-                        msg.getInt("ReferenceID"),
-                        msg.getString("Name")))
+                    logger.debug('#TDM:PSYCLONE: REF id: {},'
+                                 'Name: {},  Type : {}'.format(
+                                                        msg.getInt(
+                                                            "ReferenceID"),
+                                                        msg.getString("Name"),
+                                                        msg.getInt("Type")))
                     if data.msg == "Pin":
                         logger.debug("#TDM:PSYCLONE pin: {}".format(
                             msg.getString("pin")))
 
                     api.postOutputMessage("PerformTask", msg)
 
-              # Add a better logic have a flag that is turned on off
-            if I_CAN_SPEAK:
-                data = _TDM.get_speak_stack()
-                if data is not None:
-                    I_CAN_SPEAK, out_speak_buffer, last_speak_time = TDM_speak(
-                                                    api,
-                                                    data.msg,
-                                                    I_CAN_SPEAK,
-                                                    out_speak_buffer,
-                                                    last_speak_time)
+            stamp = str(datetime.now().strftime('%H:%M:%S.%f'))
+            logger.debug("###{} - IAT : {}; CI : {};  CU : {}".format(stamp,
+                                                       I_ACCEPT_TURN,
+                                                  _TDM.CONTENT_INTERPRETED,
+                                                  _TDM.CONTENT_UNDERSTOOD))
+            # Add a better logic have a flag that is turned on off
+            if ((I_ACCEPT_TURN or
+               (_TDM.CONTENT_INTERPRETED and _TDM.CONTENT_UNDERSTOOD) or
+               not _TDM.check_asked()) and
+                not _TDM.wait_on_action()):
+                I_ACCEPT_TURN, out_speak_buffer, last_speak_time = TDM_speak(api,
+                                            out_speak_buffer,
+                                            last_speak_time,
+                                            I_ACCEPT_TURN,
+                                            _TDM,
+                                            logger)
 
 
 # TODO - Add functionality:
 # - Check if input is repeated, if so say something else
 # - Give output time delay so we don't speak over itsel
-def TDM_speak(api, msg, I_CAN_SPEAK, out_speak_buffer, last_speak_time):
+def TDM_speak(api, out_speak_buffer,
+              last_speak_time, I_ACCEPT_TURN,
+              _TDM, logger):
     # SET beta here
-    if timer() - last_speak_time > 3:  # beta
-        if out_speak_buffer is not None:
-            if (msg == out_speak_buffer and msg != "Could you please repeat that"):
-                msg = "Could you please repeat that"
-            elif (msg == out_speak_buffer and msg == "Could you please repeat that"):
-                msg = " "
-        out_speak_buffer = msg
-        api.postOutputMessage("Talk", createAudioFromText(msg))
+    data = _TDM.get_speak_stack()
+    SPEAK = False
+#    print("###{} - TIMER {}".format(stamp, timer()-last_speak_time))
+    if out_speak_buffer is None:
+        time_diff = 0
+    else:
+        time_diff = float(len(out_speak_buffer.split(" ")))*0.45
+
+    logger.debug("_TDM.check_asked {} : Time Diff  {}".format(
+                                                        _TDM.check_asked(),
+                                                        time_diff))
+    if timer() - last_speak_time > time_diff:  # beta
+        # Check if TDM has finished interpreting inputs
+        if _TDM.CONTENT_INTERPRETED:
+            # Check if interpreted input found meaning
+            if _TDM.CONTENT_UNDERSTOOD:
+                # Clear buffer of Understood variable
+                _TDM.set_CU(False)
+                # Let user know it was understood
+                out_speak_buffer = "Ok"
+                SPEAK = True
+            # Special case for the first interaction
+            elif out_speak_buffer is None and data is not None:
+                out_speak_buffer = data.msg
+                SPEAK = True
+            # There is data on the speak stack to say
+            elif data is not None:
+                out_speak_buffer = data.msg
+                SPEAK = True
+            # No data to say, so the matter has been examined
+            # but found no result
+            elif data is None:
+                # Put a timer on repeat for long time so it dosn't pop up
+                # right away
+                if timer() - last_speak_time > 3:
+                    if (_TDM.check_asked()
+                       and out_speak_buffer is not None
+                       and _TDM.active_actions.wait()):
+                        # We don't want to repeat to many times
+                        if out_speak_buffer != "Could you repeat that":
+                            out_speak_buffer = "Could you repeat that"
+                            SPEAK = True
+                            _TDM.set_CI(False)
+                            _TDM.word_bag.empty_bag()
+                        # We don't want to repeat to many times.
+                        else:
+                            out_speak_buffer = " "
+                            SPEAK = True
+
+        # Content interpreted and not finished asking
+        if not _TDM.check_asked() and SPEAK is False:
+            if data is None:
+                logger.debug("Would Question, no Question on stack")
+            if data is not None:
+                out_speak_buffer = data.msg
+                logger.debug("Out question : {}".format(out_speak_buffer))
+                _TDM.finished_asking()
+                _TDM.speak_stack.reset()
+                SPEAK = True
+
+    if SPEAK:
+        while _TDM.active_actions.wait():
+            # This is a very ugly method
+            pass
+
+        api.postOutputMessage("Talk", createAudioFromText(
+                                      out_speak_buffer))
+        if _TDM.speak_stack.isEmpty():
+            _TDM.finished_asking()
         last_speak_time = timer()
-        I_CAN_SPEAK = False
-        return I_CAN_SPEAK, out_speak_buffer, last_speak_time
-    return I_CAN_SPEAK, out_speak_buffer, last_speak_time
+#        _TDM.finished_asking()
+# <12.04.18>
+# Perhaps we shouldn't force this off
+#        I_ACCEPT_TURN = False
+ #       api.postOutputMessage("IGiveTurn")
+
+    return I_ACCEPT_TURN, out_speak_buffer, last_speak_time
 
 
 def createAudioFromText(inString):

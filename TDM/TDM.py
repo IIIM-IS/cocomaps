@@ -6,8 +6,8 @@
 #     Creation Date       :     [2018-03-06 15:12]
 #     Last Modified       :     [2018-04-03 10:00]
 #     Description         :     Supervisory Intermediate (TDM) control function
-#                               takes care of higher level functionality and 
-#                               feedbacks to the TDM. Becomes the actual 
+#                               takes care of higher level functionality and
+#                               feedbacks to the TDM. Becomes the actual
 #                               connector with psyclone
 #     Version             :     0.1
 #################################################################################
@@ -55,7 +55,7 @@ class TDM(object):
         self.current_task = None
         self.active_actions = TDM_AA()
         self.action_stack = TDM_AS(self.active_actions)
-        self.speak_stack  = TDM_SS()
+        self.speak_stack = TDM_SS()
         self.word_bag = Word_Bag()
         self.id_number = 0
         self.asked_first = 0
@@ -63,12 +63,17 @@ class TDM(object):
         self.speaking_timeout = 0
         self.word_bag_enabled = True
         self.SESSION_IN_PROGRESS = False
+        self.asked = False
         # A panel interaction specific variable. Is given value when
         # system is in interaction with a panel. Otherwise it's none
         self.current_panel_screen = None
         # Storage for various temporary values.
         self.storage = None
         self.previous_task = None
+        # Update < 11 Ap 18 >
+        # Global variables for system
+        self.CONTENT_INTERPRETED = False
+        self.CONTENT_UNDERSTOOD = False
 
         # Static variables:
             # How many times, in a row, can the system ask the user what
@@ -95,6 +100,29 @@ class TDM(object):
     def turn_on(self):
         self.active = True
 
+    def set_CI(self, val):
+        self.CONTENT_INTERPRETED = val
+
+    def set_CU(self, val):
+        self.CONTENT_UNDERSTOOD = val
+
+    def not_asked(self):
+        """
+        <12.04.18>
+        C.hange the flag, have I asked the question
+        to False, i.e. I have not asked a question
+        but would like to.
+        """
+        self.asked = False
+
+    def check_asked(self):
+        # Check if a new question, added to the output string
+        # has been asked
+        return self.asked
+
+    def finished_asking(self):
+        self.asked = True
+
     def turn_off(self):
         self.current_task = None
         self.action_stack.reset()
@@ -116,7 +144,7 @@ class TDM(object):
         self.word_bag.empty_bag()
         self.id_number = 0
         self.asked_first = 0
-        self.go_to_search = False 
+        self.go_to_search = False
 
     def set_system_id(self, id):
         self.system_id = id
@@ -155,14 +183,17 @@ class TDM(object):
         stack return it and pop the stack
         """
         #self.logger.debug("#TDM: Checking speak stack")
-        if not self.speak_stack.isEmpty() and self.speak_timeout():
-            if self.active_actions.wait():
-                out_speak = self.speak_stack.pop(level=1)
-            else :
-                out_speak = self.speak_stack.pop()
-                self.set_speek_timeout(out_speak.max_time)
-
-            return out_speak
+        if (not self.speak_stack.isEmpty()
+           and not self.active_actions.wait()):
+            return self.speak_stack.pop()
+            #<12.04.18> Simplified, always return a value if one is
+            # available
+#            if self.active_actions.wait():
+#                out_speak = self.speak_stack.pop(level=1)
+#            else :
+#                out_speak = self.speak_stack.pop()
+#                self.set_speek_timeout(out_speak.max_time)
+        # If nothing on the stack return None
         return None
 
     def set_keywords(self, key, list):
@@ -173,6 +204,18 @@ class TDM(object):
         self.id_number+=1
         return self.id_number-1
 
+    # <12.04.18> Need a better way of stopping the system when
+    # something is on the action stacks.
+    def wait_on_action(self):
+        if not self.action_stack.isEmpty():
+            for action in self.action_stack.stack:
+                if action.get_holds():
+                    return True
+        if not self.active_actions.isEmpty():
+            for action in self.active_actions.stack:
+                if action.get_holds():
+                    return True
+        return False
 
     def speak_timeout(self):
         """
@@ -193,7 +236,7 @@ class TDM(object):
         Check if the action stack has anything to offer
         """
         if self.active and not self.action_stack.isEmpty() and not self.active_actions.wait():
-            # NOTE : the last statement has implications. We can't enact issues 
+            # NOTE : the last statement has implications. We can't enact issues
             # while other issues are in action
             data = self.action_stack.pop()
             return data
@@ -201,7 +244,7 @@ class TDM(object):
 
     def clean_task_setup(self):
         """
-        Set the system to a default state, clean action stack, speak stack 
+        Set the system to a default state, clean action stack, speak stack
         and make the current task == None
         """
         self.current_task = None
@@ -218,18 +261,18 @@ class TDM(object):
 
         else:
             if self.current_task == None:
+                """ <11 Apr 18> Go straight to how can I help, other
+                method is depricated
                 # First run, greet is has not been added
                 if self.action_stack.history == []:
                     self.logger.debug("#TDM: Adding Greet to stack")
                     self.set_active_task("Greet")
                     self.action_stack.history.append("greet")
-                # All other runs, greet is finished. We go straight to 
+                # All other runs, greet is finished. We go straight to
                 # get objective
-                else:
-                    self.logger.debug("#TDM: Adding GetObjective to stack")
-                    self.set_active_task("GetObjective")
-                    # For debugging demo3
-                    # self.set_active_task("PanelA")
+                """
+                self.logger.debug("#TDM: Adding GetObjective to stack")
+                self.set_active_task("GetObjective")
 
     def set_task_by_reference(self, task):
         self.current_task = task
@@ -247,7 +290,7 @@ class TDM(object):
             task_name = "screen_power_up"
         elif window_name == "PINCode":
             task_name = "screen_pin"
-        else :
+        else:
             task_name = "PanelA"
 
         # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -255,7 +298,7 @@ class TDM(object):
 
     def set_active_task(self, task_name):
         """
-        Set the current task according to task name. Prepare the 
+        Set the current task according to task name. Prepare the
         action stack and check if information is available. If
         not create an speak_object and add on stack. If data is
         available put action_object on action stack
@@ -264,41 +307,48 @@ class TDM(object):
             self.previous_task = self.current_task.name
         else:
             self.previous_task = "GetObjective"
+        self.logger.debug("New Object : {}".format(task_name))
         new_task = self.Tasks.get(task_name)
+        self.asked = False
+        self.set_CI(False)
+        self.set_CU(False)
         self.current_task = new_task
 
 
     def information_query(self):
         """
-        Check if there is information in the speak buffer to decide 
-        what is missing from the task, if not put question on Speach 
+        Check if there is information in the speak buffer to decide
+        what is missing from the task, if not put question on Speach
         Stack
         """
+        self.logger.debug("##MEX evaluation")
         task = self.current_task
         if self.current_task != None and self.current_task.keyword == None:
             if self.current_task.name == "GetObjective":
                 self.asked_first_inc()
             p = self.MEx.dict_search(task.keywords, self.word_bag)
             if p.sum() == 0:
-                # Add question to stack
-                self.speak_stack.add(task.primary_question(), self)
-
-                # Special intrucion for checking number of times the get
-                # objective task is called
-            else :
+                if self.asked is False:
+                    self.speak_stack.add(task.primary_question(), self)
+            else:
                 self.logger.debug("#TDM: Current task: {}".format(task.name))
                 self.logger.debug("#TDM: Current keywords: {}".format(task.keywords))
                 self.logger.debug("#TDM: Current p: {}".format(p))
                 self.logger.debug("#TDM: argmax {}".format(np.argmax(p)))
                 self.logger.debug("#TDM: Keyword: {}".format(task.keylist[np.argmax(p)]))
+                self.set_CU(True)
                 task.set_keyword(task.keylist[np.argmax(p)])
-                self.speak_stack.reset()
+
+            self.set_CI(True)
+
 
 
     def add_to_word_bag(self, sentence):
         """
         Try to add the Nunace input to the word bag.
         """
+        # Change the value of having Interpreted the content
+        self.set_CI(False)
         self.word_bag.add(sentence)
         self.information_query()
 
@@ -308,14 +358,12 @@ class TDM(object):
         and ensures that enqueued text is ready
 
         Can return actions to be performed that don't require timed inputs
-
         from the user
         """
-        # Check if the variable of dialog on can be set off and the system
-        # reset
-        if self != None and self.active and not self.turn_dialog_off():
+        # Ensure that there is something active, and that the dialog
+        # isn't turned off
+        if self is not None and self.active and not self.turn_dialog_off():
             if self.active_actions.wait():
-
                 # Check the active action stack if there are any actions
                 # that require a wait period
                 None
@@ -331,21 +379,25 @@ class TDM(object):
                 self.set_active_task(self.previous_task)
 
             else:
-                if self.action_stack.isEmpty() and self.speak_stack.isEmpty():
-                    # Special case for greeting
-                    if self.current_task != None and self.current_task.name == "Greet":
-                        self.clean_task_setup()
-                    # General case, if task is set to empty this function
-                    # makes current task be get objective
-                    self.check_task()
+                # No wait periods and no timeouts found. General approach
+                if(self.action_stack.isEmpty()
+                   and self.speak_stack.isEmpty()):
+                    # Not a good method, first that came to mind.
+                    if(self.current_task is not None
+                       and self.current_task.keyword == "Nothing"):
+                        pass
+                    else:
+                        self.check_task()
 
-                # Check if there is a wait for information
-                if self.speak_stack.isEmpty() and self.current_task != None and self.current_task.keyword == None:
-                        # Check the current active task for information
+                # If the current wordbag content hasn't been interpreted
+                # Check for information
+                if not self.CONTENT_INTERPRETED:
                         self.information_query()
-                elif self.current_task != None and self.current_task.keyword != None:
-                    if not self.current_task.set:
-                        self.current_task.eval(self)
+                # If there is a task active, and the keyword has
+                # been set, or if the keyword is set to Nothing
+                if(self.current_task is not None
+                   and self.current_task.keyword is not None):
+                    self.current_task.eval(self)
 
 
     def turn_dialog_off(self):
@@ -391,7 +443,7 @@ class sent_test(object):
                 self.delay.pop(0)
                 return self.sent.pop(0)
         return None
-            
+
 
 
 if __name__ == "__main__":
@@ -457,6 +509,3 @@ if __name__ == "__main__":
                 None
             print "Timeout Exit"
             break
-
-
-

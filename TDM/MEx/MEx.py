@@ -6,7 +6,7 @@
 #     Creation Date       :     [2017-11-14 17:58]
 #     Last Modified       :     [2018-03-27 09:39]
 #     Description         :     (M)eaning (Ex)tractor for the cocomaps project
-#                               between IIIM and CMLabs. 
+#                               between IIIM and CMLabs.
 #                               Creates a dictionary using keyword search.
 #     Version             :     3.1
 #################################################################################
@@ -18,8 +18,8 @@ import numpy as np
 
 class MEx(object):
     """
-    Top object storer. Creates and stores all types, reads in the dictionary 
-    and computes word connections. 
+    Top object storer. Creates and stores all types, reads in the dictionary
+    and computes word connections.
     """
     def __init__(self, tasks):
         """
@@ -31,9 +31,9 @@ class MEx(object):
         for key in tasks.Tasks.keys():
             for _type in tasks.Tasks[key].keywords:
                 words = []
-                for word in tasks.Tasks[key].keywords[_type]: 
+                for word in tasks.Tasks[key].keywords[_type]:
                     words.append(word)
-                if _type in self.dict.keys(): 
+                if _type in self.dict.keys():
                     for instance in self.dict[_type]:
                         if instance not in words and instance != "":
                             words.append(instance)
@@ -44,7 +44,7 @@ class MEx(object):
 
     def dict_search(self, keywords, word_bag):
         """
-        Only action types can search the dictionary. The actions have a 
+        Only action types can search the dictionary. The actions have a
         field named keywords that dictate which key within the dictionary
         is used to search for values
 
@@ -54,14 +54,16 @@ class MEx(object):
                 * DEBUG
                 Words = "Array of words split from sentense that user inputs"
         """
-        self.logger.debug("#TDM: Searcing sentence {}. With keywords {}".format(
+        p = np.zeros(len(keywords))
+        if word_bag.get() == " ":
+            self.logger.debug("#TDM: MEx emtpty string")
+            return p
+        self.logger.debug("#TDM: Searcing sentence {}  With keywords {}".format(
                             word_bag.get(),
                             keywords
         ))
 
-        p = np.zeros(len(keywords))
 
-        
         for i in range(word_bag.len):
             alpha = 1.0/(1.0 - np.exp(-(i+1)))
             for word in word_bag.get(no=i):
@@ -70,7 +72,7 @@ class MEx(object):
                     # Assumptions, keywords must have dictionary definitions
                     # or this breaks
                     if self.is_in_dict(word, self.dict[key]):
-                        self.logger.debug("#TDM: word: {}".format(word))
+                        self.logger.debug("#TDM: word: {} : {}".format(word, key))
                         p[idx] += 1*alpha
 
         self.logger.debug("#TDM: Results are {}".format(p))
@@ -78,7 +80,7 @@ class MEx(object):
 
     def pin_search(self, word_bag):
         """
-        Search for number values in the word bag. Specifically a 4 
+        Search for number values in the word bag. Specifically a 4
         number value that comes in in sequence.
         """
 
@@ -89,6 +91,7 @@ class MEx(object):
                 if len(word) == pin_length and word.isdigit():
                             return True, word
         return False, []
+
 
     def is_in_dict(self, word, keys):
         for key in keys:
@@ -101,7 +104,7 @@ class MEx(object):
         """
         Print available types within currently loaded structure
         """
-        
+
         print "Available objects in current structure \n"
         for _type in self.dict.keys():
             print "Type: {}".format(_type)
